@@ -57,6 +57,7 @@ Interesting urls:
 ```
 
 * GET https://www.vier.be/api/video/e9c03e53-4895-47ed-a31e-03da9a0b6614 (no auth needed)
+  GET https://api.viervijfzes.be/content/e9c03e53-4895-47ed-a31e-03da9a0b6614 (`authorization` header required)
 ```json
 {
   "autoplay": false,
@@ -116,3 +117,38 @@ Interesting urls:
   "whatsonId": "10138413273449527"
 }
 ```
+
+* GET https://images.viervijfzes.be/www.vier.be/production/meta/tnwallpaper3840x2160demol2020-q5y6k8.jpg?auto=format&fit=crop&h=752&ixlib=php-1.1.0&q=85&w=1394&s=5f78f68246dc3f40673acaa2d5f21451
+
+* GET https://api.viervijfzes.be/content/{{ id }}
+* POST https://api.viervijfzes.be/email/change
+  - step
+  - uuid
+  - old_email
+  - new_email
+* POST https://api.viervijfzes.be/email/get
+  - id
+* POST https://api.viervijfzes.be/email/sync
+  - email
+* POST https://api.viervijfzes.be/email/valid
+  - email
+* GET https://api.viervijfzes.be/notifications
+* POST https://api.viervijfzes.be/personalization
+* POST https://api.viervijfzes.be/reset
+  - Domain
+  - Email
+  - Url
+* POST https://api.viervijfzes.be/search
+  - query
+  - sites ('vier', 'vijf', 'zes')
+  - page
+  - mode: 'byDate'
+* POST https://api.viervijfzes.be/webform
+  - FormId
+  - Created
+  - UserName: Wieni
+  - Blob
+* PUT https://api2.viervijfzes.be/selligent/lists/
+  - options
+* POST https://api2.viervijfzes.be/selligent/newsletter/
+  - email
