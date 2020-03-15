@@ -55,7 +55,6 @@ class SbsAuth:
                 _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
 
         if not self._id_token:
-            exit()
             # We have no tokens, or they are all invalid, do a login
             id_token, refresh_token = self._authenticate(self._username, self._password)
             self._id_token = id_token
