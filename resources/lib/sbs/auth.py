@@ -30,4 +30,6 @@ class SbsAuth:
                      client_id=self.COGNITO_CLIENT_ID,
                      client=client)
 
-        return aws.authenticate_user()
+        result = aws.authenticate_user()
+
+        return result.get('AuthenticationResult', {}).get('IdToken')

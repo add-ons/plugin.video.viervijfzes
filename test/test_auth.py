@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-""" Tests for Auth """
+""" Tests for AUTH API """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import logging
 import os
 import unittest
 
 from resources.lib.sbs.auth import SbsAuth
 
+_LOGGER = logging.getLogger('test-auth')
+
 
 class TestAuth(unittest.TestCase):
-    """ Tests for VTM GO API """
+    """ Tests for AUTH API """
 
     def __init__(self, *args, **kwargs):
         super(TestAuth, self).__init__(*args, **kwargs)
@@ -20,6 +23,7 @@ class TestAuth(unittest.TestCase):
         auth = SbsAuth(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''))
         token = auth.get_token()
         self.assertTrue(token)
+        self.assertIsInstance(token, str)
 
     def test_login_nok(self):
         auth = SbsAuth('unknown@example.com', 'password')
