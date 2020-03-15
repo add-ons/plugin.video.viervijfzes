@@ -135,6 +135,11 @@ class AwsIdp:
         refresh_request_data = json.dumps(refresh_request)
         refresh_response = self._session.post(self.url, refresh_request_data, headers=refresh_headers)
         refresh_json = json.loads(refresh_response.content)
+
+        if "message" in refresh_json:
+            _LOGGER.error("Error refreshing: %s", refresh_json.get("message"))
+            return None
+
         id_token = refresh_json.get("AuthenticationResult", {}).get("IdToken")
         return id_token
 

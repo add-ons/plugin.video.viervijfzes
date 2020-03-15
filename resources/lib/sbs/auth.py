@@ -48,13 +48,15 @@ class SbsAuth:
 
         if self._refresh_token:
             # We have a valid refresh token, use that to refresh our id token
-            id_token = self._refresh(self._refresh_token)
-            self._id_token = id_token
-            self._expiry = now + 3600
-            _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
+            # The refresh token is valid for 30 days. If this refresh fails, we just continue by logging in again.
+            self._id_token = self._refresh(self._refresh_token + '123')
+            if self._id_token:
+                self._expiry = now + 3600
+                _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
 
-        else:
-            # We have not tokens, or they are all invalid, do a login
+        if not self._id_token:
+            exit()
+            # We have no tokens, or they are all invalid, do a login
             id_token, refresh_token = self._authenticate(self._username, self._password)
             self._id_token = id_token
             self._refresh_token = refresh_token
