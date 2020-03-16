@@ -2,7 +2,7 @@
 
 ## Programs
 
-Programs can be scraped of the homepage of the channel from `a.program-overview__link`. We have a title and a path.
+Programs can be scraped of the homepage of the channel from `a.program-overview__link`. We can find a `title` and a `path`.
 
 Examples:
 * https://www.vier.be/
@@ -11,8 +11,7 @@ Examples:
 
 ## Program info
 
-The path can be used to lookup the program info. A GET request has to be made to the channel url appended with the path.
-On that page, we can extract a JSON from a `div` with an attribute `data-hero`.
+The `path` can be used to generate a URL that we can fetch. On that page, we can extract a JSON from a `div` with an attribute `data-hero`.
 
 ```json
 {
@@ -155,9 +154,6 @@ TODO
 Interesting urls:
 
 * GET https://www.vier.be/api/content_tree (no auth needed)
-```json
-# Json is to long
-```
   
 * GET https://api.viervijfzes.be/notifications (`authorization` header required)
 ```json
@@ -270,35 +266,44 @@ Interesting urls:
 
 * GET https://images.viervijfzes.be/www.vier.be/production/meta/tnwallpaper3840x2160demol2020-q5y6k8.jpg?auto=format&fit=crop&h=752&ixlib=php-1.1.0&q=85&w=1394&s=5f78f68246dc3f40673acaa2d5f21451
 
-* GET https://api.viervijfzes.be/content/{{ id }}
 * POST https://api.viervijfzes.be/email/change
   - step
   - uuid
   - old_email
   - new_email
+  
 * POST https://api.viervijfzes.be/email/get
   - id
+  
 * POST https://api.viervijfzes.be/email/sync
   - email
+  
 * POST https://api.viervijfzes.be/email/valid
   - email
+  
 * GET https://api.viervijfzes.be/notifications
+
 * POST https://api.viervijfzes.be/personalization
+
 * POST https://api.viervijfzes.be/reset
   - Domain
   - Email
   - Url
+  
 * POST https://api.viervijfzes.be/search
   - query
   - sites ('vier', 'vijf', 'zes')
   - page
   - mode: 'byDate'
+  
 * POST https://api.viervijfzes.be/webform
   - FormId
   - Created
   - UserName: Wieni
   - Blob
+  
 * PUT https://api2.viervijfzes.be/selligent/lists/
   - options
+  
 * POST https://api2.viervijfzes.be/selligent/newsletter/
   - email

@@ -17,6 +17,7 @@ _LOGGER = logging.getLogger('api')
 
 class Program:
     """ Defines a Program. """
+
     def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, cover=None, background=None, seasons=None, episodes=None):
         """
         :type uuid: str
@@ -45,6 +46,7 @@ class Program:
 
 class Season:
     """ Defines a Season. """
+
     def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, cover=None, number=None):
         """
         :type uuid: str
@@ -70,6 +72,7 @@ class Season:
 
 class Episode:
     """ Defines an Episode. """
+
     def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, cover=None, duration=None, season=None, number=None):
         """
         :type uuid: str
@@ -98,7 +101,6 @@ class Episode:
 
 class ContentApi:
     """ Vier/Vijf/Zes Content API"""
-
     API_ENDPOINT = 'https://api.viervijfzes.be'
 
     def __init__(self, token):
@@ -130,7 +132,7 @@ class ContentApi:
         data = self._get_url(CHANNELS[channel]['url'])
 
         # Parse programs
-        regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<url>[^"]+)">\s+'
+        regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
                                     r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
                                     r'</a>', re.DOTALL)
 
@@ -177,26 +179,27 @@ class ContentApi:
                 channel=channel,
                 title=playlist['title'],
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
-            ) for playlist in data['playlists']
+            )
+            for playlist in data['playlists']
         ]
 
         # Create Episodes info
-        program.episodes = []
-        for playlist in data['playlists']:
-            program.episodes.extend([
-                Episode(
-                    uuid=episode['videoUuid'],
-                    path=episode['link'].lstrip('/'),
-                    channel=channel,
-                    title=episode['title'],
-                    description=episode['pageInfo']['description'],
-                    cover=episode['image'],
-                    duration=episode['duration'],
-                    season=episode['seasonNumber'],
-                    number=episode['episodeNumber'],
-                    # TODO: add unpublishDate as expiry
-                ) for episode in playlist['episodes']
-            ])
+        program.episodes = [
+            Episode(
+                uuid=episode['videoUuid'],
+                path=episode['link'].lstrip('/'),
+                channel=channel,
+                title=episode['title'],
+                description=episode['pageInfo']['description'],
+                cover=episode['image'],
+                duration=episode['duration'],
+                season=episode['seasonNumber'],
+                number=episode['episodeNumber'],
+                # TODO: add unpublishDate as expiry
+            )
+            for playlist in data['playlists']
+            for episode in playlist['episodes']
+        ]
 
         return program
 

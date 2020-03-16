@@ -19,7 +19,6 @@ class TestEpg(unittest.TestCase):
         self._auth = SbsAuth(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
 
     def test_vier_today(self):
-        """ Test"""
         epg = SbsEpg()
         programs = epg.get_epg('vier', date.today().strftime('%Y-%m-%d'))
         self.assertIsInstance(programs, list)
