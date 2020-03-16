@@ -73,9 +73,10 @@ class Season:
 class Episode:
     """ Defines an Episode. """
 
-    def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, cover=None, duration=None, season=None, number=None):
+    def __init__(self, uuid=None, nodeid=None, path=None, channel=None, title=None, description=None, cover=None, duration=None, season=None, number=None):
         """
         :type uuid: str
+        :type nodeid: str
         :type path: str
         :type channel: str
         :type title: str
@@ -86,6 +87,7 @@ class Episode:
         :type number: int
         """
         self.uuid = uuid
+        self.nodeid = nodeid
         self.path = path
         self.channel = channel
         self.title = title
@@ -157,14 +159,45 @@ class ContentApi:
         # Extract JSON
         regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
         json_data = html.unescape(regex_program.search(page).group(1))
-
         data = json.loads(json_data)['data']
 
+        program = self._parse_program_data(data)
+
+        return program
+
+    def get_episode(self, channel, path):
+        """ Get a Episode object from the specified page.
+            NOTE: This function doesn't use an API. """
+
+        # Load webpage
+        page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+
+        # Extract program JSON
+        regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
+        json_data = html.unescape(regex_program.search(page).group(1))
+        data = json.loads(json_data)['data']
+
+        program = self._parse_program_data(data)
+
+        # Extract episode JSON
+        regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
+        json_data = html.unescape(regex_episode.search(page).group(1))
+        data = json.loads(json_data)
+
+        # Lookup the episode in the program JSON based on the nodeId
+        for episode in program.episodes:
+            if episode.nodeid == data['pageInfo']['nodeId']:
+                return episode
+
+        return None
+
+    @staticmethod
+    def _parse_program_data(data):
         # Create Program info
         program = Program(
             uuid=data['id'],
-            path=path,
-            channel=channel,
+            path=data['link'].lstrip('/'),
+            channel=data['pageInfo']['site'],
             title=data['title'],
             description=data['description'],
             cover=data['images']['poster'],
@@ -176,7 +209,7 @@ class ContentApi:
             Season(
                 uuid=playlist['id'],
                 path=playlist['link'].lstrip('/'),
-                channel=channel,
+                channel=data['pageInfo']['site'],
                 title=playlist['title'],
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
             )
@@ -187,8 +220,9 @@ class ContentApi:
         program.episodes = [
             Episode(
                 uuid=episode['videoUuid'],
+                nodeid=episode['pageInfo']['nodeId'],
                 path=episode['link'].lstrip('/'),
-                channel=channel,
+                channel=data['pageInfo']['site'],
                 title=episode['title'],
                 description=episode['pageInfo']['description'],
                 cover=episode['image'],
@@ -202,12 +236,6 @@ class ContentApi:
         ]
 
         return program
-
-    def get_episode(self, channel, path):
-        """ Get a Episode object from the specified page.
-            NOTE: This function doesn't use an API. """
-        # TODO: fetch page and parse out a Episode
-        raise NotImplementedError()
 
     def _get_url(self, url, params=None):
         """ Makes a GET request for the specified URL.

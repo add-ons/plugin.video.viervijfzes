@@ -12,7 +12,7 @@ from resources.lib.sbs.auth_awsidp import AwsIdp
 _LOGGER = logging.getLogger('auth')
 
 
-class SbsAuth:
+class AuthApi:
     """ Vier/Vijf/Zes Authentication API """
     COGNITO_REGION = 'eu-west-1'
     COGNITO_POOL_ID = 'eu-west-1_dViSsKM5Y'
@@ -77,11 +77,11 @@ class SbsAuth:
     @staticmethod
     def _authenticate(username, password):
         """ Authenticate with Amazon Cognito and fetch a refresh token and id token. """
-        client = AwsIdp(SbsAuth.COGNITO_POOL_ID, SbsAuth.COGNITO_CLIENT_ID)
+        client = AwsIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
         return client.authenticate(username, password)
 
     @staticmethod
     def _refresh(refresh_token):
         """ Use the refresh token to fetch a new id token. """
-        client = AwsIdp(SbsAuth.COGNITO_POOL_ID, SbsAuth.COGNITO_CLIENT_ID)
+        client = AwsIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
         return client.renew_token(refresh_token)

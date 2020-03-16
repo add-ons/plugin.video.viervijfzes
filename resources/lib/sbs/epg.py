@@ -38,7 +38,7 @@ class EpgProgram:
         return "%r" % self.__dict__
 
 
-class SbsEpg:
+class EpgApi:
     """ Vier/Vijf/Zes EPG API """
 
     EPG_ENDPOINTS = {

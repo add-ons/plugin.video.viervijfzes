@@ -10,7 +10,7 @@ import os
 import unittest
 
 from resources.lib.sbs.content import ContentApi, Program, Season, Episode
-from resources.lib.sbs.auth import SbsAuth
+from resources.lib.sbs.auth import AuthApi
 
 _LOGGER = logging.getLogger('test-api')
 
@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger('test-api')
 class TestApi(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
-        self._auth = SbsAuth(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
+        self._auth = AuthApi(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
 
     def test_notifications(self):
         api = ContentApi(self._auth.get_token())

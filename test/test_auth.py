@@ -9,7 +9,7 @@ import logging
 import os
 import unittest
 
-from resources.lib.sbs.auth import SbsAuth
+from resources.lib.sbs.auth import AuthApi
 
 _LOGGER = logging.getLogger('test-auth')
 
@@ -20,7 +20,7 @@ class TestAuth(unittest.TestCase):
 
     def test_login(self):
         # TODO: use a credentials.json or something
-        auth = SbsAuth(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
+        auth = AuthApi(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
 
         # We should get a token by logging in or refreshing
         token = auth.get_token()
