@@ -9,7 +9,7 @@ from datetime import datetime
 
 from resources.lib.sbs.auth_awsidp import AwsIdp
 
-_LOGGER = logging.getLogger('auth')
+_LOGGER = logging.getLogger('auth-api')
 
 
 class AuthApi:

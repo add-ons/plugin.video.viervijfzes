@@ -2,6 +2,8 @@
 """ Amazon Cognito implementation without external dependencies """
 # Based on https://github.com/retrospect-addon/plugin.video.retrospect/blob/master/channels/channel.be/vier/awsidp.py
 
+from __future__ import absolute_import, division, unicode_literals
+
 import base64
 import binascii
 import datetime
@@ -150,9 +152,7 @@ class AwsIdp:
 
         :return: A full Authorization request.
         :rtype: dict
-
         """
-
         auth_request = {
             "AuthParameters": {
                 "USERNAME": username,
@@ -171,9 +171,7 @@ class AwsIdp:
 
         :return: A valid and full request data object to use as a response for a challenge.
         :rtype: dict
-
         """
-
         user_id = challenge_parameters["USERNAME"]
         user_id_for_srp = challenge_parameters["USER_ID_FOR_SRP"]
         srp_b = challenge_parameters["SRP_B"]
@@ -220,7 +218,6 @@ class AwsIdp:
 
         :return Computed HKDF value.
         :rtype: object
-
         """
 
         u_value = self.__calculate_u(self.large_a_value, server_b_value)
@@ -245,7 +242,6 @@ class AwsIdp:
         :param {Buffer} ikm Input key material.
         :param {Buffer} salt Salt value.
         :return {Buffer} Strong key material.
-
         """
 
         prk = hmac.new(salt, ikm, hashlib.sha256).digest()
@@ -261,7 +257,6 @@ class AwsIdp:
 
         :return Computed U value.
         :rtype: int
-
         """
 
         u_hex_hash = self.__hex_hash(self.__pad_hex(big_a) + self.__pad_hex(big_b))
@@ -272,7 +267,6 @@ class AwsIdp:
 
         :return a random value.
         :rtype: int
-
         """
         random_long_int = self.__get_random(128)
         return random_long_int % self.big_n
@@ -282,7 +276,6 @@ class AwsIdp:
 
         :return Computed large A.
         :rtype: int
-
         """
 
         big_a = pow(self.g, self.small_a_value, self.big_n)
@@ -317,7 +310,6 @@ class AwsIdp:
 
         :return Padded hex string.
         :rtype: str
-
         """
 
         # noinspection PyTypeChecker
@@ -342,7 +334,6 @@ class AwsIdp:
 
         :return: timestamp in format 'Sun Jan 27 19:00:04 UTC 2019'
         :rtype: str
-
         """
 
         # We need US only data, so we cannot just do a strftime:

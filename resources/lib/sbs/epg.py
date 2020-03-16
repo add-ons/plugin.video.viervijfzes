@@ -9,7 +9,7 @@ from datetime import datetime
 
 import requests
 
-_LOGGER = logging.getLogger('epg')
+_LOGGER = logging.getLogger('epg-api')
 
 
 class EpgProgram:

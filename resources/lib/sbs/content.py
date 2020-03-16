@@ -12,7 +12,7 @@ import requests
 
 from resources.lib.sbs import CHANNELS
 
-_LOGGER = logging.getLogger('api')
+_LOGGER = logging.getLogger('content-api')
 
 
 class Program:
@@ -113,20 +113,28 @@ class ContentApi:
         self._session.headers['authorization'] = token
 
     def get_notifications(self):
-        """ Get a list of notifications for your account. """
+        """ Get a list of notifications for your account.
+        :rtype list[dict]
+        """
         response = self._get_url(self.API_ENDPOINT + '/notifications')
         data = json.loads(response)
         return data
 
     def get_stream(self, uuid):
-        """ Get the stream URL to use for this video. """
+        """ Get the stream URL to use for this video.
+        :type uuid: str
+        :rtype str
+        """
         response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid)
         data = json.loads(response)
         return data['video']['S']
 
     def get_programs(self, channel):
         """ Get a list of all programs of the specified channel.
-            NOTE: This function doesn't use an API. """
+        :type channel: str
+        :rtype list[Program]
+        NOTE: This function doesn't use an API.
+        """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
@@ -149,7 +157,11 @@ class ContentApi:
 
     def get_program(self, channel, path):
         """ Get a Program object from the specified page.
-            NOTE: This function doesn't use an API. """
+        :type channel: str
+        :type path: str
+        :rtype Program
+        NOTE: This function doesn't use an API.
+        """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
@@ -167,7 +179,13 @@ class ContentApi:
 
     def get_episode(self, channel, path):
         """ Get a Episode object from the specified page.
-            NOTE: This function doesn't use an API. """
+        :type channel: str
+        :type path: str
+        :rtype Episode
+        NOTE: This function doesn't use an API.
+        """
+        if channel not in CHANNELS:
+            raise Exception('Unknown channel %s' % channel)
 
         # Load webpage
         page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
@@ -193,6 +211,10 @@ class ContentApi:
 
     @staticmethod
     def _parse_program_data(data):
+        """ Parse the Program JSON.
+        :type data: dict
+        :rtype Program
+        """
         # Create Program info
         program = Program(
             uuid=data['id'],
@@ -244,5 +266,7 @@ class ContentApi:
         """
         response = self._session.get(url, params=params)
 
-        # TODO: handle errors
+        if response.status_code != 200:
+            raise Exception('Could not fetch data')
+
         return response.text
