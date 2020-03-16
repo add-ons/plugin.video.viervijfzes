@@ -13,8 +13,11 @@ _LOGGER = logging.getLogger('epg')
 
 
 class EpgProgram:
-    def __init__(self, program_title, episode_title, episode_title_original, nr, season, genre, start, won_id, won_program_id, program_description, plot,
-                 duration, program_url, video_url, cover):
+    """ Defines a Program in the EPG. """
+
+    def __init__(self, channel, program_title, episode_title, episode_title_original, nr, season, genre, start, won_id, won_program_id, program_description,
+                 plot, duration, program_url, video_url, cover):
+        self.channel = channel
         self.program_title = program_title
         self.episode_title = episode_title
         self.episode_title_original = episode_title_original
@@ -36,23 +39,23 @@ class EpgProgram:
 
 
 class SbsEpg:
+    """ Vier/Vijf/Zes EPG API """
+
     EPG_ENDPOINTS = {
         'vier': 'https://www.vier.be/api/epg/{date}',
         'vijf': 'https://www.vijf.be/api/epg/{date}',
         'zes': 'https://www.zestv.be/api/epg/{date}',
     }
 
-    URL_ENDPOINTS = {
-        'vier': 'https://www.vier.be{path}',
-        'vijf': 'https://www.vijf.be{path}',
-        'zes': 'https://www.zestv.be{path}',
-    }
-
     def __init__(self):
         """ Initialise object """
+        self._session = requests.session()
 
     def get_epg(self, channel, date):
-        """ Returns an authentication token """
+        """ Returns the EPG for the specified channel and date.
+        :type channel: str
+        :type date: str
+         """
         if channel not in self.EPG_ENDPOINTS:
             raise Exception('Unknown channel %s' % channel)
 
@@ -63,11 +66,15 @@ class SbsEpg:
         # Parse the results
         return [self._parse_program(channel, x) for x in data]
 
-    def _parse_program(self, channel, data) -> EpgProgram:
-        """ Parse the epg json data to a EpgProgram object. """
-
-        # Return a mapping to a generic EpgProgram
+    @staticmethod
+    def _parse_program(channel, data):
+        """ Parse the EPG JSON data to a EpgProgram object.
+        :type channel: str
+        :type data: dict
+        :rtype EpgProgram
+        """
         return EpgProgram(
+            channel=channel,
             program_title=data.get('program_title'),
             episode_title=data.get('episode_title'),
             episode_title_original=data.get('original_title'),
@@ -80,8 +87,8 @@ class SbsEpg:
             program_description=data.get('program_concept'),
             plot=data.get('content_episode'),
             duration=int(data.get('duration')) if data.get('duration') else None,
-            program_url=self.URL_ENDPOINTS[channel].format(path=data.get('program_node', {}).get('url')),
-            video_url=self.URL_ENDPOINTS[channel].format(path=data.get('video_node', {}).get('url')),
+            program_url=(data.get('program_node', {}).get('url') or '').lstrip('/'),
+            video_url=(data.get('video_node', {}).get('url') or '').lstrip('/'),
             cover=data.get('video_node', {}).get('image'),
         )
 
@@ -90,7 +97,7 @@ class SbsEpg:
         :type url: str
         :rtype str
         """
-        response = requests.get(url)
+        response = self._session.get(url)
 
         # TODO check error code
 

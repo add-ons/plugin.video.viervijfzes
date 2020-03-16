@@ -24,9 +24,10 @@ _LOGGER = logging.getLogger('auth-awsidp')
 
 
 class AwsIdp:
-    def __init__(self, pool_id, client_id):
-        """ Simple AWS Identity Provider client.
+    """ AWS Identity Provider """
 
+    def __init__(self, pool_id, client_id):
+        """
         :param str pool_id:     The AWS user pool to connect to (format: <region>_<poolid>).
                                 E.g.: eu-west-1_aLkOfYN3T
         :param str client_id:   The client application ID (the ID of the application connecting)
@@ -72,6 +73,7 @@ class AwsIdp:
         _LOGGER.debug("Created %s", self)
 
     def authenticate(self, username, password):
+        """ Authenticate with a username and password. """
         # Step 1: First initiate an authentication request
         auth_request = self.__get_authentication_request(username)
         auth_data = json.dumps(auth_request)
@@ -118,9 +120,7 @@ class AwsIdp:
         http://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html
 
         :param str refresh_token:   Token to use for refreshing the authorization token.
-
         """
-
         refresh_request = {
             "AuthParameters": {
                 "REFRESH_TOKEN": refresh_token

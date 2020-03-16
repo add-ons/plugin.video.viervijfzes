@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Tests for AUTH API """
 
+# pylint: disable=missing-docstring,no-self-use
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
@@ -13,8 +15,6 @@ _LOGGER = logging.getLogger('test-auth')
 
 
 class TestAuth(unittest.TestCase):
-    """ Tests for AUTH API """
-
     def __init__(self, *args, **kwargs):
         super(TestAuth, self).__init__(*args, **kwargs)
 
