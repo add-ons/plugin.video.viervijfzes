@@ -9,9 +9,9 @@ import os
 import unittest
 from datetime import date
 
-from resources.lib.sbs.auth import AuthApi
-from resources.lib.sbs.content import ContentApi, Episode
-from resources.lib.sbs.epg import EpgApi, EpgProgram
+from resources.lib.viervijfzes.auth import AuthApi
+from resources.lib.viervijfzes.content import ContentApi, Episode
+from resources.lib.viervijfzes.epg import EpgApi, EpgProgram
 
 
 class TestEpg(unittest.TestCase):

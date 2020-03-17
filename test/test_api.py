@@ -9,8 +9,8 @@ import logging
 import os
 import unittest
 
-from resources.lib.sbs.content import ContentApi, Program, Season, Episode
-from resources.lib.sbs.auth import AuthApi
+from resources.lib.viervijfzes.content import ContentApi, Program, Season, Episode
+from resources.lib.viervijfzes.auth import AuthApi
 
 _LOGGER = logging.getLogger('test-api')
 

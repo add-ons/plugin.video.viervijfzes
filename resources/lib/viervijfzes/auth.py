@@ -7,7 +7,7 @@ import json
 import logging
 from datetime import datetime
 
-from resources.lib.sbs.auth_awsidp import AwsIdp
+from resources.lib.viervijfzes.auth_awsidp import AwsIdp
 
 _LOGGER = logging.getLogger('auth-api')
 

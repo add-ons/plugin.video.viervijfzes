@@ -10,7 +10,7 @@ import re
 
 import requests
 
-from resources.lib.sbs import CHANNELS
+from resources.lib.viervijfzes import CHANNELS
 
 _LOGGER = logging.getLogger('content-api')
 
