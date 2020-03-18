@@ -6,11 +6,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
-import os
 import unittest
 
-from resources.lib.viervijfzes.content import ContentApi, Program, Season, Episode
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
+from resources.lib.viervijfzes.content import ContentApi, Program, Episode
 
 _LOGGER = logging.getLogger('test-api')
 
@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger('test-api')
 class TestApi(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
-        self._auth = AuthApi(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
+        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
 
     def test_notifications(self):
         api = ContentApi(self._auth.get_token())
@@ -38,8 +38,8 @@ class TestApi(unittest.TestCase):
         for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
             program = api.get_program(channel, program)
             self.assertIsInstance(program, Program)
-            self.assertIsInstance(program.seasons, list)
-            self.assertIsInstance(program.seasons[0], Season)
+            self.assertIsInstance(program.seasons, dict)
+            # self.assertIsInstance(program.seasons[0], Season)
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
             _LOGGER.info('Got program: %s', program)
@@ -48,7 +48,7 @@ class TestApi(unittest.TestCase):
         api = ContentApi(self._auth.get_token())
         program = api.get_program('vier', 'auwch')
         episode = program.episodes[0]
-        video = api.get_stream(episode.uuid)
+        video = api.get_stream(episode.channel, episode.uuid)
         self.assertTrue(video)
 
         _LOGGER.info('Got video URL: %s', video)

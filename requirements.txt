@@ -6,3 +6,4 @@ python-dateutil
 requests
 git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
 tox-travis
+six

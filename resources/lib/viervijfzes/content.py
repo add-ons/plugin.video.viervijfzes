@@ -3,16 +3,28 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-import html
 import json
 import logging
 import re
 
 import requests
+from six.moves.html_parser import HTMLParser
 
 from resources.lib.viervijfzes import CHANNELS
 
 _LOGGER = logging.getLogger('content-api')
+
+
+class UnavailableException(Exception):
+    """ Is thrown when an item is unavailable. """
+
+
+class NoContentException(Exception):
+    """ Is thrown when no items are unavailable. """
+
+
+class GeoblockedException(Exception):
+    """ Is thrown when a geoblocked item is played. """
 
 
 class Program:
@@ -120,8 +132,9 @@ class ContentApi:
         data = json.loads(response)
         return data
 
-    def get_stream(self, uuid):
+    def get_stream(self, channel, uuid):
         """ Get the stream URL to use for this video.
+        :type channel: str
         :type uuid: str
         :rtype str
         """
@@ -142,6 +155,7 @@ class ContentApi:
         data = self._get_url(CHANNELS[channel]['url'])
 
         # Parse programs
+        h = HTMLParser()
         regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
                                     r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
                                     r'</a>', re.DOTALL)
@@ -149,7 +163,7 @@ class ContentApi:
         programs = [
             Program(channel=channel,
                     path=program.group('path').lstrip('/'),
-                    title=program.group('title').strip())
+                    title=h.unescape(program.group('title').strip()))
             for program in regex_programs.finditer(data)
         ]
 
@@ -170,7 +184,7 @@ class ContentApi:
 
         # Extract JSON
         regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-        json_data = html.unescape(regex_program.search(page).group(1))
+        json_data = HTMLParser().unescape(regex_program.search(page).group(1))
         data = json.loads(json_data)['data']
 
         program = self._parse_program_data(data)
@@ -191,15 +205,16 @@ class ContentApi:
         page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
         # Extract program JSON
+        h = HTMLParser()
         regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-        json_data = html.unescape(regex_program.search(page).group(1))
+        json_data = h.unescape(regex_program.search(page).group(1))
         data = json.loads(json_data)['data']
 
         program = self._parse_program_data(data)
 
         # Extract episode JSON
         regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
-        json_data = html.unescape(regex_episode.search(page).group(1))
+        json_data = h.unescape(regex_episode.search(page).group(1))
         data = json.loads(json_data)
 
         # Lookup the episode in the program JSON based on the nodeId
@@ -227,8 +242,8 @@ class ContentApi:
         )
 
         # Create Season info
-        program.seasons = [
-            Season(
+        program.seasons = {
+            playlist['episodes'][0]['seasonNumber']: Season(
                 uuid=playlist['id'],
                 path=playlist['link'].lstrip('/'),
                 channel=data['pageInfo']['site'],
@@ -236,7 +251,7 @@ class ContentApi:
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
             )
             for playlist in data['playlists']
-        ]
+        }
 
         # Create Episodes info
         program.episodes = [

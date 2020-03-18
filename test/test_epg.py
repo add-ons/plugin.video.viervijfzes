@@ -5,10 +5,12 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os
 import unittest
 from datetime import date
 
+import six
+
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import ContentApi, Episode
 from resources.lib.viervijfzes.epg import EpgApi, EpgProgram
@@ -17,7 +19,7 @@ from resources.lib.viervijfzes.epg import EpgApi, EpgProgram
 class TestEpg(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestEpg, self).__init__(*args, **kwargs)
-        self._auth = AuthApi(os.getenv('VVZ_USERNAME', ''), os.getenv('VVZ_PASSWORD', ''), cache='/tmp/viervijfzes-tokens.json')
+        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
 
     def test_vier_today(self):
         epg = EpgApi()
@@ -58,8 +60,8 @@ class TestEpg(unittest.TestCase):
         self.assertIsInstance(episode, Episode)
 
         # Get stream based on the Episode's UUID
-        video = api.get_stream(episode.uuid)
-        self.assertIsInstance(video, str)
+        video = api.get_stream(episode.channel, episode.uuid)
+        self.assertTrue(video)
 
 
 if __name__ == '__main__':

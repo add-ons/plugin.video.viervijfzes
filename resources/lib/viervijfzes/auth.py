@@ -5,8 +5,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 import json
 import logging
-from datetime import datetime
+import time
 
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth_awsidp import AwsIdp
 
 _LOGGER = logging.getLogger('auth-api')
@@ -18,11 +19,13 @@ class AuthApi:
     COGNITO_POOL_ID = 'eu-west-1_dViSsKM5Y'
     COGNITO_CLIENT_ID = '6s1h851s8uplco5h6mqh1jac8m'
 
-    def __init__(self, username, password, cache=None):
+    TOKEN_FILE = 'auth-tokens.json'
+
+    def __init__(self, username, password, cache_dir=None):
         """ Initialise object """
         self._username = username
         self._password = password
-        self._cache = cache
+        self._cache = cache_dir
         self._id_token = None
         self._expiry = 0
         self._refresh_token = None
@@ -30,17 +33,17 @@ class AuthApi:
         if self._cache:
             # Load tokens from cache
             try:
-                with open(self._cache, 'r') as f:
+                with open(self._cache + self.TOKEN_FILE, 'rb') as f:
                     data_json = json.loads(f.read())
                     self._id_token = data_json.get('id_token')
                     self._refresh_token = data_json.get('refresh_token')
                     self._expiry = int(data_json.get('expiry', 0))
-            except (FileNotFoundError, TypeError):
+            except (IOError, TypeError, ValueError):
                 _LOGGER.info('We could not use the cache since it is invalid or non-existant.')
 
     def get_token(self):
         """ Get a valid token """
-        now = int(datetime.today().timestamp())
+        now = int(time.time())
 
         if self._id_token and self._expiry > now:
             # We have a valid id token in memory, use it
@@ -64,8 +67,12 @@ class AuthApi:
             _LOGGER.debug('Got an id token by logging in: %s', self._id_token)
 
         if self._cache:
+            # Make sure the cache dir exists
+            if not kodiutils.exists(self._cache):
+                kodiutils.mkdir(self._cache)
+
             # Store new tokens in cache
-            with open(self._cache, 'w') as f:
+            with open(self._cache + self.TOKEN_FILE, 'wb') as f:
                 f.write(json.dumps(dict(
                     id_token=self._id_token,
                     refresh_token=self._refresh_token,

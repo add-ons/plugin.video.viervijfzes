@@ -15,12 +15,7 @@ import os
 import sys
 
 import requests
-
-# TODO: Make python3 only?
-if sys.version_info[0] == 3:
-    basestring = str
-else:
-    basestring = __builtin__.basestring
+import six
 
 _LOGGER = logging.getLogger('auth-awsidp')
 
@@ -313,7 +308,7 @@ class AwsIdp:
         """
 
         # noinspection PyTypeChecker
-        if not isinstance(long_int, basestring):
+        if not isinstance(long_int, six.string_types):
             hash_str = AwsIdp.__long_to_hex(long_int)
         else:
             hash_str = long_int
