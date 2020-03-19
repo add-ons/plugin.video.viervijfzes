@@ -1,0 +1,135 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+### MENUS
+msgctxt "#30001"
+msgid "A-Z"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Alphabetically sorted list of programs"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Channels"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Show channel based overview"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Search trough the catalogue"
+msgstr ""
+
+msgctxt "#30013"
+msgid "TV guide"
+msgstr ""
+
+msgctxt "#30014"
+msgid "Browse the TV Guide"
+msgstr ""
+
+
+### SUBMENUS
+msgctxt "#30053"
+msgid "TV Guide for [B]{channel}[/B]"
+msgstr ""
+
+msgctxt "#30054"
+msgid "Browse the TV Guide for [B]{channel}[/B]"
+msgstr ""
+
+msgctxt "#30055"
+msgid "Catalog for [B]{channel}[/B]"
+msgstr ""
+
+msgctxt "#30056"
+msgid "Browse the Catalog for [B]{channel}[/B]"
+msgstr ""
+
+
+### CONTEXT MENU
+msgctxt "#30102"
+msgid "Go to Program"
+msgstr ""
+
+
+### CODE
+msgctxt "#30204"
+msgid "All seasons"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Season {season}"
+msgstr ""
+
+msgctxt "#30206"
+msgid "Watch [B]{label}[/B] on YouTube"
+msgstr ""
+
+
+### Dates
+msgctxt "#30301"
+msgid "Yesterday"
+msgstr ""
+
+msgctxt "#30302"
+msgid "Today"
+msgstr ""
+
+msgctxt "#30303"
+msgid "Tomorrow"
+msgstr ""
+
+
+### MESSAGES
+msgctxt "#30709"
+msgid "Geo-blocked video"
+msgstr ""
+
+msgctxt "#30710"
+msgid "This video is geo-blocked and can't be played from your location."
+msgstr ""
+
+msgctxt "#30711"
+msgid "Unavailable video"
+msgstr ""
+
+msgctxt "#30712"
+msgid "The video is unavailable and can't be played right now."
+msgstr ""
+
+msgctxt "#30713"
+msgid "The requested video was not found in the guide."
+msgstr ""
+
+msgctxt "#30717"
+msgid "This program is not available in the Vier/Vijf/Zes catalogue."
+msgstr ""
+
+
+### SETTINGS
+msgctxt "#30800"
+msgid "Credentials"
+msgstr ""
+
+msgctxt "#30801"
+msgid "Vier/Vijf/Zes credentials"
+msgstr ""
+
+msgctxt "#30803"
+msgid "Email address"
+msgstr ""
+
+msgctxt "#30805"
+msgid "Password"
+msgstr ""
