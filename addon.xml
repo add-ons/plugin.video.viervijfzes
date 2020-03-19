@@ -22,6 +22,6 @@
             <icon>resources/icon.png</icon>
             <fanart>resources/fanart.png</fanart>
         </assets>
-<!--        <reuselanguageinvoker>true</reuselanguageinvoker>-->
+        <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
 </addon>
