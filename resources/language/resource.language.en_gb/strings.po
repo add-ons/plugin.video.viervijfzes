@@ -158,7 +158,7 @@ msgstr ""
 
 ### MESSAGES
 msgctxt "#30701"
-msgid "You need to configure your credentials before you can access the content of VTM GO."
+msgid "You need to configure your credentials before you can access the content of VierVijfZes."
 msgstr ""
 
 msgctxt "#30702"
@@ -166,7 +166,7 @@ msgid "Unknown error while logging in: {code}"
 msgstr ""
 
 msgctxt "#30703"
-msgid "Your account has no profiles defined. Please login on vtm.be/vtmgo and create a profile."
+msgid "Your account has no profiles defined. Please login on Vier.be/Vijf.be/Zes.be and create a profile."
 msgstr ""
 
 msgctxt "#30704"
@@ -210,7 +210,7 @@ msgid "Updating metadata ({index}/{total})"
 msgstr ""
 
 msgctxt "#30717"
-msgid "This program is not available in the VTM GO catalogue."
+msgid "This program is not available in the Vier/Vijf/Zes catalogue."
 msgstr ""
 
 
@@ -220,7 +220,7 @@ msgid "Credentials"
 msgstr ""
 
 msgctxt "#30801"
-msgid "VTM GO credentials"
+msgid "Vier/Vijf/Zes credentials"
 msgstr ""
 
 msgctxt "#30803"

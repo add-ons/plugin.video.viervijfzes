@@ -43,8 +43,8 @@ def uri_to_path(uri):
 def read_addon_xml(path):
     ''' Parse the addon.xml and return an info dictionary '''
     info = dict(
-        path='./',  # '/storage/.kodi/addons/plugin.video.vtm.go',
-        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vtm.go/',
+        path='./',  # '/storage/.kodi/addons/plugin.video.viervijfzes
+        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.viervijfzes/',
         type='xbmc.python.pluginsource',
     )
 

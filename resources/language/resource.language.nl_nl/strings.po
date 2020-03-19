@@ -75,11 +75,11 @@ msgstr "[B][COLOR lightblue]Kids zone[/COLOR][/B]"
 
 msgctxt "#30202"
 msgid "Credentials are correct!"
-msgstr "De VTM GO inloggegevens werken perfect!"
+msgstr "De Vier/Vijf/Zes inloggegevens werken perfect!"
 
 msgctxt "#30203"
 msgid "Your credentials are not valid!"
-msgstr "De VTM GO inloggegevens zijn onjuist!"
+msgstr "De Vier/Vijf/Zes inloggegevens zijn onjuist!"
 
 msgctxt "#30204"
 msgid "All seasons"
@@ -158,16 +158,16 @@ msgstr "Overmorgen"
 
 ### MESSAGES
 msgctxt "#30701"
-msgid "You need to configure your credentials before you can access the content of VTM GO."
-msgstr "Je moet je inloggegevens configureren voordat je VTM GO kan gebruiken."
+msgid "You need to configure your credentials before you can access the content of Vier/Vijf/Zes."
+msgstr "Je moet je inloggegevens configureren voordat je Vier/Vijf/Zes kan gebruiken."
 
 msgctxt "#30702"
 msgid "Unknown error while logging in: {code}"
 msgstr "Onbekende fout bij het inloggen: {code}"
 
 msgctxt "#30703"
-msgid "Your account has no profiles defined. Please login on vtm.be/vtmgo and create a profile."
-msgstr "Je account heeft geen profielen. Gelieve in te loggen op vtm.be/vtmgo en een profiel aan te maken."
+msgid "Your account has no profiles defined. Please login on Vier.be/Vijf.be/Zes.be and create a profile."
+msgstr "Je account heeft geen profielen. Gelieve in te loggen op Vier.be/Vijf.be/Zes.be en een profiel aan te maken."
 
 msgctxt "#30704"
 msgid "This video may be geo-blocked, or your account is already being used currently."
@@ -210,8 +210,8 @@ msgid "Updating metadata ({index}/{total})"
 msgstr "Vernieuwen metadata ({index}/{total})"
 
 msgctxt "#30717"
-msgid "This program is not available in the VTM GO catalogue."
-msgstr "Dit programma is niet beschikbaar in de VTM GO catalogus."
+msgid "This program is not available in the Vier/Vijf/Zes catalogue."
+msgstr "Dit programma is niet beschikbaar in de Vier/Vijf/Zes catalogus."
 
 ### SETTINGS
 msgctxt "#30800"
@@ -219,8 +219,8 @@ msgid "Credentials"
 msgstr "Inloggegevens"
 
 msgctxt "#30801"
-msgid "VTM GO credentials"
-msgstr "VTM GO inloggegevens"
+msgid "Vier/Vijf/Zes credentials"
+msgstr "Vier/Vijf/Zes inloggegevens"
 
 msgctxt "#30803"
 msgid "Email address"
