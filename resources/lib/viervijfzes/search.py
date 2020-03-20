@@ -26,6 +26,9 @@ class SearchApi:
         :type query: str
         :rtype list[Program]
         """
+        if not query:
+            return []
+
         response = self._session.post(
             self.API_ENDPOINT,
             json={
@@ -35,10 +38,11 @@ class SearchApi:
                 "mode": "byDate"
             }
         )
-        data = json.loads(response.content)
 
-        if data['timed_out']:
-            raise TimeoutError()
+        if response.status_code != 200:
+            raise Exception('Could not search')
+
+        data = json.loads(response.content)
 
         results = []
         for hit in data['hits']['hits']:

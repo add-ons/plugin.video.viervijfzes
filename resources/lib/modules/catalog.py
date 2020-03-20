@@ -70,7 +70,7 @@ class Catalog:
             kodiutils.end_of_directory()
             return
 
-        if len(program.episodes) == 0:
+        if not program.episodes:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the Vier/Vijf/Zes catalogue.
             kodiutils.end_of_directory()
             return
@@ -87,37 +87,41 @@ class Catalog:
         # Add an '* All seasons' entry when configured in Kodi
         if kodiutils.get_global_setting('videolibrary.showallitems') is True:
             listing.append(
-                TitleItem(title='* %s' % kodiutils.localize(30204),  # * All seasons
-                          path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=-1),
-                          art_dict={
-                              'thumb': program.cover,
-                              'fanart': program.background,
-                          },
-                          info_dict={
-                              'tvshowtitle': program.title,
-                              'title': kodiutils.localize(30204),  # All seasons
-                              'plot': program.description,
-                              'set': program.title,
-                              'studio': studio,
-                          })
+                TitleItem(
+                    title='* %s' % kodiutils.localize(30204),  # * All seasons
+                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=-1),
+                    art_dict={
+                        'thumb': program.cover,
+                        'fanart': program.background,
+                    },
+                    info_dict={
+                        'tvshowtitle': program.title,
+                        'title': kodiutils.localize(30204),  # All seasons
+                        'plot': program.description,
+                        'set': program.title,
+                        'studio': studio,
+                    }
+                )
             )
 
         # Add the seasons
         for s in list(program.seasons.values()):
             listing.append(
-                TitleItem(title=s.title,  # kodiutils.localize(30205, season=s.number),  # Season {season}
-                          path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=s.number),
-                          art_dict={
-                              'thumb': s.cover,
-                              'fanart': program.background,
-                          },
-                          info_dict={
-                              'tvshowtitle': program.title,
-                              'title': kodiutils.localize(30205, season=s.number),  # Season {season}
-                              'plot': s.description,
-                              'set': program.title,
-                              'studio': studio,
-                          })
+                TitleItem(
+                    title=s.title,  # kodiutils.localize(30205, season=s.number),  # Season {season}
+                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=s.number),
+                    art_dict={
+                        'thumb': s.cover,
+                        'fanart': program.background,
+                    },
+                    info_dict={
+                        'tvshowtitle': program.title,
+                        'title': kodiutils.localize(30205, season=s.number),  # Season {season}
+                        'plot': s.description,
+                        'set': program.title,
+                        'studio': studio,
+                    }
+                )
             )
 
         # Sort by label. Some programs return seasons unordered.

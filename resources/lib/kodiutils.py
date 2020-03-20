@@ -113,17 +113,17 @@ def addon_profile():
 
 def url_for(name, *args, **kwargs):
     """Wrapper for routing.url_for() to lookup by name"""
-    from resources.lib import addon
+    import addon  # pylint: disable=import-error
     return addon.routing.url_for(getattr(addon, name), *args, **kwargs)
 
 
 def show_listing(title_items, category=None, sort=None, content=None, cache=True):
     """ Show a virtual directory in Kodi """
-    from resources.lib import addon
+    from addon import routing  # pylint: disable=import-error
 
     if content:
         # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos, videos, images, games
-        xbmcplugin.setContent(addon.routing.handle, content=content)
+        xbmcplugin.setContent(routing.handle, content=content)
 
     # Jump through hoops to get a stable breadcrumbs implementation
     category_label = ''
@@ -137,7 +137,7 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
     elif not content:
         category_label = addon_name()
 
-    xbmcplugin.setPluginCategory(handle=addon.routing.handle, category=category_label)
+    xbmcplugin.setPluginCategory(handle=routing.handle, category=category_label)
 
     # Add all sort methods to GUI (start with preferred)
     if sort is None:
@@ -146,7 +146,7 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
         sort = [sort] + DEFAULT_SORT_METHODS
 
     for key in sort:
-        xbmcplugin.addSortMethod(handle=addon.routing.handle, sortMethod=SORT_METHODS[key])
+        xbmcplugin.addSortMethod(handle=routing.handle, sortMethod=SORT_METHODS[key])
 
     # Add the listings
     listing = []
@@ -184,13 +184,13 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
         url = title_item.path if title_item.path else None
         listing.append((url, list_item, is_folder))
 
-    succeeded = xbmcplugin.addDirectoryItems(addon.routing.handle, listing, len(listing))
-    xbmcplugin.endOfDirectory(addon.routing.handle, succeeded, cacheToDisc=cache)
+    succeeded = xbmcplugin.addDirectoryItems(routing.handle, listing, len(listing))
+    xbmcplugin.endOfDirectory(routing.handle, succeeded, cacheToDisc=cache)
 
 
 def play(stream, title=None, art_dict=None, info_dict=None, prop_dict=None):
     """Play the given stream"""
-    from resources.lib.addon import routing
+    from addon import routing  # pylint: disable=import-error
 
     play_item = xbmcgui.ListItem(label=title, path=stream)
     if art_dict:
@@ -476,7 +476,7 @@ def container_update(url):
 
 def end_of_directory():
     """Close a virtual directory, required to avoid a waiting Kodi"""
-    from resources.lib.addon import routing
+    from addon import routing  # pylint: disable=import-error
     xbmcplugin.endOfDirectory(handle=routing.handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 
@@ -510,8 +510,8 @@ def get_cache(key, ttl=None):
     """ Get an item from the cache """
     import time
     path = get_cache_path()
-    file = '.'.join(key)
-    fullpath = path + file
+    filename = '.'.join(key)
+    fullpath = path + filename
 
     if not exists(fullpath):
         return None
@@ -521,7 +521,7 @@ def get_cache(key, ttl=None):
 
     with open_file(fullpath, 'r') as fdesc:
         try:
-            _LOGGER.info('Fetching {file} from cache', file=file)
+            _LOGGER.info('Fetching {file} from cache', file=filename)
             import json
             value = json.load(fdesc)
             return value
@@ -532,13 +532,13 @@ def get_cache(key, ttl=None):
 def set_cache(key, data):
     """ Store an item in the cache """
     path = get_cache_path()
-    file = '.'.join(key)
-    fullpath = path + file
+    filename = '.'.join(key)
+    fullpath = path + filename
 
     if not exists(path):
         mkdirs(path)
 
     with open_file(fullpath, 'w') as fdesc:
-        _LOGGER.info('Storing to cache as {file}', file=file)
+        _LOGGER.info('Storing to cache as {file}', file=filename)
         import json
         json.dump(data, fdesc)

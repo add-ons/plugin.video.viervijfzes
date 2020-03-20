@@ -19,33 +19,39 @@ class Menu:
     def show_mainmenu():
         """ Show the main menu """
         listing = [
-            TitleItem(title=kodiutils.localize(30001),  # A-Z
-                      path=kodiutils.url_for('show_catalog'),
-                      art_dict=dict(
-                          icon='DefaultMovieTitle.png',
-                          fanart=kodiutils.get_addon_info('fanart'),
-                      ),
-                      info_dict=dict(
-                          plot=kodiutils.localize(30002),
-                      )),
-            TitleItem(title=kodiutils.localize(30007),  # TV Channels
-                      path=kodiutils.url_for('show_channels'),
-                      art_dict=dict(
-                          icon='DefaultAddonPVRClient.png',
-                          fanart=kodiutils.get_addon_info('fanart'),
-                      ),
-                      info_dict=dict(
-                          plot=kodiutils.localize(30008),
-                      )),
-            TitleItem(title=kodiutils.localize(30009),  # Search
-                      path=kodiutils.url_for('show_search'),
-                      art_dict=dict(
-                          icon='DefaultAddonsSearch.png',
-                          fanart=kodiutils.get_addon_info('fanart'),
-                      ),
-                      info_dict=dict(
-                          plot=kodiutils.localize(30010),
-                      ))
+            TitleItem(
+                title=kodiutils.localize(30001),  # A-Z
+                path=kodiutils.url_for('show_catalog'),
+                art_dict=dict(
+                    icon='DefaultMovieTitle.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30002),
+                )
+            ),
+            TitleItem(
+                title=kodiutils.localize(30007),  # TV Channels
+                path=kodiutils.url_for('show_channels'),
+                art_dict=dict(
+                    icon='DefaultAddonPVRClient.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30008),
+                )
+            ),
+            TitleItem(
+                title=kodiutils.localize(30009),  # Search
+                path=kodiutils.url_for('show_search'),
+                art_dict=dict(
+                    icon='DefaultAddonsSearch.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30010),
+                )
+            )
         ]
 
         kodiutils.show_listing(listing, sort=['unsorted'])

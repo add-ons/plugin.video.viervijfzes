@@ -72,11 +72,12 @@ class AuthApi:
 
             # Store new tokens in cache
             with open(self._cache + self.TOKEN_FILE, 'wb') as f:
-                f.write(json.dumps(dict(
+                data = json.dumps(dict(
                     id_token=self._id_token,
                     refresh_token=self._refresh_token,
                     expiry=self._expiry,
-                )))
+                ))
+                f.write(data.encode('utf8'))
 
         return self._id_token
 

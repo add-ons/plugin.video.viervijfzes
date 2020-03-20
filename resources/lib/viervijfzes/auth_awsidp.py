@@ -185,10 +185,11 @@ class AwsIdp:
         secret_block_bytes = base64.standard_b64decode(secret_block)
 
         # the message is a combo of the pool_id, provided SRP userId, the Secret and Timestamp
-        msg = bytearray(self.pool_id.split('_')[1], 'utf-8') + \
-              bytearray(user_id_for_srp, 'utf-8') + \
-              bytearray(secret_block_bytes) + \
-              bytearray(timestamp, 'utf-8')
+        msg = \
+            bytearray(self.pool_id.split('_')[1], 'utf-8') + \
+            bytearray(user_id_for_srp, 'utf-8') + \
+            bytearray(secret_block_bytes) + \
+            bytearray(timestamp, 'utf-8')
         hmac_obj = hmac.new(hkdf, msg, digestmod=hashlib.sha256)
         signature_string = base64.standard_b64encode(hmac_obj.digest()).decode('utf-8')
         challenge_request = {
