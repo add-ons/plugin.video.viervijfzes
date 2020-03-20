@@ -13,3 +13,4 @@ disable=
     too-many-instance-attributes,
     too-many-locals,
     too-many-public-methods,
+    cyclic-import, # This shoud be fixed

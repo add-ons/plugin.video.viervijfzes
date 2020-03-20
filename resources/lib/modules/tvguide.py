@@ -119,6 +119,11 @@ class TvGuide:
             else:
                 context_menu = None
 
+            stream_dict = STREAM_DICT.copy()
+            stream_dict.update({
+                'duration': program.duration,
+            })
+
             title = '{time} - {title}'.format(
                 time=program.start.strftime('%H:%M'),
                 title=program.program_title
@@ -146,9 +151,7 @@ class TvGuide:
                               'duration': program.duration,
                               'mediatype': 'video',
                           },
-                          stream_dict=STREAM_DICT + {
-                              'duration': program.duration,
-                          },
+                          stream_dict=stream_dict,
                           context_menu=context_menu,
                           is_playable=True)
             )

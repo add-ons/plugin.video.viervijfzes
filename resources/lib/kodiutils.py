@@ -113,13 +113,13 @@ def addon_profile():
 
 def url_for(name, *args, **kwargs):
     """Wrapper for routing.url_for() to lookup by name"""
-    import addon  # pylint: disable=import-error
+    import resources.lib.addon as addon
     return addon.routing.url_for(getattr(addon, name), *args, **kwargs)
 
 
 def show_listing(title_items, category=None, sort=None, content=None, cache=True):
     """ Show a virtual directory in Kodi """
-    from addon import routing  # pylint: disable=import-error
+    from resources.lib.addon import routing
 
     if content:
         # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos, videos, images, games
@@ -190,7 +190,7 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
 
 def play(stream, title=None, art_dict=None, info_dict=None, prop_dict=None):
     """Play the given stream"""
-    from addon import routing  # pylint: disable=import-error
+    from resources.lib.addon import routing
 
     play_item = xbmcgui.ListItem(label=title, path=stream)
     if art_dict:
@@ -476,7 +476,7 @@ def container_update(url):
 
 def end_of_directory():
     """Close a virtual directory, required to avoid a waiting Kodi"""
-    from addon import routing  # pylint: disable=import-error
+    from resources.lib.addon import routing
     xbmcplugin.endOfDirectory(handle=routing.handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 
