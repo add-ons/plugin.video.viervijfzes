@@ -381,6 +381,11 @@ def get_global_setting(key):
     return result.get('result', {}).get('value')
 
 
+def set_global_setting(key, value):
+    """Set a Kodi setting"""
+    return jsonrpc(method='Settings.SetSettingValue', params=dict(setting=key, value=value))
+
+
 def get_cond_visibility(condition):
     """Test a condition in XBMC"""
     return xbmc.getCondVisibility(condition)
