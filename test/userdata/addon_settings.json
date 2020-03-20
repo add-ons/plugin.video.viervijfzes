@@ -1,0 +1,9 @@
+{
+  "plugin.video.viervijfzes": {
+    "_comment": "do-not-add-username-and-password-here"
+  },
+  "plugin.video.youtube": {
+  },
+  "service.upnext": {
+  }
+}
