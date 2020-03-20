@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality '''
+"""This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality"""
 
 # pylint: disable=invalid-name,unused-argument
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from xbmc import log, LOGERROR
+from xbmc import LOGFATAL, LOGINFO, log
 from xbmcextra import kodi_to_ansi, uri_to_path
 
 try:  # Python 3
@@ -63,49 +63,50 @@ SORT_METHOD_DATE_TAKEN = 44
 
 
 def addDirectoryItem(handle, path, listitem, isFolder=False):
-    ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
+    """A reimplementation of the xbmcplugin addDirectoryItems() function"""
     label = kodi_to_ansi(listitem.label)
     path = uri_to_path(path) if path else ''
+    # perma = kodi_to_ansi(listitem.label)  # FIXME: Add permalink
     bullet = '»' if isFolder else '·'
     print('{bullet} {label}{path}'.format(bullet=bullet, label=label, path=path))
     return True
 
 
 def addDirectoryItems(handle, listing, length):
-    ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
+    """A reimplementation of the xbmcplugin addDirectoryItems() function"""
     for item in listing:
         addDirectoryItem(handle, item[0], item[1], item[2])
     return True
 
 
 def addSortMethod(handle, sortMethod):
-    ''' A stub implementation of the xbmcplugin addSortMethod() function '''
+    """A stub implementation of the xbmcplugin addSortMethod() function"""
 
 
 def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True):
-    ''' A stub implementation of the xbmcplugin endOfDirectory() function '''
-    print(kodi_to_ansi('[B]-=( [COLOR cyan]--------[/COLOR] )=-[/B]'))
+    """A stub implementation of the xbmcplugin endOfDirectory() function"""
+    # print(kodi_to_ansi('[B]-=( [COLOR cyan]--------[/COLOR] )=-[/B]'))
 
 
 def setContent(handle, content):
-    ''' A stub implementation of the xbmcplugin setContent() function '''
+    """A stub implementation of the xbmcplugin setContent() function"""
 
 
 def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
-    ''' A stub implementation of the xbmcplugin setPluginFanart() function '''
+    """A stub implementation of the xbmcplugin setPluginFanart() function"""
 
 
 def setPluginCategory(handle, category):
-    ''' A reimplementation of the xbmcplugin setPluginCategory() function '''
+    """A reimplementation of the xbmcplugin setPluginCategory() function"""
     print(kodi_to_ansi('[B]-=( [COLOR cyan]%s[/COLOR] )=-[/B]' % category))
 
 
 def setResolvedUrl(handle, succeeded, listitem):
-    ''' A stub implementation of the xbmcplugin setResolvedUrl() function '''
+    """A stub implementation of the xbmcplugin setResolvedUrl() function"""
     request = Request(listitem.path)
     request.get_method = lambda: 'HEAD'
     try:
         response = urlopen(request)
-        log('Stream playing successfully: %s' % response.code)
+        log('Stream playing successfully: %s' % response.code, LOGINFO)
     except HTTPError as exc:
-        log('Playing stream returned: %s' % exc, LOGERROR)
+        log('Playing stream returned: %s' % exc, LOGFATAL)

@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Extra functions for testing '''
+"""Extra functions for testing"""
 
 # pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import xml.etree.ElementTree as ET
-
 import polib
 
 
 def kodi_to_ansi(string):
-    ''' Convert Kodi format tags to ANSI codes '''
+    """Convert Kodi format tags to ANSI codes"""
     if string is None:
         return None
     string = string.replace('[B]', '\033[1m')
@@ -34,17 +32,17 @@ def kodi_to_ansi(string):
 
 
 def uri_to_path(uri):
-    ''' Shorten a plugin URI to just the path '''
+    """Shorten a plugin URI to just the path"""
     if uri is None:
         return None
     return ' \033[33m→ \033[34m%s\033[39;0m' % uri.replace('plugin://' + ADDON_ID, '')
 
 
 def read_addon_xml(path):
-    ''' Parse the addon.xml and return an info dictionary '''
+    """Parse the addon.xml and return an info dictionary"""
     info = dict(
-        path='./',  # '/storage/.kodi/addons/plugin.video.viervijfzes
-        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.viervijfzes/',
+        path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
+        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
         type='xbmc.python.pluginsource',
     )
 
@@ -73,7 +71,7 @@ def read_addon_xml(path):
 
 
 def global_settings():
-    ''' Use the global_settings file '''
+    """Use the global_settings file"""
     import json
     try:
         with open('test/userdata/global_settings.json') as f:
@@ -102,8 +100,8 @@ def global_settings():
     return settings
 
 
-def addon_settings():
-    ''' Use the addon_settings file '''
+def addon_settings(addon_id=None):
+    """Use the addon_settings file"""
     import json
     try:
         with open('test/userdata/addon_settings.json') as f:
@@ -114,23 +112,76 @@ def addon_settings():
 
     # Read credentials from environment or credentials.json
     if 'ADDON_USERNAME' in os.environ and 'ADDON_PASSWORD' in os.environ:
-        print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
+        # print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
         settings[ADDON_ID]['username'] = os.environ.get('ADDON_USERNAME')
         settings[ADDON_ID]['password'] = os.environ.get('ADDON_PASSWORD')
-        settings[ADDON_ID]['profile'] = os.environ.get('ADDON_PROFILE')
     elif os.path.exists('test/userdata/credentials.json'):
-        print('Using credentials from test/userdata/credentials.json')
+        # print('Using credentials from test/userdata/credentials.json')
         with open('test/userdata/credentials.json') as f:
             credentials = json.load(f)
         settings[ADDON_ID].update(credentials)
     else:
         print("Error: Cannot use 'test/userdata/credentials.json'")
+
+    if addon_id:
+        return settings[addon_id]
+
     return settings
 
 
 def import_language(language):
-    ''' Process the language.po file '''
-    return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    """Process the language.po file"""
+    try:
+        podb = polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    except IOError:
+        podb = polib.pofile('resources/language/resource.language.en_gb/strings.po')
+
+    podb.extend([
+        # WEEKDAY_LONG
+        polib.POEntry(msgctxt='#11', msgstr='Monday'),
+        polib.POEntry(msgctxt='#12', msgstr='Tuesday'),
+        polib.POEntry(msgctxt='#13', msgstr='Wednesday'),
+        polib.POEntry(msgctxt='#14', msgstr='Thursday'),
+        polib.POEntry(msgctxt='#15', msgstr='Friday'),
+        polib.POEntry(msgctxt='#16', msgstr='Saturday'),
+        polib.POEntry(msgctxt='#17', msgstr='Sunday'),
+        # MONTH_LONG
+        polib.POEntry(msgctxt='#21', msgstr='January'),
+        polib.POEntry(msgctxt='#22', msgstr='February'),
+        polib.POEntry(msgctxt='#23', msgstr='March'),
+        polib.POEntry(msgctxt='#24', msgstr='April'),
+        polib.POEntry(msgctxt='#25', msgstr='May'),
+        polib.POEntry(msgctxt='#26', msgstr='June'),
+        polib.POEntry(msgctxt='#27', msgstr='July'),
+        polib.POEntry(msgctxt='#28', msgstr='August'),
+        polib.POEntry(msgctxt='#29', msgstr='September'),
+        polib.POEntry(msgctxt='#30', msgstr='October'),
+        polib.POEntry(msgctxt='#31', msgstr='November'),
+        polib.POEntry(msgctxt='#32', msgstr='December'),
+        # WEEKDAY_SHORT
+        polib.POEntry(msgctxt='#41', msgstr='Mon'),
+        polib.POEntry(msgctxt='#42', msgstr='Tue'),
+        polib.POEntry(msgctxt='#43', msgstr='Wed'),
+        polib.POEntry(msgctxt='#44', msgstr='Thu'),
+        polib.POEntry(msgctxt='#45', msgstr='Fri'),
+        polib.POEntry(msgctxt='#46', msgstr='Sat'),
+        polib.POEntry(msgctxt='#47', msgstr='Sun'),
+        # MONTH_LONG
+        polib.POEntry(msgctxt='#51', msgstr='Jan'),
+        polib.POEntry(msgctxt='#52', msgstr='Feb'),
+        polib.POEntry(msgctxt='#53', msgstr='Mar'),
+        polib.POEntry(msgctxt='#54', msgstr='Apr'),
+        polib.POEntry(msgctxt='#55', msgstr='May'),
+        polib.POEntry(msgctxt='#56', msgstr='Jun'),
+        polib.POEntry(msgctxt='#57', msgstr='Jul'),
+        polib.POEntry(msgctxt='#58', msgstr='Aug'),
+        polib.POEntry(msgctxt='#59', msgstr='Sep'),
+        polib.POEntry(msgctxt='#50', msgstr='Oct'),
+        polib.POEntry(msgctxt='#51', msgstr='Nov'),
+        polib.POEntry(msgctxt='#52', msgstr='Dec'),
+    ])
+
+    return podb
 
 
 ADDON_INFO = read_addon_xml('addon.xml')
