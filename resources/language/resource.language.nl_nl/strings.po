@@ -128,8 +128,8 @@ msgid "Credentials"
 msgstr "Inloggegevens"
 
 msgctxt "#30801"
-msgid "Vier/Vijf/Zes credentials"
-msgstr "Vier/Vijf/Zes inloggegevens"
+msgid "Credentials"
+msgstr "Inloggegevens"
 
 msgctxt "#30803"
 msgid "Email address"

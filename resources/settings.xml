@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="30800"> <!-- Credentials -->
-        <setting label="30801" type="lsep"/> <!-- Vier/Vijf/Zes login -->
+        <setting label="30801" type="lsep"/> <!-- Credentials -->
         <setting label="30803" type="text" id="username"/>
         <setting label="30805" type="text" id="password" option="hidden"/>
     </category>

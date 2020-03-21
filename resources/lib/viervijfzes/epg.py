@@ -41,7 +41,7 @@ class EpgProgram:
 
 
 class EpgApi:
-    """ Vier/Vijf/Zes EPG API """
+    """ VIER/VIJF/ZES EPG API """
 
     EPG_ENDPOINTS = {
         'vier': 'https://www.vier.be/api/epg/{date}',

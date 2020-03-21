@@ -127,7 +127,7 @@ class Episode:
 
 
 class ContentApi:
-    """ Vier/Vijf/Zes Content API"""
+    """ VIER/VIJF/ZES Content API"""
     API_ENDPOINT = 'https://api.viervijfzes.be'
 
     def __init__(self, token=None):

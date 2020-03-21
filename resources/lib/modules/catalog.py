@@ -66,12 +66,12 @@ class Catalog:
         try:
             program = self._api.get_program(channel, program_id)
         except UnavailableException:
-            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the Vier/Vijf/Zes catalogue.
+            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 
         if not program.episodes:
-            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the Vier/Vijf/Zes catalogue.
+            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 
@@ -136,7 +136,7 @@ class Catalog:
         try:
             program = self._api.get_program(channel, program_id)
         except UnavailableException:
-            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the Vier/Vijf/Zes catalogue.
+            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 

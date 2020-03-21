@@ -127,7 +127,7 @@ msgid "Credentials"
 msgstr ""
 
 msgctxt "#30801"
-msgid "Vier/Vijf/Zes credentials"
+msgid "Credentials"
 msgstr ""
 
 msgctxt "#30803"
