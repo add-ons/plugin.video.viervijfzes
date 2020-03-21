@@ -96,6 +96,14 @@ class EpgApi:
         else:
             airing = False
 
+        # Only allow direct playing if the linked video is the actual program
+        if data.get('video_node', {}).get('latest_video'):
+            video_url = (data.get('video_node', {}).get('url') or '').lstrip('/')
+            cover = data.get('video_node', {}).get('image')
+        else:
+            video_url = None
+            cover = None
+
         return EpgProgram(
             channel=channel,
             program_title=data.get('program_title'),
@@ -111,8 +119,8 @@ class EpgApi:
             description=data.get('content_episode'),
             duration=duration,
             program_url=(data.get('program_node', {}).get('url') or '').lstrip('/'),
-            video_url=(data.get('video_node', {}).get('url') or '').lstrip('/'),
-            cover=data.get('video_node', {}).get('image'),
+            video_url=video_url,
+            cover=cover,
             airing=airing,
         )
 
@@ -142,6 +150,7 @@ class EpgApi:
         """
         response = self._session.get(url)
 
-        # TODO check error code
+        if response.status_code != 200:
+            raise Exception('Could not fetch data')
 
         return response.text
