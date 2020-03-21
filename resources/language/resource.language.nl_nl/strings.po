@@ -93,6 +93,10 @@ msgstr "Morgen"
 
 
 ### MESSAGES
+msgctxt "#30701"
+msgid "To watch a video, you need to enter your credentials. Do you want to enter them now?"
+msgstr "Om een video te bekijken moet je je inloggegevens ingeven. Wil je dit nu doen?"
+
 msgctxt "#30709"
 msgid "Geo-blocked video"
 msgstr "Video is geografisch geblokkeerd"
@@ -114,8 +118,8 @@ msgid "The requested video was not found in the guide."
 msgstr "De gevraagde video werd niet gevonden in de tv-gids."
 
 msgctxt "#30717"
-msgid "This program is not available in the Vier/Vijf/Zes catalogue."
-msgstr "Dit programma is niet beschikbaar in de Vier/Vijf/Zes catalogus."
+msgid "This program is not available in the catalogue."
+msgstr "Dit programma is niet beschikbaar in de catalogus."
 
 
 ### SETTINGS

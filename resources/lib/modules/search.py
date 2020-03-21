@@ -26,7 +26,7 @@ class Search:
         """
         if not query:
             # Ask for query
-            query = kodiutils.get_search_string(heading=kodiutils.localize(30009))  # Search Vier/Vijf/Zes
+            query = kodiutils.get_search_string(heading=kodiutils.localize(30009))  # Search
             if not query:
                 kodiutils.end_of_directory()
                 return

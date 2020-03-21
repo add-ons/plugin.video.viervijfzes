@@ -8,8 +8,8 @@ import logging
 import re
 from datetime import datetime
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser
 
 from resources.lib.viervijfzes import CHANNELS
 
@@ -130,12 +130,10 @@ class ContentApi:
     """ Vier/Vijf/Zes Content API"""
     API_ENDPOINT = 'https://api.viervijfzes.be'
 
-    def __init__(self, token):
+    def __init__(self, token=None):
         """ Initialise object """
-        self._token = token
-
         self._session = requests.session()
-        self._session.headers['authorization'] = token
+        self._token = token
 
     def get_notifications(self):
         """ Get a list of notifications for your account.
@@ -321,7 +319,12 @@ class ContentApi:
         :type url: str
         :rtype str
         """
-        response = self._session.get(url, params=params)
+        if self._token:
+            response = self._session.get(url, params=params, headers={
+                'authorization': self._token,
+            })
+        else:
+            response = self._session.get(url, params=params)
 
         if response.status_code != 200:
             raise Exception('Could not fetch data')

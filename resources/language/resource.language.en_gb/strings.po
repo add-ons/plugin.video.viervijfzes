@@ -92,6 +92,10 @@ msgstr ""
 
 
 ### MESSAGES
+msgctxt "#30701"
+msgid "To watch a video, you need to enter your credentials. Do you want to enter them now?"
+msgstr ""
+
 msgctxt "#30709"
 msgid "Geo-blocked video"
 msgstr ""
@@ -113,7 +117,7 @@ msgid "The requested video was not found in the guide."
 msgstr ""
 
 msgctxt "#30717"
-msgid "This program is not available in the Vier/Vijf/Zes catalogue."
+msgid "This program is not available in the catalogue."
 msgstr ""
 
 

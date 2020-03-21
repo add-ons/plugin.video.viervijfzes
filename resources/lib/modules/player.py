@@ -17,8 +17,6 @@ class Player:
 
     def __init__(self):
         """ Initialise object """
-        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        self._api = ContentApi(self._auth.get_token())
 
     def play_from_page(self, channel, path):
         """ Play the requested item.
@@ -26,19 +24,32 @@ class Player:
         :type path: string
         """
         # Get episode information
-        episode = self._api.get_episode(channel, path)
+        episode = ContentApi().get_episode(channel, path)
 
         # Play this now we have the uuid
         self.play(channel, episode.uuid)
 
-    def play(self, channel, item):
+    @staticmethod
+    def play(channel, item):
         """ Play the requested item.
         :type channel: string
         :type item: string
         """
         try:
+            # Check if we have credentials
+            if not kodiutils.get_setting('username') or not kodiutils.get_setting('password'):
+                confirm = kodiutils.yesno_dialog(message=kodiutils.localize(30701))  # To watch a video, you need to enter your credentials. Do you want to enter them now?
+                if confirm:
+                    kodiutils.open_settings()
+                kodiutils.end_of_directory()
+                return
+
+            # Fetch an auth token now
+            auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+            token = auth.get_token()
+
             # Get stream information
-            resolved_stream = self._api.get_stream(channel, item)
+            resolved_stream = ContentApi(token).get_stream(channel, item)
 
         except GeoblockedException:
             kodiutils.ok_dialog(heading=kodiutils.localize(30709), message=kodiutils.localize(30710))  # This video is geo-blocked...

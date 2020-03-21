@@ -221,6 +221,14 @@ def ok_dialog(heading='', message=''):
     return Dialog().ok(heading=heading, line1=message)
 
 
+def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None):
+    """Show Kodi's OK dialog"""
+    from xbmcgui import Dialog
+    if not heading:
+        heading = addon_name()
+    return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel)
+
+
 def notification(heading='', message='', icon='info', time=4000):
     """Show a Kodi notification"""
     from xbmcgui import Dialog
