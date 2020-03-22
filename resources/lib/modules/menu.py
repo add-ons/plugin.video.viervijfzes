@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
-from resources.lib.viervijfzes import CHANNELS
+from resources.lib.viervijfzes import CHANNELS, STREAM_DICT
 from resources.lib.viervijfzes.content import Program, Episode
 
 
@@ -107,12 +107,10 @@ class Menu:
                 'aired': item.aired.strftime('%Y-%m-%d'),
             })
 
-            stream_dict = {
-                'codec': 'h264',
+            stream_dict = STREAM_DICT.copy()
+            stream_dict.update({
                 'duration': item.duration,
-                'height': 576,
-                'width': 720,
-            }
+            })
 
             return TitleItem(title=info_dict['title'],
                              path=kodiutils.url_for('play', channel=item.channel, uuid=item.uuid),

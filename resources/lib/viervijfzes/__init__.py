@@ -45,6 +45,6 @@ CHANNELS = OrderedDict([
 
 STREAM_DICT = {
     'codec': 'h264',
-    'height': 960,
-    'width': 544,
+    'height': 544,
+    'width': 960,
 }
