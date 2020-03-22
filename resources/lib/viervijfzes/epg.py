@@ -16,6 +16,7 @@ _LOGGER = logging.getLogger('epg-api')
 class EpgProgram:
     """ Defines a Program in the EPG. """
 
+    # pylint: disable=invalid-name
     def __init__(self, channel, program_title, episode_title, episode_title_original, nr, season, genre, start, won_id, won_program_id, program_description,
                  description, duration, program_url, video_url, cover, airing):
         self.channel = channel

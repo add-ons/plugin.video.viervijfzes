@@ -71,8 +71,8 @@ class AwsIdp:
         self.info_bits = bytearray('Caldera Derived Key', 'utf-8')
 
         self.big_n = self.__hex_to_long(self.n_hex)
-        self.g = self.__hex_to_long(self.g_hex)
-        self.k = self.__hex_to_long(self.__hex_hash('00' + self.n_hex + '0' + self.g_hex))
+        self.g = self.__hex_to_long(self.g_hex)  # pylint: disable=invalid-name
+        self.k = self.__hex_to_long(self.__hex_hash('00' + self.n_hex + '0' + self.g_hex))  # pylint: disable=invalid-name
         self.small_a_value = self.__generate_random_small_a()
         self.large_a_value = self.__calculate_a()
         _LOGGER.debug("Created %s", self)
@@ -299,8 +299,8 @@ class AwsIdp:
     @staticmethod
     def __hash_sha256(buf):
         """AuthenticationHelper.hash"""
-        a = hashlib.sha256(buf).hexdigest()
-        return (64 - len(a)) * '0' + a
+        digest = hashlib.sha256(buf).hexdigest()
+        return (64 - len(digest)) * '0' + digest
 
     @staticmethod
     def __pad_hex(long_int):
