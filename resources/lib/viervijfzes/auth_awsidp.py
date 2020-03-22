@@ -22,12 +22,10 @@ _LOGGER = logging.getLogger('auth-awsidp')
 
 class InvalidLoginException(Exception):
     """ The login credentials are invalid """
-    pass
 
 
 class AuthenticationException(Exception):
     """ Something went wrong while logging in """
-    pass
 
 
 class AwsIdp:

@@ -58,7 +58,7 @@ class AuthApi:
                 self._expiry = now + 3600
                 _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
             except (InvalidLoginException, AuthenticationException) as e:
-                _LOGGER.error('Error logging in: %s', e.message)
+                _LOGGER.error('Error logging in: %s', str(e))
                 self._id_token = None
                 self._refresh_token = None
                 self._expiry = 0

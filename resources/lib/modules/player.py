@@ -54,7 +54,7 @@ class Player:
 
             except (InvalidLoginException, AuthenticationException) as ex:
                 _LOGGER.error(ex)
-                kodiutils.ok_dialog(message=kodiutils.localize(30702, error=ex.message))
+                kodiutils.ok_dialog(message=kodiutils.localize(30702, error=str(ex)))
                 kodiutils.end_of_directory()
                 return
 
