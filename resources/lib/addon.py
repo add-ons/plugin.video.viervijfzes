@@ -70,11 +70,11 @@ def show_catalog_program(channel, program):
     Catalog().show_program(channel, program)
 
 
-@routing.route('/program/program/<channel>/<program>/<season>')
+@routing.route('/catalog/program/<channel>/<program>/<season>')
 def show_catalog_program_season(channel, program, season):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_season(channel, program, int(season))
+    Catalog().show_program_season(channel, program, season)
 
 
 @routing.route('/search')

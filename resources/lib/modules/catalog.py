@@ -36,9 +36,9 @@ class Catalog:
 
         listing = [self._menu.generate_titleitem(item) for item in items]
 
-        # Sort items by label, but don't put folders at the top.
+        # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
-        kodiutils.show_listing(listing, 30003, content='tvshows', sort='label')
+        kodiutils.show_listing(listing, 30003, content='tvshows', sort='title')
 
     def show_catalog_channel(self, channel):
         """ Show the programs of a specific channel
@@ -54,9 +54,9 @@ class Catalog:
         for item in items:
             listing.append(self._menu.generate_titleitem(item))
 
-        # Sort items by label, but don't put folders at the top.
+        # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
-        kodiutils.show_listing(listing, 30003, content='tvshows', sort='label')
+        kodiutils.show_listing(listing, 30003, content='tvshows', sort='title')
 
     def show_program(self, channel, program_id):
         """ Show a program from the catalog
@@ -77,7 +77,7 @@ class Catalog:
 
         # Go directly to the season when we have only one season
         if len(program.seasons) == 1:
-            self.show_program_season(channel, program_id, program.seasons.values()[0].number)
+            self.show_program_season(channel, program_id, program.seasons.values()[0].uuid)
             return
 
         studio = CHANNELS.get(program.channel, {}).get('studio_icon')
@@ -89,9 +89,8 @@ class Catalog:
             listing.append(
                 TitleItem(
                     title='* %s' % kodiutils.localize(30204),  # * All seasons
-                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=-1),
+                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season='-1'),
                     art_dict={
-                        'thumb': program.cover,
                         'fanart': program.background,
                     },
                     info_dict={
@@ -109,9 +108,8 @@ class Catalog:
             listing.append(
                 TitleItem(
                     title=s.title,  # kodiutils.localize(30205, season=s.number),  # Season {season}
-                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=s.number),
+                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=s.uuid),
                     art_dict={
-                        'thumb': s.cover,
                         'fanart': program.background,
                     },
                     info_dict={
@@ -125,13 +123,13 @@ class Catalog:
             )
 
         # Sort by label. Some programs return seasons unordered.
-        kodiutils.show_listing(listing, 30003, content='tvshows', sort=['label'])
+        kodiutils.show_listing(listing, 30003, content='tvshows')
 
-    def show_program_season(self, channel, program_id, season):
+    def show_program_season(self, channel, program_id, season_uuid):
         """ Show the episodes of a program from the catalog
         :type channel: str
         :type program_id: str
-        :type season: int
+        :type season_uuid: str
         """
         try:
             program = self._api.get_program(channel, program_id)
@@ -140,12 +138,12 @@ class Catalog:
             kodiutils.end_of_directory()
             return
 
-        if season == -1:
+        if season_uuid == "-1":
             # Show all episodes
             episodes = program.episodes
         else:
             # Show the episodes of the season that was selected
-            episodes = [e for e in program.episodes if e.season == season]
+            episodes = [e for e in program.episodes if e.season_uuid == season_uuid]
 
         listing = [self._menu.generate_titleitem(episode) for episode in episodes]
 

@@ -94,8 +94,7 @@ class Episode:
     """ Defines an Episode. """
 
     def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, duration=None,
-                 season=None, number=None,
-                 rating=None, aired=None, expiry=None):
+                 season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None):
         """
         :type uuid: str
         :type nodeid: str
@@ -107,6 +106,7 @@ class Episode:
         :type cover: str
         :type duration: int
         :type season: int
+        :type season_uuid: str
         :type number: int
         :type rating: str
         :type aired: datetime
@@ -122,6 +122,7 @@ class Episode:
         self.cover = cover
         self.duration = duration
         self.season = season
+        self.season_uuid = season_uuid
         self.number = number
         self.rating = rating
         self.aired = aired
@@ -352,7 +353,7 @@ class ContentApi:
 
         # Create Season info
         program.seasons = {
-            playlist['episodes'][0]['seasonNumber']: Season(
+            key: Season(
                 uuid=playlist['id'],
                 path=playlist['link'].lstrip('/'),
                 channel=playlist['pageInfo']['site'],
@@ -360,12 +361,12 @@ class ContentApi:
                 description=playlist['pageInfo']['description'],
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
             )
-            for playlist in data['playlists']
+            for key, playlist in enumerate(data['playlists'])
         }
 
         # Create Episodes info
         program.episodes = [
-            ContentApi._parse_episode_data(episode)
+            ContentApi._parse_episode_data(episode, playlist['id'])
             for playlist in data['playlists']
             for episode in playlist['episodes']
         ]
@@ -373,9 +374,10 @@ class ContentApi:
         return program
 
     @staticmethod
-    def _parse_episode_data(data):
+    def _parse_episode_data(data, season_uuid):
         """ Parse the Episode JSON.
         :type data: dict
+        :type season_uuid: str
         :rtype Episode
         """
 
@@ -389,22 +391,18 @@ class ContentApi:
             else:
                 episode_number = None
 
-        if data.get('episodeTitle'):
-            episode_title = data.get('episodeTitle')
-        else:
-            episode_title = data.get('title')
-
         episode = Episode(
             uuid=data.get('videoUuid'),
             nodeid=data.get('pageInfo', {}).get('nodeId'),
             path=data.get('link').lstrip('/'),
             channel=data.get('pageInfo', {}).get('site'),
             program_title=data.get('program', {}).get('title'),
-            title=episode_title,
+            title=data.get('title'),
             description=data.get('pageInfo', {}).get('description'),
             cover=data.get('image'),
             duration=data.get('duration'),
             season=data.get('seasonNumber'),
+            season_uuid=season_uuid,
             number=episode_number,
             aired=datetime.fromtimestamp(data.get('createdDate')),
             expiry=datetime.fromtimestamp(data.get('unpublishDate')) if data.get('unpublishDate') else None,

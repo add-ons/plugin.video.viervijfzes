@@ -86,7 +86,14 @@ class Menu:
                 'season': len(item.seasons) if item.seasons else None,
             })
 
-            return TitleItem(title=item.title,
+            if isinstance(item.episodes, list) and not item.episodes:
+                # We know that we don't have episodes
+                title = '[COLOR gray]' + item.title + '[/COLOR]'
+            else:
+                # We have episodes, or we don't know it
+                title = item.title
+
+            return TitleItem(title=title,
                              path=kodiutils.url_for('show_catalog_program', channel=item.channel, program=item.path),
                              art_dict=art_dict,
                              info_dict=info_dict)

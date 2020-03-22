@@ -16,13 +16,14 @@ ADDON = xbmcaddon.Addon()
 SORT_METHODS = dict(
     unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
     label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS,
+    title=xbmcplugin.SORT_METHOD_TITLE,
     episode=xbmcplugin.SORT_METHOD_EPISODE,
     duration=xbmcplugin.SORT_METHOD_DURATION,
     year=xbmcplugin.SORT_METHOD_VIDEO_YEAR,
     date=xbmcplugin.SORT_METHOD_DATE,
 )
 DEFAULT_SORT_METHODS = [
-    'unsorted', 'label'
+    'unsorted', 'title'
 ]
 
 _LOGGER = logging.getLogger('kodiutils')
