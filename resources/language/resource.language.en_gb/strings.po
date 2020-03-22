@@ -120,6 +120,18 @@ msgctxt "#30713"
 msgid "The requested video was not found in the guide."
 msgstr ""
 
+msgctxt "#30714"
+msgid "Local metadata is cleared."
+msgstr ""
+
+msgctxt "#30715"
+msgid "Updating metadata"
+msgstr ""
+
+msgctxt "#30716"
+msgid "Updating metadata ({index}/{total})..."
+msgstr ""
+
 msgctxt "#30717"
 msgid "This program is not available in the catalogue."
 msgstr ""
@@ -141,3 +153,24 @@ msgstr ""
 msgctxt "#30805"
 msgid "Password"
 msgstr ""
+
+msgctxt "#30820"
+msgid "Interface"
+msgstr ""
+
+msgctxt "#30827"
+msgid "Metadata"
+msgstr ""
+
+msgctxt "#30829"
+msgid "Periodically refresh metadata in the background"
+msgstr ""
+
+msgctxt "#30831"
+msgid "Update local metadata now"
+msgstr ""
+
+msgctxt "#30833"
+msgid "Clear local metadata"
+msgstr ""
+

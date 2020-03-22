@@ -5,9 +5,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 import json
 import logging
-import os
 import time
 
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth_awsidp import AwsIdp, InvalidLoginException, AuthenticationException
 
 _LOGGER = logging.getLogger('auth-api')
@@ -21,25 +21,24 @@ class AuthApi:
 
     TOKEN_FILE = 'auth-tokens.json'
 
-    def __init__(self, username, password, cache_dir=None):
+    def __init__(self, username, password):
         """ Initialise object """
         self._username = username
         self._password = password
-        self._cache_dir = cache_dir
+        self._cache_dir = kodiutils.get_tokens_path()
         self._id_token = None
         self._expiry = 0
         self._refresh_token = None
 
-        if self._cache_dir:
-            # Load tokens from cache
-            try:
-                with open(self._cache_dir + self.TOKEN_FILE, 'rb') as f:
-                    data_json = json.loads(f.read())
-                    self._id_token = data_json.get('id_token')
-                    self._refresh_token = data_json.get('refresh_token')
-                    self._expiry = int(data_json.get('expiry', 0))
-            except (IOError, TypeError, ValueError):
-                _LOGGER.info('We could not use the cache since it is invalid or non-existant.')
+        # Load tokens from cache
+        try:
+            with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'rb') as f:
+                data_json = json.loads(f.read())
+                self._id_token = data_json.get('id_token')
+                self._refresh_token = data_json.get('refresh_token')
+                self._expiry = int(data_json.get('expiry', 0))
+        except (IOError, TypeError, ValueError):
+            _LOGGER.info('We could not use the cache since it is invalid or non-existant.')
 
     def get_token(self):
         """ Get a valid token """
@@ -59,7 +58,7 @@ class AuthApi:
                 self._expiry = now + 3600
                 _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
             except (InvalidLoginException, AuthenticationException) as e:
-                _LOGGER.error('Error logging in: %s', e.message)
+                _LOGGER.error('Error logging in: %s', str(e))
                 self._id_token = None
                 self._refresh_token = None
                 self._expiry = 0
@@ -74,33 +73,23 @@ class AuthApi:
             self._expiry = now + 3600
             _LOGGER.debug('Got an id token by logging in: %s', self._id_token)
 
-        if self._cache_dir:
-            if not os.path.isdir(self._cache_dir):
-                os.mkdir(self._cache_dir)
-
-            # Store new tokens in cache
-            with open(self._cache_dir + self.TOKEN_FILE, 'wb') as f:
-                data = json.dumps(dict(
-                    id_token=self._id_token,
-                    refresh_token=self._refresh_token,
-                    expiry=self._expiry,
-                ))
-                f.write(data.encode('utf8'))
+        # Store new tokens in cache
+        if not kodiutils.exists(self._cache_dir):
+            kodiutils.mkdirs(self._cache_dir)
+        with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'wb') as f:
+            data = json.dumps(dict(
+                id_token=self._id_token,
+                refresh_token=self._refresh_token,
+                expiry=self._expiry,
+            ))
+            f.write(data.encode('utf8'))
 
         return self._id_token
 
-    def clear_cache(self):
+    @staticmethod
+    def clear_tokens():
         """ Remove the cached tokens. """
-        if not self._cache_dir:
-            return
-
-        # Remove cache
-        os.remove(self._cache_dir + self.TOKEN_FILE)
-
-        # Clear tokens in memory
-        self._id_token = None
-        self._refresh_token = None
-        self._expiry = 0
+        kodiutils.delete(kodiutils.get_tokens_path() + AuthApi.TOKEN_FILE)
 
     @staticmethod
     def _authenticate(username, password):

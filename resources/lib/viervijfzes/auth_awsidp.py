@@ -22,12 +22,10 @@ _LOGGER = logging.getLogger('auth-awsidp')
 
 class InvalidLoginException(Exception):
     """ The login credentials are invalid """
-    pass
 
 
 class AuthenticationException(Exception):
     """ Something went wrong while logging in """
-    pass
 
 
 class AwsIdp:
@@ -90,7 +88,7 @@ class AwsIdp:
             "Content-Type": "application/x-amz-json-1.1"
         }
         auth_response = self._session.post(self.url, auth_data, headers=auth_headers)
-        auth_response_json = json.loads(auth_response.content)
+        auth_response_json = json.loads(auth_response.text)
         challenge_parameters = auth_response_json.get("ChallengeParameters")
         _LOGGER.debug(challenge_parameters)
 
@@ -106,7 +104,7 @@ class AwsIdp:
             "Content-Type": "application/x-amz-json-1.1"
         }
         auth_response = self._session.post(self.url, challenge_data, headers=challenge_headers)
-        auth_response_json = json.loads(auth_response.content)
+        auth_response_json = json.loads(auth_response.text)
         _LOGGER.debug("Got response: %s", auth_response_json)
 
         if "message" in auth_response_json:
@@ -138,7 +136,7 @@ class AwsIdp:
         }
         refresh_request_data = json.dumps(refresh_request)
         refresh_response = self._session.post(self.url, refresh_request_data, headers=refresh_headers)
-        refresh_json = json.loads(refresh_response.content)
+        refresh_json = json.loads(refresh_response.text)
 
         if "message" in refresh_json:
             raise AuthenticationException(refresh_json.get("message"))

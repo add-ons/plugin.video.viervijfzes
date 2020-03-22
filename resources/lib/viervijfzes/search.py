@@ -42,7 +42,7 @@ class SearchApi:
         if response.status_code != 200:
             raise Exception('Could not search')
 
-        data = json.loads(response.content)
+        data = json.loads(response.text)
 
         results = []
         for hit in data['hits']['hits']:

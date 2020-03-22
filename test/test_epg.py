@@ -49,15 +49,15 @@ class TestEpg(unittest.TestCase):
         epg_programs = self._epg.get_epg('vier', date.today().strftime('%Y-%m-%d'))
         epg_program = [program for program in epg_programs if program.video_url][0]
 
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+        api = ContentApi(auth)
+
         # Lookup the Episode data since we don't have an UUID
-        api = ContentApi()
         episode = api.get_episode(epg_program.channel, epg_program.video_url)
         self.assertIsInstance(episode, Episode)
 
         # Get stream based on the Episode's UUID
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        api = ContentApi(auth.get_token())
-        video = api.get_stream(episode.channel, episode.uuid)
+        video = api.get_stream_by_uuid(episode.uuid)
         self.assertTrue(video)
 
 

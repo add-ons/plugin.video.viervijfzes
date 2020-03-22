@@ -3,12 +3,15 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import logging
+
 from routing import Plugin
 
 from resources.lib import kodilogging
 
 kodilogging.config()
 routing = Plugin()
+_LOGGER = logging.getLogger('addon')
 
 
 @routing.route('/')
@@ -67,11 +70,11 @@ def show_catalog_program(channel, program):
     Catalog().show_program(channel, program)
 
 
-@routing.route('/program/program/<channel>/<program>/<season>')
+@routing.route('/catalog/program/<channel>/<program>/<season>')
 def show_catalog_program_season(channel, program, season):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_season(channel, program, int(season))
+    Catalog().show_program_season(channel, program, season)
 
 
 @routing.route('/search')
@@ -82,11 +85,11 @@ def show_search(query=None):
     Search().show_search(query)
 
 
-@routing.route('/play/catalog/<channel>/<uuid>')
-def play(channel, uuid):
+@routing.route('/play/catalog/<uuid>')
+def play(uuid):
     """ Play the requested item """
     from resources.lib.modules.player import Player
-    Player().play(channel, uuid)
+    Player().play(uuid)
 
 
 @routing.route('/play/page/<channel>/<page>')
@@ -99,6 +102,20 @@ def play_from_page(channel, page):
 
     from resources.lib.modules.player import Player
     Player().play_from_page(channel, unquote(page))
+
+
+@routing.route('/metadata/update')
+def metadata_update():
+    """ Update the metadata for the listings (called from settings) """
+    from resources.lib.modules.metadata import Metadata
+    Metadata().update()
+
+
+@routing.route('/metadata/clean')
+def metadata_clean():
+    """ Clear metadata (called from settings) """
+    from resources.lib.modules.metadata import Metadata
+    Metadata().clean()
 
 
 def run(params):

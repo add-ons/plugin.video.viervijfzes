@@ -16,13 +16,14 @@ ADDON = xbmcaddon.Addon()
 SORT_METHODS = dict(
     unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
     label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS,
+    title=xbmcplugin.SORT_METHOD_TITLE,
     episode=xbmcplugin.SORT_METHOD_EPISODE,
     duration=xbmcplugin.SORT_METHOD_DURATION,
     year=xbmcplugin.SORT_METHOD_VIDEO_YEAR,
     date=xbmcplugin.SORT_METHOD_DATE,
 )
 DEFAULT_SORT_METHODS = [
-    'unsorted', 'label'
+    'unsorted', 'title'
 ]
 
 _LOGGER = logging.getLogger('kodiutils')
@@ -269,7 +270,7 @@ def set_locale():
         setlocale(LC_ALL, locale_lang)
     except (Error, ValueError) as exc:
         if locale_lang != 'en_GB':
-            _LOGGER.debug("Your system does not support locale '{locale}': {error}", locale=locale_lang, error=exc)
+            _LOGGER.debug("Your system does not support locale '%s': %s", locale_lang, exc)
             set_locale.cached = False
             return False
     set_locale.cached = True
@@ -423,14 +424,14 @@ def listdir(path):
 def mkdir(path):
     """Create a directory (using xbmcvfs)"""
     from xbmcvfs import mkdir as vfsmkdir
-    _LOGGER.debug("Create directory '{path}'.", path=path)
+    _LOGGER.debug("Create directory '%s'.", path)
     return vfsmkdir(path)
 
 
 def mkdirs(path):
     """Create directory including parents (using xbmcvfs)"""
     from xbmcvfs import mkdirs as vfsmkdirs
-    _LOGGER.debug("Recursively create directory '{path}'.", path=path)
+    _LOGGER.debug("Recursively create directory '%s'.", path)
     return vfsmkdirs(path)
 
 
@@ -458,14 +459,14 @@ def stat_file(path):
 def delete(path):
     """Remove a file (using xbmcvfs)"""
     from xbmcvfs import delete as vfsdelete
-    _LOGGER.debug("Delete file '{path}'.", path=path)
+    _LOGGER.debug("Delete file '%s'.", path)
     return vfsdelete(path)
 
 
 def container_refresh(url=None):
     """Refresh the current container or (re)load a container by URL"""
     if url:
-        _LOGGER.debug('Execute: Container.Refresh({url})', url=url)
+        _LOGGER.debug('Execute: Container.Refresh(%s)', url)
         xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
     else:
         _LOGGER.debug('Execute: Container.Refresh')
@@ -475,7 +476,7 @@ def container_refresh(url=None):
 def container_update(url):
     """Update the current container while respecting the path history."""
     if url:
-        _LOGGER.debug('Execute: Container.Update({url})', url=url)
+        _LOGGER.debug('Execute: Container.Update(%s)', url)
         xbmc.executebuiltin('Container.Update({url})'.format(url=url))
     else:
         # URL is a mandatory argument for Container.Update, use Container.Refresh instead
@@ -529,7 +530,7 @@ def get_cache(key, ttl=None):
 
     with open_file(fullpath, 'r') as fdesc:
         try:
-            _LOGGER.info('Fetching {file} from cache', file=filename)
+            _LOGGER.debug('Fetching %s from cache', filename)
             import json
             value = json.load(fdesc)
             return value
@@ -547,6 +548,21 @@ def set_cache(key, data):
         mkdirs(path)
 
     with open_file(fullpath, 'w') as fdesc:
-        _LOGGER.info('Storing to cache as {file}', file=filename)
+        _LOGGER.debug('Storing to cache as %s', filename)
         import json
         json.dump(data, fdesc)
+
+
+def invalidate_cache(ttl=None):
+    """ Clear the cache """
+    path = get_cache_path()
+    if not exists(path):
+        return
+    _, files = listdir(path)
+    import time
+    now = time.mktime(time.localtime())
+    for filename in files:
+        fullpath = path + filename
+        if ttl and now - stat_file(fullpath).st_mtime() < ttl:
+            continue
+        delete(fullpath)

@@ -9,8 +9,8 @@ import logging
 import unittest
 
 import resources.lib.kodiutils as kodiutils
-from resources.lib.viervijfzes.content import ContentApi, Program, Episode
 from resources.lib.viervijfzes.auth import AuthApi
+from resources.lib.viervijfzes.content import ContentApi, Program, Episode
 
 _LOGGER = logging.getLogger('test-api')
 
@@ -18,7 +18,8 @@ _LOGGER = logging.getLogger('test-api')
 class TestApi(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
-        self._api = ContentApi()
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+        self._api = ContentApi(auth)
 
     def test_programs(self):
         for channel in ['vier', 'vijf', 'zes']:
@@ -39,9 +40,7 @@ class TestApi(unittest.TestCase):
         program = self._api.get_program('vier', 'auwch')
         episode = program.episodes[0]
 
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        api_authed = ContentApi(auth.get_token())
-        video = api_authed.get_stream(episode.channel, episode.uuid)
+        video = self._api.get_stream_by_uuid(episode.uuid)
         self.assertTrue(video)
 
         _LOGGER.info('Got video URL: %s', video)

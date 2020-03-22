@@ -17,18 +17,19 @@ _LOGGER = logging.getLogger('test-auth')
 class TestAuth(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestAuth, self).__init__(*args, **kwargs)
-        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
 
     def test_login(self):
         # Clear any cache we have
-        self._auth.clear_cache()
+        AuthApi.clear_tokens()
 
         # We should get a token by logging in
-        token = self._auth.get_token()
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+        token = auth.get_token()
         self.assertTrue(token)
 
         # Test it a second time, it should go from memory now
-        token = self._auth.get_token()
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+        token = auth.get_token()
         self.assertTrue(token)
 
 
