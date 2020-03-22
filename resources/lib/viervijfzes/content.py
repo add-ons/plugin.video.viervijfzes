@@ -425,7 +425,7 @@ class ContentApi:
             response = self._session.get(url, params=params)
 
         if response.status_code != 200:
-            _LOGGER.error(response.content)
+            _LOGGER.error(response.text)
             raise Exception('Could not fetch data')
 
         return response.text
