@@ -96,6 +96,10 @@ msgctxt "#30701"
 msgid "To watch a video, you need to enter your credentials. Do you want to enter them now?"
 msgstr ""
 
+msgctxt "#30702"
+msgid "An error occurred while authenticating: {error}."
+msgstr ""
+
 msgctxt "#30709"
 msgid "Geo-blocked video"
 msgstr ""

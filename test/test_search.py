@@ -17,21 +17,19 @@ _LOGGER = logging.getLogger('test-search')
 class TestSearch(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestSearch, self).__init__(*args, **kwargs)
+        self._search = SearchApi()
 
     def test_search(self):
-        search = SearchApi()
-        programs = search.search('de mol')
+        programs = self._search.search('de mol')
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
     def test_search_empty(self):
-        search = SearchApi()
-        programs = search.search('')
+        programs = self._search.search('')
         self.assertIsInstance(programs, list)
 
     def test_search_space(self):
-        search = SearchApi()
-        programs = search.search(' ')
+        programs = self._search.search(' ')
         self.assertIsInstance(programs, list)
 
 

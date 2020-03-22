@@ -9,7 +9,6 @@ from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
 from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes import CHANNELS
-from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import ContentApi, UnavailableException
 
 _LOGGER = logging.getLogger('catalog')
@@ -20,8 +19,7 @@ class Catalog:
 
     def __init__(self):
         """ Initialise object """
-        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        self._api = ContentApi(self._auth.get_token())
+        self._api = ContentApi()
         self._menu = Menu()
 
     def show_catalog(self):

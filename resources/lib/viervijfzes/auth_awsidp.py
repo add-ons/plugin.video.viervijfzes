@@ -20,6 +20,16 @@ import six
 _LOGGER = logging.getLogger('auth-awsidp')
 
 
+class InvalidLoginException(Exception):
+    """ The login credentials are invalid """
+    pass
+
+
+class AuthenticationException(Exception):
+    """ Something went wrong while logging in """
+    pass
+
+
 class AwsIdp:
     """ AWS Identity Provider """
 
@@ -86,9 +96,7 @@ class AwsIdp:
 
         challenge_name = auth_response_json.get("ChallengeName")
         if not challenge_name == "PASSWORD_VERIFIER":
-            message = auth_response_json.get("message")
-            _LOGGER.error("Cannot start authentication challenge: %s", message or None)
-            return None
+            raise AuthenticationException(auth_response_json.get("message"))
 
         # Step 2: Respond to the Challenge with a valid ChallengeResponse
         challenge_request = self.__get_challenge_response_request(challenge_parameters, password)
@@ -102,8 +110,7 @@ class AwsIdp:
         _LOGGER.debug("Got response: %s", auth_response_json)
 
         if "message" in auth_response_json:
-            _LOGGER.error("Error logging in: %s", auth_response_json.get("message"))
-            return None, None
+            raise InvalidLoginException(auth_response_json.get("message"))
 
         id_token = auth_response_json.get("AuthenticationResult", {}).get("IdToken")
         refresh_token = auth_response_json.get("AuthenticationResult", {}).get("RefreshToken")
@@ -134,8 +141,7 @@ class AwsIdp:
         refresh_json = json.loads(refresh_response.content)
 
         if "message" in refresh_json:
-            _LOGGER.error("Error refreshing: %s", refresh_json.get("message"))
-            return None
+            raise AuthenticationException(refresh_json.get("message"))
 
         id_token = refresh_json.get("AuthenticationResult", {}).get("IdToken")
         return id_token

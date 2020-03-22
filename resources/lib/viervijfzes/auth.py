@@ -8,7 +8,7 @@ import logging
 import os
 import time
 
-from resources.lib.viervijfzes.auth_awsidp import AwsIdp
+from resources.lib.viervijfzes.auth_awsidp import AwsIdp, InvalidLoginException, AuthenticationException
 
 _LOGGER = logging.getLogger('auth-api')
 
@@ -25,15 +25,15 @@ class AuthApi:
         """ Initialise object """
         self._username = username
         self._password = password
-        self._cache = cache_dir
+        self._cache_dir = cache_dir
         self._id_token = None
         self._expiry = 0
         self._refresh_token = None
 
-        if self._cache:
+        if self._cache_dir:
             # Load tokens from cache
             try:
-                with open(self._cache + self.TOKEN_FILE, 'rb') as f:
+                with open(self._cache_dir + self.TOKEN_FILE, 'rb') as f:
                     data_json = json.loads(f.read())
                     self._id_token = data_json.get('id_token')
                     self._refresh_token = data_json.get('refresh_token')
@@ -53,25 +53,33 @@ class AuthApi:
         if self._refresh_token:
             # We have a valid refresh token, use that to refresh our id token
             # The refresh token is valid for 30 days. If this refresh fails, we just continue by logging in again.
-            self._id_token = self._refresh(self._refresh_token)
-            if self._id_token:
+            _LOGGER.debug('Getting an id token by refreshing')
+            try:
+                self._id_token = self._refresh(self._refresh_token)
                 self._expiry = now + 3600
                 _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
+            except (InvalidLoginException, AuthenticationException) as e:
+                _LOGGER.error('Error logging in: %s', e.message)
+                self._id_token = None
+                self._refresh_token = None
+                self._expiry = 0
+                # We continue by logging in with username and password
 
         if not self._id_token:
             # We have no tokens, or they are all invalid, do a login
+            _LOGGER.debug('Getting an id token by logging in')
             id_token, refresh_token = self._authenticate(self._username, self._password)
             self._id_token = id_token
             self._refresh_token = refresh_token
             self._expiry = now + 3600
             _LOGGER.debug('Got an id token by logging in: %s', self._id_token)
 
-        if self._cache:
-            if not os.path.isdir(self._cache):
-                os.mkdir(self._cache)
+        if self._cache_dir:
+            if not os.path.isdir(self._cache_dir):
+                os.mkdir(self._cache_dir)
 
             # Store new tokens in cache
-            with open(self._cache + self.TOKEN_FILE, 'wb') as f:
+            with open(self._cache_dir + self.TOKEN_FILE, 'wb') as f:
                 data = json.dumps(dict(
                     id_token=self._id_token,
                     refresh_token=self._refresh_token,
@@ -83,11 +91,11 @@ class AuthApi:
 
     def clear_cache(self):
         """ Remove the cached tokens. """
-        if not self._cache:
+        if not self._cache_dir:
             return
 
         # Remove cache
-        os.remove(self._cache + self.TOKEN_FILE)
+        os.remove(self._cache_dir + self.TOKEN_FILE)
 
         # Clear tokens in memory
         self._id_token = None

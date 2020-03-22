@@ -7,6 +7,7 @@ import logging
 
 from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
+from resources.lib.viervijfzes.auth_awsidp import InvalidLoginException, AuthenticationException
 from resources.lib.viervijfzes.content import ContentApi, UnavailableException, GeoblockedException
 
 _LOGGER = logging.getLogger('player')
@@ -38,15 +39,22 @@ class Player:
         try:
             # Check if we have credentials
             if not kodiutils.get_setting('username') or not kodiutils.get_setting('password'):
-                confirm = kodiutils.yesno_dialog(message=kodiutils.localize(30701))  # To watch a video, you need to enter your credentials. Do you want to enter them now?
+                confirm = kodiutils.yesno_dialog(
+                    message=kodiutils.localize(30701))  # To watch a video, you need to enter your credentials. Do you want to enter them now?
                 if confirm:
                     kodiutils.open_settings()
                 kodiutils.end_of_directory()
                 return
 
             # Fetch an auth token now
-            auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-            token = auth.get_token()
+            try:
+                auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+                token = auth.get_token()
+            except (InvalidLoginException, AuthenticationException) as ex:
+                _LOGGER.error(ex)
+                kodiutils.ok_dialog(message=kodiutils.localize(30702, error=ex.message))
+                kodiutils.end_of_directory()
+                return
 
             # Get stream information
             resolved_stream = ContentApi(token).get_stream(channel, item)

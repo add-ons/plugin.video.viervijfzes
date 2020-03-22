@@ -97,6 +97,10 @@ msgctxt "#30701"
 msgid "To watch a video, you need to enter your credentials. Do you want to enter them now?"
 msgstr "Om een video te bekijken moet je je inloggegevens ingeven. Wil je dit nu doen?"
 
+msgctxt "#30702"
+msgid "An error occurred while authenticating: {error}."
+msgstr "Er is een fout opgetreden tijdens het aanmelden: {error}."
+
 msgctxt "#30709"
 msgid "Geo-blocked video"
 msgstr "Video is geografisch geblokkeerd"

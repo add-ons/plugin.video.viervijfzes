@@ -18,19 +18,16 @@ _LOGGER = logging.getLogger('test-api')
 class TestApi(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
+        self._api = ContentApi()
 
     def test_programs(self):
-        api = ContentApi()
-
         for channel in ['vier', 'vijf', 'zes']:
-            channels = api.get_programs(channel)
+            channels = self._api.get_programs(channel)
             self.assertIsInstance(channels, list)
 
     def test_episodes(self):
-        api = ContentApi()
-
         for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
-            program = api.get_program(channel, program)
+            program = self._api.get_program(channel, program)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
             # self.assertIsInstance(program.seasons[0], Season)
@@ -39,13 +36,12 @@ class TestApi(unittest.TestCase):
             _LOGGER.info('Got program: %s', program)
 
     def test_get_stream(self):
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        token = auth.get_token()
-
-        api = ContentApi(token)
-        program = api.get_program('vier', 'auwch')
+        program = self._api.get_program('vier', 'auwch')
         episode = program.episodes[0]
-        video = api.get_stream(episode.channel, episode.uuid)
+
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+        api_authed = ContentApi(auth.get_token())
+        video = api_authed.get_stream(episode.channel, episode.uuid)
         self.assertTrue(video)
 
         _LOGGER.info('Got video URL: %s', video)
