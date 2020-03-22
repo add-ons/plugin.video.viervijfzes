@@ -28,12 +28,11 @@ class Player:
         episode = ContentApi().get_episode(channel, path)
 
         # Play this now we have the uuid
-        self.play(channel, episode.uuid)
+        self.play(episode.uuid)
 
     @staticmethod
-    def play(channel, item):
+    def play(item):
         """ Play the requested item.
-        :type channel: string
         :type item: string
         """
         try:
@@ -48,16 +47,16 @@ class Player:
 
             # Fetch an auth token now
             try:
-                auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-                token = auth.get_token()
+                auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+
+                # Get stream information
+                resolved_stream = ContentApi(auth).get_stream_by_uuid(item)
+
             except (InvalidLoginException, AuthenticationException) as ex:
                 _LOGGER.error(ex)
                 kodiutils.ok_dialog(message=kodiutils.localize(30702, error=ex.message))
                 kodiutils.end_of_directory()
                 return
-
-            # Get stream information
-            resolved_stream = ContentApi(token).get_stream(channel, item)
 
         except GeoblockedException:
             kodiutils.ok_dialog(heading=kodiutils.localize(30709), message=kodiutils.localize(30710))  # This video is geo-blocked...

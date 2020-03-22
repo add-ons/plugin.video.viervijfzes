@@ -170,4 +170,4 @@ class TvGuide:
             return
 
         kodiutils.container_update(
-            kodiutils.url_for('play', channel=channel, uuid=broadcast.video_url))
+            kodiutils.url_for('play', uuid=broadcast.video_url))

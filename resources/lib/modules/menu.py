@@ -113,7 +113,7 @@ class Menu:
             })
 
             return TitleItem(title=info_dict['title'],
-                             path=kodiutils.url_for('play', channel=item.channel, uuid=item.uuid),
+                             path=kodiutils.url_for('play', uuid=item.uuid),
                              art_dict=art_dict,
                              info_dict=info_dict,
                              stream_dict=stream_dict,

@@ -10,6 +10,7 @@
     <extension point="xbmc.python.pluginsource" library="addon_entry.py">
         <provides>video</provides>
     </extension>
+    <extension point="xbmc.service" library="service_entry.py"/>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Watch content from VIER, VIJF and ZES.</summary>
         <platform>all</platform>
@@ -22,6 +23,6 @@
             <icon>resources/icon.png</icon>
             <fanart>resources/fanart.png</fanart>
         </assets>
-        <reuselanguageinvoker>true</reuselanguageinvoker>
+<!--        <reuselanguageinvoker>true</reuselanguageinvoker>-->
     </extension>
 </addon>

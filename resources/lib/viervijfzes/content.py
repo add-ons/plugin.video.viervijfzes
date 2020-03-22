@@ -11,9 +11,14 @@ from datetime import datetime
 from six.moves.html_parser import HTMLParser
 import requests
 
+from resources.lib import kodiutils
 from resources.lib.viervijfzes import CHANNELS
 
 _LOGGER = logging.getLogger('content-api')
+
+CACHE_AUTO = 1  # Allow to use the cache, and query the API if no cache is available
+CACHE_ONLY = 2  # Only use the cache, don't use the API
+CACHE_PREVENT = 3  # Don't use the cache
 
 
 class UnavailableException(Exception):
@@ -129,29 +134,68 @@ class Episode:
 class ContentApi:
     """ VIER/VIJF/ZES Content API"""
     API_ENDPOINT = 'https://api.viervijfzes.be'
+    SITE_APIS = {
+        'vier': 'https://www.vier.be/api',
+        'vijf': 'https://www.vijf.be/api',
+        'zes': 'https://www.zestv.be/api',
+    }
 
-    def __init__(self, token=None):
+    def __init__(self, auth=None):
         """ Initialise object """
         self._session = requests.session()
-        self._token = token
+        self._auth = auth
 
     def get_notifications(self):
         """ Get a list of notifications for your account.
         :rtype list[dict]
         """
-        response = self._get_url(self.API_ENDPOINT + '/notifications')
+        response = self._get_url(self.API_ENDPOINT + '/notifications', authentication=True)
         data = json.loads(response)
         return data
 
-    def get_stream(self, _channel, uuid):
+    def get_content_tree(self, channel):
+        """ Get a list of all the content.
+        :type channel: str
+        :rtype list[dict]
+        """
+        if channel not in self.SITE_APIS:
+            raise Exception('Unknown channel %s' % channel)
+
+        response = self._get_url(self.SITE_APIS[channel] + '/content_tree', authentication=True)
+        data = json.loads(response)
+        return data
+
+    def get_stream_by_uuid(self, uuid):
         """ Get the stream URL to use for this video.
-        :type _channel: str
         :type uuid: str
         :rtype str
         """
-        response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid)
+        response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
         data = json.loads(response)
         return data['video']['S']
+
+    def get_programs_new(self, channel):
+        """ Get a list of all programs of the specified channel.
+        :type channel: str
+        :rtype list[Program]
+        """
+        if channel not in CHANNELS:
+            raise Exception('Unknown channel %s' % channel)
+
+        # Request all content from this channel
+        content_tree = self.get_content_tree(channel)
+
+        programs = []
+        for p in content_tree['programs']:
+            try:
+                program = self.get_program_by_uuid(p)
+                program.channel = channel
+                programs.append(program)
+            except UnavailableException:
+                # Some programs are not available, but do occur in the content tree
+                pass
+
+        return programs
 
     def get_programs(self, channel):
         """ Get a list of all programs of the specified channel.
@@ -171,35 +215,89 @@ class ContentApi:
                                     r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
                                     r'</a>', re.DOTALL)
 
-        programs = [
-            Program(channel=channel,
-                    path=program.group('path').lstrip('/'),
-                    title=h.unescape(program.group('title').strip()))
-            for program in regex_programs.finditer(data)
-        ]
+        programs = []
+        for item in regex_programs.finditer(data):
+            path = item.group('path').lstrip('/')
+
+            program = self.get_program(channel, path, CACHE_ONLY)  # Get program details, but from cache only
+            if program:
+                # Use program with metadata from cache
+                programs.append(program)
+            else:
+                # Use program with the values that we've parsed from the page
+                programs.append(Program(channel=channel,
+                                        path=path,
+                                        title=h.unescape(item.group('title').strip())))
 
         return programs
 
-    def get_program(self, channel, path):
+    def get_program(self, channel, path, cache=CACHE_AUTO):
         """ Get a Program object from the specified page.
         :type channel: str
         :type path: str
+        :type cache: int
         :rtype Program
         NOTE: This function doesn't use an API.
         """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
-        # Load webpage
-        page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+        if cache in [CACHE_AUTO, CACHE_ONLY]:
+            # Try to fetch from cache
+            data = kodiutils.get_cache(['program', channel, path])
+            if data is None and cache == CACHE_ONLY:
+                return None
+        else:
+            data = None
 
-        # Extract JSON
-        regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-        json_data = HTMLParser().unescape(regex_program.search(page).group(1))
-        data = json.loads(json_data)['data']
+        if data is None:
+            # Fetch webpage
+            page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+
+            # Extract JSON
+            regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
+            json_data = HTMLParser().unescape(regex_program.search(page).group(1))
+            data = json.loads(json_data)['data']
+
+            # Store response in cache
+            kodiutils.set_cache(['program', channel, path], data)
+
         program = self._parse_program_data(data)
 
         return program
+
+    def get_program_by_uuid(self, uuid, cache=CACHE_AUTO):
+        """ Get a Program object.
+        :type uuid: str
+        :type cache: int
+        :rtype Program
+        """
+        if cache in [CACHE_AUTO, CACHE_ONLY]:
+            # Try to fetch from cache
+            data = kodiutils.get_cache(['program', uuid])
+            if data is None and cache == CACHE_ONLY:
+                return None
+        else:
+            data = None
+
+        if data is None:
+            # Fetch from API
+            response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
+            data = json.loads(response)
+
+            if not data:
+                raise UnavailableException()
+
+            # Store response in cache
+            kodiutils.set_cache(['program', uuid], data)
+
+        return Program(
+            uuid=uuid,
+            path=data['url']['S'].strip('/'),
+            title=data['label']['S'],
+            description=data['description']['S'],
+            cover=data['image']['S'],
+        )
 
     def get_episode(self, channel, path):
         """ Get a Episode object from the specified page.
@@ -314,19 +412,22 @@ class ContentApi:
         )
         return episode
 
-    def _get_url(self, url, params=None):
+    def _get_url(self, url, params=None, authentication=False):
         """ Makes a GET request for the specified URL.
         :type url: str
         :rtype str
         """
-        if self._token:
+        if authentication:
+            if not self._auth:
+                raise Exception('Requested to authenticate, but not auth object passed')
             response = self._session.get(url, params=params, headers={
-                'authorization': self._token,
+                'authorization': self._auth.get_token(),
             })
         else:
             response = self._session.get(url, params=params)
 
         if response.status_code != 200:
+            _LOGGER.error(response.content)
             raise Exception('Could not fetch data')
 
         return response.text
