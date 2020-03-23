@@ -29,6 +29,7 @@ jobs:
         make check-translations
     - name: Run tests
       env:
+        PYTHONIOENCODING: utf-8
         ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
         ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
       run: |
