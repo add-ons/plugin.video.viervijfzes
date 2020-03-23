@@ -1,5 +1,5 @@
 [![GitHub release](https://img.shields.io/github/release/add-ons/plugin.video.viervijfzes.svg?include_prereleases)](https://github.com/add-ons/plugin.video.viervijfzes/releases)
-[![Build Status](https://github.com/add-ons/plugin.video.viervijfzes/workflows/CI/badge.svg)](https://github.com/add-ons/plugin.video.viervijfzes/actions?query=branch%3Amaster)
+[![Build Status](https://img.shields.io/github/workflow/status/add-ons/plugin.video.viervijfzes/CI/master)](https://github.com/add-ons/plugin.video.viervijfzes/actions?query=branch%3Amaster)
 [![Codecov status](https://img.shields.io/codecov/c/github/add-ons/plugin.video.viervijfzes/master)](https://codecov.io/gh/add-ons/plugin.video.viervijfzes/branch/master)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Contributors](https://img.shields.io/github/contributors/add-ons/plugin.video.viervijfzes.svg)](https://github.com/add-ons/plugin.video.viervijfzes/graphs/contributors)
