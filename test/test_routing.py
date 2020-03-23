@@ -58,7 +58,6 @@ class TestRouting(unittest.TestCase):
 
     def test_metadata_update(self):
         routing.run([routing.url_for(addon.metadata_clean), '0', ''])
-        # routing.run([routing.url_for(addon.metadata_update), '0', ''])
 
 
 if __name__ == '__main__':
