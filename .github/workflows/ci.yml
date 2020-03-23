@@ -28,6 +28,11 @@ jobs:
         make check-tox
         make check-translations
     - name: Run tests
+      env:
+        ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
+        ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
       run: |
         make test
         codecov
+    - name: Upload code coverage
+      uses: codecov/codecov-action@v1.0.6

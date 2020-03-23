@@ -39,7 +39,7 @@ test: test-unit
 
 test-unit:
 	@echo ">>> Running unit tests"
-ifdef TRAVIS_JOB_ID
+ifdef GITHUB_ACTIONS
 		@coverage run -m unittest discover
 else
 		@python -m unittest discover -v -b -f
