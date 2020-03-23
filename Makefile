@@ -41,6 +41,7 @@ test-unit:
 	@echo ">>> Running unit tests"
 ifdef GITHUB_ACTIONS
 		@coverage run -m unittest discover
+		@coverage xml
 else
 		@python -m unittest discover -v -b -f
 endif
