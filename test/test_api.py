@@ -31,10 +31,11 @@ class TestApi(unittest.TestCase):
             program = self._api.get_program(channel, program)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
-            # self.assertIsInstance(program.seasons[0], Season)
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
-            _LOGGER.info('Got program: %s', program)
+
+            program_by_uuid = self._api.get_program_by_uuid(program.uuid)
+            self.assertIsInstance(program_by_uuid, Program)
 
     def test_get_stream(self):
         program = self._api.get_program('vier', 'auwch')

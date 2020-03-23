@@ -14,6 +14,14 @@ msgctxt "#30002"
 msgid "Alphabetically sorted list of programs"
 msgstr ""
 
+msgctxt "#30003"
+msgid "Catalogue"
+msgstr ""
+
+msgctxt "#30004"
+msgid "TV Shows and Movies listed by category"
+msgstr ""
+
 msgctxt "#30007"
 msgid "Channels"
 msgstr ""
