@@ -111,7 +111,6 @@ class Menu:
                 'duration': item.duration,
                 'season': item.season,
                 'episode': item.number,
-                'aired': item.aired.strftime('%Y-%m-%d'),
             })
 
             stream_dict = STREAM_DICT.copy()
