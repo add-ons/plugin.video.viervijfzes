@@ -6,19 +6,21 @@
 
 # VIER / VIJF / ZES Kodi add-on
 
-*plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [vier.be](https://vier.be/), [vijf.be](https://vijf.be/), [zestv.be](https://zestv.be/) te bekijken. 
+*plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [vier.be](https://vier.be/), [vijf.be](https://vijf.be/) en [zestv.be](https://zestv.be/) te bekijken. 
 
 > Note: Je moet eerst een account aanmaken op één van bovenstaande websites.
 
 ## Handmatige installatie
 
-Je kan de [laatste release](https://github.com/add-ons/plugin.video.viervijfzes/releases) downloaden, of een [development zip](https://github.com/add-ons/plugin.video.viervijfzes/archive/master.zip) van Github voor de laatste wijzigingen.
+Deze addon staat momenteel nog niet de repository van Kodi zelf, je moet deze voorlopig nog handmatig installeren en updaten.
+
+Je kan de [laatste release](https://github.com/add-ons/plugin.video.viervijfzes/releases) downloaden, of een [development zip](https://github.com/add-ons/plugin.video.viervijfzes/archive/master.zip) van Github downloaden met de laatste wijzigingen.
 
 ## Features
 
 De volgende features worden ondersteund:
 * Bekijk on-demand content van VIER, VIJF en ZES
-* Programma's rechtstreeks afspelen vanuit de TV GIDS
+* Programma's rechtstreeks afspelen vanuit de tv-gids
 * Doorzoeken van alle programma's
 * Afspelen van gerelateerde Youtube content
 
