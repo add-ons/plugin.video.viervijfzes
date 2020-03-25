@@ -9,13 +9,13 @@ import unittest
 
 from resources.lib import addon
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+xbmc = __import__('xbmc')  # pylint: disable=invalid-name
+xbmcaddon = __import__('xbmcaddon')  # pylint: disable=invalid-name
+xbmcgui = __import__('xbmcgui')  # pylint: disable=invalid-name
+xbmcplugin = __import__('xbmcplugin')  # pylint: disable=invalid-name
+xbmcvfs = __import__('xbmcvfs')  # pylint: disable=invalid-name
 
-routing = addon.routing
+routing = addon.routing  # pylint: disable=invalid-name
 
 
 class TestRouting(unittest.TestCase):

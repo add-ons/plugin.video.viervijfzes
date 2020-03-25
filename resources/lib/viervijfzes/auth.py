@@ -32,8 +32,8 @@ class AuthApi:
 
         # Load tokens from cache
         try:
-            with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'rb') as f:
-                data_json = json.loads(f.read())
+            with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'rb') as fdesc:
+                data_json = json.loads(fdesc.read())
                 self._id_token = data_json.get('id_token')
                 self._refresh_token = data_json.get('refresh_token')
                 self._expiry = int(data_json.get('expiry', 0))
@@ -57,8 +57,8 @@ class AuthApi:
                 self._id_token = self._refresh(self._refresh_token)
                 self._expiry = now + 3600
                 _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
-            except (InvalidLoginException, AuthenticationException) as e:
-                _LOGGER.error('Error logging in: %s', str(e))
+            except (InvalidLoginException, AuthenticationException) as exc:
+                _LOGGER.error('Error logging in: %s', str(exc))
                 self._id_token = None
                 self._refresh_token = None
                 self._expiry = 0
@@ -76,13 +76,13 @@ class AuthApi:
         # Store new tokens in cache
         if not kodiutils.exists(self._cache_dir):
             kodiutils.mkdirs(self._cache_dir)
-        with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'wb') as f:
+        with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'wb') as fdesc:
             data = json.dumps(dict(
                 id_token=self._id_token,
                 refresh_token=self._refresh_token,
                 expiry=self._expiry,
             ))
-            f.write(data.encode('utf8'))
+            fdesc.write(data.encode('utf8'))
 
         return self._id_token
 

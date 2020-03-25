@@ -39,7 +39,7 @@ class BackgroundService(Monitor):
 
         _LOGGER.info('Service stopped')
 
-    def onSettingsChanged(self):
+    def onSettingsChanged(self):  # pylint: disable=invalid-name
         """ Callback when a setting has changed """
         if self._has_credentials_changed():
             _LOGGER.info('Clearing auth tokens due to changed credentials')

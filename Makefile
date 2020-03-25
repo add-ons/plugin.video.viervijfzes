@@ -1,15 +1,19 @@
-ENVS = py27,py36,py37
 export PYTHONPATH := $(CURDIR):$(CURDIR)/test
+PYTHON := python
 
 # Collect information to build as sensible package name
-name = plugin.video.viervijfzes
+name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
 version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_hash = $(shell git rev-parse --short HEAD)
 zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
-include_files = addon_entry.py addon.xml CHANGELOG.md LICENSE README.md service_entry.py resources/
+include_files = addon_entry.py addon.xml CHANGELOG.md LICENSE README.md resources/ service_entry.py
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc \*.pyo
+
+languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.%, %, $(wildcard resources/language/*)))
+
+.PHONY: check test
 
 all: check test build
 zip: build
@@ -18,15 +22,17 @@ check: check-pylint check-tox check-translations
 
 check-pylint:
 	@echo ">>> Running pylint checks"
-	@pylint *.py resources/ test/
+	@$(PYTHON) -m pylint *.py resources/lib/ test/
 
 check-tox:
 	@echo ">>> Running tox checks"
-	@tox -q
+	@$(PYTHON) -m tox -q
 
 check-translations:
 	@echo ">>> Running translation checks"
-	@msgcmp resources/language/resource.language.nl_nl/strings.po resources/language/resource.language.en_gb/strings.po
+	@$(foreach lang,$(languages), \
+		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
+	)
 
 check-addon: clean build
 	@echo ">>> Running addon checks"
@@ -43,7 +49,7 @@ ifdef GITHUB_ACTIONS
 		@coverage run -m unittest discover
 		@coverage xml
 else
-		@python -m unittest discover -v -b -f
+		@$(PYTHON) -m unittest discover -v -b -f
 endif
 
 clean:
@@ -60,11 +66,5 @@ build: clean
 	@echo "Successfully wrote package as: ../$(zip_name)"
 
 release: build
-	rm -rf ../repo-plugins/plugin.video.viervijfzes/*
+	rm -rf ../repo-plugins/$(name)/*
 	unzip ../$(zip_name) -d ../repo-plugins/
-
-run:
-	@echo ">>> Run CLI"
-	python test/run.py /
-
-.PHONY: check test

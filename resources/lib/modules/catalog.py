@@ -104,18 +104,18 @@ class Catalog:
             )
 
         # Add the seasons
-        for s in list(program.seasons.values()):
+        for season in list(program.seasons.values()):
             listing.append(
                 TitleItem(
-                    title=s.title,  # kodiutils.localize(30205, season=s.number),  # Season {season}
-                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=s.uuid),
+                    title=season.title,  # kodiutils.localize(30205, season=season.number),  # Season {season}
+                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=season.uuid),
                     art_dict={
                         'fanart': program.background,
                     },
                     info_dict={
                         'tvshowtitle': program.title,
-                        'title': kodiutils.localize(30205, season=s.number),  # Season {season}
-                        'plot': s.description,
+                        'title': kodiutils.localize(30205, season=season.number),  # Season {season}
+                        'plot': season.description,
                         'set': program.title,
                         'studio': studio,
                     }

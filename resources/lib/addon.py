@@ -10,7 +10,7 @@ from routing import Plugin
 from resources.lib import kodilogging
 
 kodilogging.config()
-routing = Plugin()
+routing = Plugin()  # pylint: disable=invalid-name
 _LOGGER = logging.getLogger('addon')
 
 

@@ -187,9 +187,9 @@ class ContentApi:
         content_tree = self.get_content_tree(channel)
 
         programs = []
-        for p in content_tree['programs']:
+        for uuid in content_tree['programs']:
             try:
-                program = self.get_program_by_uuid(p)
+                program = self.get_program_by_uuid(uuid)
                 program.channel = channel
                 programs.append(program)
             except UnavailableException:
@@ -211,7 +211,7 @@ class ContentApi:
         data = self._get_url(CHANNELS[channel]['url'])
 
         # Parse programs
-        h = HTMLParser()
+        parser = HTMLParser()
         regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
                                     r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
                                     r'</a>', re.DOTALL)
@@ -228,8 +228,7 @@ class ContentApi:
                 # Use program with the values that we've parsed from the page
                 programs.append(Program(channel=channel,
                                         path=path,
-                                        title=h.unescape(item.group('title').strip())))
-
+                                        title=parser.unescape(item.group('title').strip())))
         return programs
 
     def get_program(self, channel, path, cache=CACHE_AUTO):
@@ -314,15 +313,15 @@ class ContentApi:
         page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
         # Extract program JSON
-        h = HTMLParser()
+        parser = HTMLParser()
         regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-        json_data = h.unescape(regex_program.search(page).group(1))
+        json_data = parser.unescape(regex_program.search(page).group(1))
         data = json.loads(json_data)['data']
         program = self._parse_program_data(data)
 
         # Extract episode JSON
         regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
-        json_data = h.unescape(regex_episode.search(page).group(1))
+        json_data = parser.unescape(regex_episode.search(page).group(1))
         data = json.loads(json_data)
 
         # Lookup the episode in the program JSON based on the nodeId
