@@ -35,6 +35,12 @@ class Player:
         """ Play the requested item.
         :type item: string
         """
+
+        # Workaround for Raspberry Pi 3 and older
+        omxplayer = kodiutils.get_global_setting('videoplayer.useomxplayer')
+        if omxplayer is False:
+            kodiutils.set_global_setting('videoplayer.useomxplayer', True)
+
         try:
             # Check if we have credentials
             if not kodiutils.get_setting('username') or not kodiutils.get_setting('password'):

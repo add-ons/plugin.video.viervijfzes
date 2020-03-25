@@ -17,13 +17,13 @@ class EpgProgram:
     """ Defines a Program in the EPG. """
 
     # pylint: disable=invalid-name
-    def __init__(self, channel, program_title, episode_title, episode_title_original, nr, season, genre, start, won_id, won_program_id, program_description,
+    def __init__(self, channel, program_title, episode_title, episode_title_original, number, season, genre, start, won_id, won_program_id, program_description,
                  description, duration, program_url, video_url, cover, airing):
         self.channel = channel
         self.program_title = program_title
         self.episode_title = episode_title
         self.episode_title_original = episode_title_original
-        self.nr = nr
+        self.number = number
         self.season = season
         self.genre = genre
         self.start = start
@@ -110,7 +110,7 @@ class EpgApi:
             program_title=data.get('program_title'),
             episode_title=data.get('episode_title'),
             episode_title_original=data.get('original_title'),
-            nr=int(data.get('episode_nr')) if data.get('episode_nr') else None,
+            number=int(data.get('episode_nr')) if data.get('episode_nr') else None,
             season=int(data.get('season')) if data.get('season') else None,
             genre=data.get('genre'),
             start=start,

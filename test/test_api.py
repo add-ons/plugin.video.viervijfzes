@@ -23,8 +23,9 @@ class TestApi(unittest.TestCase):
 
     def test_programs(self):
         for channel in ['vier', 'vijf', 'zes']:
-            channels = self._api.get_programs(channel)
-            self.assertIsInstance(channels, list)
+            programs = self._api.get_programs(channel)
+            self.assertIsInstance(programs, list)
+            self.assertIsInstance(programs[0], Program)
 
     def test_episodes(self):
         for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
@@ -34,17 +35,17 @@ class TestApi(unittest.TestCase):
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
 
-            program_by_uuid = self._api.get_program_by_uuid(program.uuid)
-            self.assertIsInstance(program_by_uuid, Program)
-
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
         program = self._api.get_program('vier', 'auwch')
-        episode = program.episodes[0]
+        self.assertIsInstance(program, Program)
 
+        program_by_uuid = self._api.get_program_by_uuid(program.uuid)
+        self.assertIsInstance(program_by_uuid, Program)
+
+        episode = program.episodes[0]
         video = self._api.get_stream_by_uuid(episode.uuid)
         self.assertTrue(video)
-
-        _LOGGER.info('Got video URL: %s', video)
 
 
 if __name__ == '__main__':

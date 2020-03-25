@@ -119,11 +119,6 @@ class TvGuide:
             else:
                 context_menu = None
 
-            stream_dict = STREAM_DICT.copy()
-            stream_dict.update({
-                'duration': program.duration,
-            })
-
             title = '{time} - {title}'.format(
                 time=program.start.strftime('%H:%M'),
                 title=program.program_title
@@ -138,6 +133,22 @@ class TvGuide:
                 path = None
                 title = '[COLOR gray]' + title + '[/COLOR]'
 
+            stream_dict = STREAM_DICT.copy()
+            stream_dict.update({
+                'duration': program.duration,
+            })
+
+            info_dict = {
+                'title': title,
+                'plot': program.description,
+                'studio': program.channel,
+                'duration': program.duration,
+                'tvshowtitle': program.program_title,
+                'season': program.season,
+                'episode': program.number,
+                'mediatype': 'episode',
+            }
+
             listing.append(
                 TitleItem(title=title,
                           path=path,
@@ -145,12 +156,7 @@ class TvGuide:
                               'icon': program.cover,
                               'thumb': program.cover,
                           },
-                          info_dict={
-                              'title': title,
-                              'plot': program.description,
-                              'duration': program.duration,
-                              'mediatype': 'video',
-                          },
+                          info_dict=info_dict,
                           stream_dict=stream_dict,
                           context_menu=context_menu,
                           is_playable=True)

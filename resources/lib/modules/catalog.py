@@ -10,7 +10,7 @@ from resources.lib.kodiutils import TitleItem
 from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.content import ContentApi, UnavailableException
+from resources.lib.viervijfzes.content import ContentApi, UnavailableException, CACHE_PREVENT
 
 _LOGGER = logging.getLogger('catalog')
 
@@ -64,7 +64,7 @@ class Catalog:
         :type program_id: str
          """
         try:
-            program = self._api.get_program(channel, program_id)
+            program = self._api.get_program(channel, program_id, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()

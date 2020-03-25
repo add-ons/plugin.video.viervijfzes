@@ -18,6 +18,7 @@ class TestAuth(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestAuth, self).__init__(*args, **kwargs)
 
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_login(self):
         # Clear any cache we have
         AuthApi.clear_tokens()
