@@ -10,7 +10,7 @@
 
 > Note: Je moet eerst een account aanmaken op één van bovenstaande websites.
 
-## Handmatige installatie
+## Installatie
 
 Deze addon staat momenteel nog niet de repository van Kodi zelf, je moet deze voorlopig nog handmatig installeren en updaten.
 
@@ -23,6 +23,16 @@ De volgende features worden ondersteund:
 * Programma's rechtstreeks afspelen vanuit de tv-gids
 * Doorzoeken van alle programma's
 * Afspelen van gerelateerde Youtube content
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="resources/screenshot01.jpg" width=270></td>
+    <td><img src="resources/screenshot02.jpg" width=270></td>
+    <td><img src="resources/screenshot03.jpg" width=270></td>
+  </tr>
+ </table>
 
 ## Disclaimer
 
