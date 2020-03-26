@@ -90,7 +90,6 @@ class AwsIdp:
         auth_response = self._session.post(self.url, auth_data, headers=auth_headers)
         auth_response_json = json.loads(auth_response.text)
         challenge_parameters = auth_response_json.get("ChallengeParameters")
-        _LOGGER.debug(challenge_parameters)
 
         challenge_name = auth_response_json.get("ChallengeName")
         if not challenge_name == "PASSWORD_VERIFIER":
@@ -105,7 +104,6 @@ class AwsIdp:
         }
         auth_response = self._session.post(self.url, challenge_data, headers=challenge_headers)
         auth_response_json = json.loads(auth_response.text)
-        _LOGGER.debug("Got response: %s", auth_response_json)
 
         if "message" in auth_response_json:
             raise InvalidLoginException(auth_response_json.get("message"))
@@ -348,7 +346,6 @@ class AwsIdp:
             format_string = "{} {} %-d %H:%M:%S UTC %Y".format(days[time_now.weekday()], months[time_now.month])
 
         time_string = datetime.datetime.utcnow().strftime(format_string)
-        _LOGGER.debug("AWS Auth Timestamp: %s", time_string)
         return time_string
 
     def __str__(self):

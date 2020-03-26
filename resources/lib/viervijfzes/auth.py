@@ -46,7 +46,7 @@ class AuthApi:
 
         if self._id_token and self._expiry > now:
             # We have a valid id token in memory, use it
-            _LOGGER.debug('Got an id token from memory: %s', self._id_token)
+            _LOGGER.debug('Got an id token from memory')
             return self._id_token
 
         if self._refresh_token:
@@ -56,7 +56,6 @@ class AuthApi:
             try:
                 self._id_token = self._refresh(self._refresh_token)
                 self._expiry = now + 3600
-                _LOGGER.debug('Got an id token by refreshing: %s', self._id_token)
             except (InvalidLoginException, AuthenticationException) as exc:
                 _LOGGER.error('Error logging in: %s', str(exc))
                 self._id_token = None
@@ -71,7 +70,6 @@ class AuthApi:
             self._id_token = id_token
             self._refresh_token = refresh_token
             self._expiry = now + 3600
-            _LOGGER.debug('Got an id token by logging in: %s', self._id_token)
 
         # Store new tokens in cache
         if not kodiutils.exists(self._cache_dir):
