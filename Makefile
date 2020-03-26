@@ -45,12 +45,7 @@ test: test-unit
 
 test-unit:
 	@echo ">>> Running unit tests"
-ifdef GITHUB_ACTIONS
-		@coverage run -m unittest discover
-		@coverage xml
-else
-		@$(PYTHON) -m unittest discover -v -b -f
-endif
+	@$(PYTHON) -m unittest discover -v -b -f
 
 clean:
 	@find . -name '*.pyc' -type f -delete

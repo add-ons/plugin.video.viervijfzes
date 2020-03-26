@@ -146,58 +146,6 @@ class ContentApi:
         self._session = requests.session()
         self._auth = auth
 
-    def get_notifications(self):
-        """ Get a list of notifications for your account.
-        :rtype list[dict]
-        """
-        response = self._get_url(self.API_ENDPOINT + '/notifications', authentication=True)
-        data = json.loads(response)
-        return data
-
-    def get_content_tree(self, channel):
-        """ Get a list of all the content.
-        :type channel: str
-        :rtype list[dict]
-        """
-        if channel not in self.SITE_APIS:
-            raise Exception('Unknown channel %s' % channel)
-
-        response = self._get_url(self.SITE_APIS[channel] + '/content_tree', authentication=True)
-        data = json.loads(response)
-        return data
-
-    def get_stream_by_uuid(self, uuid):
-        """ Get the stream URL to use for this video.
-        :type uuid: str
-        :rtype str
-        """
-        response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
-        data = json.loads(response)
-        return data['video']['S']
-
-    def get_programs_new(self, channel):
-        """ Get a list of all programs of the specified channel.
-        :type channel: str
-        :rtype list[Program]
-        """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
-
-        # Request all content from this channel
-        content_tree = self.get_content_tree(channel)
-
-        programs = []
-        for uuid in content_tree['programs']:
-            try:
-                program = self.get_program_by_uuid(uuid)
-                program.channel = channel
-                programs.append(program)
-            except UnavailableException:
-                # Some programs are not available, but do occur in the content tree
-                pass
-
-        return programs
-
     def get_programs(self, channel):
         """ Get a list of all programs of the specified channel.
         :type channel: str
@@ -331,6 +279,15 @@ class ContentApi:
                 return episode
 
         return None
+
+    def get_stream_by_uuid(self, uuid):
+        """ Get the stream URL to use for this video.
+        :type uuid: str
+        :rtype str
+        """
+        response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
+        data = json.loads(response)
+        return data['video']['S']
 
     @staticmethod
     def _parse_program_data(data):
