@@ -77,7 +77,7 @@ class Keyboard:
         return 'test'
 
 
-class Monitor(object):
+class Monitor:
     """A stub implementation of the xbmc Monitor class"""
 
     def __init__(self, line='', heading=''):
