@@ -77,15 +77,16 @@ class Keyboard:
         return 'test'
 
 
-class Monitor:
-    ''' A stub implementation of the xbmc Monitor class '''
+class Monitor(object):  # pylint: disable=useless-object-inheritance
+    """A stub implementation of the xbmc Monitor class"""
 
     def __init__(self, line='', heading=''):
-        ''' A stub constructor for the xbmc Monitor class '''
+        """A stub constructor for the xbmc Monitor class"""
+        self._deadline = time.time() + 10  # 10 seconds
 
     def abortRequested(self):
-        ''' A stub implementation for the xbmc Keyboard class abortRequested() method '''
-        return False
+        """A stub implementation for the xbmc Keyboard class abortRequested() method"""
+        return time.time() > self._deadline
 
     def waitForAbort(self, timeout=None):
         ''' A stub implementation for the xbmc Keyboard class waitForAbort() method '''

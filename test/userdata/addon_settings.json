@@ -1,6 +1,7 @@
 {
   "plugin.video.viervijfzes": {
-    "_comment": "do-not-add-username-and-password-here"
+    "_comment": "do-not-add-username-and-password-here",
+    "metadata_update": "true"
   },
   "plugin.video.youtube": {
   },

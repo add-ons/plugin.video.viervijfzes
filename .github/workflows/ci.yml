@@ -47,6 +47,12 @@ jobs:
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
         run: |
           coverage run -m unittest discover
+      - name: Run addon
+        run: |
+          coverage run -a test/run.py /
+      - name: Run add-on service
+        run: |
+          coverage run -a service_entry.py
       - name: Upload code coverage to CodeCov
         uses: codecov/codecov-action@v1
         continue-on-error: true
