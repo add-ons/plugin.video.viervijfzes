@@ -9,30 +9,8 @@ on:
       - master
 
 jobs:
-
-  check-addon:
-    name: Run kodi-addon-checker
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          sudo apt-get install libxml2-utils
-          python -m pip install --upgrade pip
-          pip install kodi-addon-checker
-      - name: Run kodi-addon-checker
-        run: |
-          make check-addon
-
   tests:
-    name: Run unit tests
+    name: Unit tests
     runs-on: ubuntu-latest
     env:
       PYTHONIOENCODING: utf-8
