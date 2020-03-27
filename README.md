@@ -4,7 +4,7 @@
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Contributors](https://img.shields.io/github/contributors/add-ons/plugin.video.viervijfzes.svg)](https://github.com/add-ons/plugin.video.viervijfzes/graphs/contributors)
 
-# VIER VIJF ZES Kodi add-on
+# VIER-VIJF-ZES Kodi add-on
 
 *plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [vier.be](https://www.vier.be/), [vijf.be](https://www.vijf.be/) en [zestv.be](https://www.zestv.be/) te bekijken. 
 
