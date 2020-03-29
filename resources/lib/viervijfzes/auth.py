@@ -86,7 +86,8 @@ class AuthApi:
 
     def clear_tokens(self):
         """ Remove the cached tokens. """
-        os.unlink(self._token_path + AuthApi.TOKEN_FILE)
+        if os.path.exists(self._token_path + AuthApi.TOKEN_FILE):
+            os.unlink(self._token_path + AuthApi.TOKEN_FILE)
 
     @staticmethod
     def _authenticate(username, password):
