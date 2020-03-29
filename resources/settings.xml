@@ -10,6 +10,5 @@
         <setting label="30827" type="lsep"/> <!-- Metadata -->
         <setting label="30829" type="bool" id="metadata_update" default="true" subsetting="true"/>
         <setting label="30831" type="action" action="RunPlugin(plugin://plugin.video.viervijfzes/metadata/update)"/>
-        <setting label="30833" type="action" action="RunPlugin(plugin://plugin.video.viervijfzes/metadata/clean)"/>
     </category>
 </settings>

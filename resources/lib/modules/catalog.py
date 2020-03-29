@@ -20,8 +20,8 @@ class Catalog:
 
     def __init__(self):
         """ Initialise object """
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
-        self._api = ContentApi(auth)
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+        self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
         self._menu = Menu()
 
     def show_catalog(self):

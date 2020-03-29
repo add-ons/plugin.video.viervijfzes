@@ -178,7 +178,3 @@ msgstr "Vernieuw de lokale metdata automatisch in de achtergrond"
 msgctxt "#30831"
 msgid "Update local metadata now"
 msgstr "De lokale metadata nu vernieuwen"
-
-msgctxt "#30833"
-msgid "Clear local metadata"
-msgstr "De lokale metadata verwijderen"

@@ -111,13 +111,6 @@ def metadata_update():
     Metadata().update()
 
 
-@routing.route('/metadata/clean')
-def metadata_clean():
-    """ Clear metadata (called from settings) """
-    from resources.lib.modules.metadata import Metadata
-    Metadata().clean()
-
-
 def run(params):
     """ Run the routing plugin """
     routing.run(params)

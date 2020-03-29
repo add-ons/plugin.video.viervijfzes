@@ -177,8 +177,3 @@ msgstr ""
 msgctxt "#30831"
 msgid "Update local metadata now"
 msgstr ""
-
-msgctxt "#30833"
-msgid "Clear local metadata"
-msgstr ""
-

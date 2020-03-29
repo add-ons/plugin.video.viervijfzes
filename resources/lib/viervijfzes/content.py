@@ -5,13 +5,14 @@ from __future__ import absolute_import, division, unicode_literals
 
 import json
 import logging
+import os
 import re
+import time
 from datetime import datetime
 
 from six.moves.html_parser import HTMLParser
 import requests
 
-from resources.lib import kodiutils
 from resources.lib.viervijfzes import CHANNELS
 
 _LOGGER = logging.getLogger('content-api')
@@ -141,33 +142,49 @@ class ContentApi:
         'zes': 'https://www.zestv.be/api',
     }
 
-    def __init__(self, auth=None):
+    def __init__(self, auth=None, cache_path=None):
         """ Initialise object """
         self._session = requests.session()
         self._auth = auth
+        self._cache_path = cache_path
 
-    def get_programs(self, channel):
+    def get_programs(self, channel, cache=CACHE_AUTO):
         """ Get a list of all programs of the specified channel.
         :type channel: str
+        :type cache: str
         :rtype list[Program]
-        NOTE: This function doesn't use an API.
         """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
-        # Load webpage
-        data = self._get_url(CHANNELS[channel]['url'])
+        def update():
+            """ Fetch the program listing by scraping """
+            # Load webpage
+            raw_html = self._get_url(CHANNELS[channel]['url'])
 
-        # Parse programs
-        parser = HTMLParser()
-        regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
-                                    r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
-                                    r'</a>', re.DOTALL)
+            # Parse programs
+            parser = HTMLParser()
+            regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
+                                        r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
+                                        r'</a>', re.DOTALL)
+            data = {
+                item.group('path').lstrip('/'): parser.unescape(item.group('title').strip())
+                for item in regex_programs.finditer(raw_html)
+            }
+
+            if not data:
+                raise Exception('No programs found for %s' % channel)
+
+            return data
+
+        # Fetch listing from cache or update if needed
+        data = self._handle_cache(key=['programs', channel], cache_mode=cache, update=update, ttl=30 * 5)
+        if not data:
+            return []
 
         programs = []
-        for item in regex_programs.finditer(data):
-            path = item.group('path').lstrip('/')
-
+        for path in data:
+            title = data[path]
             program = self.get_program(channel, path, CACHE_ONLY)  # Get program details, but from cache only
             if program:
                 # Use program with metadata from cache
@@ -176,7 +193,7 @@ class ContentApi:
                 # Use program with the values that we've parsed from the page
                 programs.append(Program(channel=channel,
                                         path=path,
-                                        title=parser.unescape(item.group('title').strip())))
+                                        title=title))
         return programs
 
     def get_program(self, channel, path, cache=CACHE_AUTO):
@@ -185,20 +202,12 @@ class ContentApi:
         :type path: str
         :type cache: int
         :rtype Program
-        NOTE: This function doesn't use an API.
         """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
-        if cache in [CACHE_AUTO, CACHE_ONLY]:
-            # Try to fetch from cache
-            data = kodiutils.get_cache(['program', channel, path])
-            if data is None and cache == CACHE_ONLY:
-                return None
-        else:
-            data = None
-
-        if data is None:
+        def update():
+            """ Fetch the program metadata by scraping """
             # Fetch webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
@@ -207,45 +216,14 @@ class ContentApi:
             json_data = HTMLParser().unescape(regex_program.search(page).group(1))
             data = json.loads(json_data)['data']
 
-            # Store response in cache
-            kodiutils.set_cache(['program', channel, path], data)
+            return data
+
+        # Fetch listing from cache or update if needed
+        data = self._handle_cache(key=['program', channel, path], cache_mode=cache, update=update)
 
         program = self._parse_program_data(data)
 
         return program
-
-    def get_program_by_uuid(self, uuid, cache=CACHE_AUTO):
-        """ Get a Program object.
-        :type uuid: str
-        :type cache: int
-        :rtype Program
-        """
-        if cache in [CACHE_AUTO, CACHE_ONLY]:
-            # Try to fetch from cache
-            data = kodiutils.get_cache(['program', uuid])
-            if data is None and cache == CACHE_ONLY:
-                return None
-        else:
-            data = None
-
-        if data is None:
-            # Fetch from API
-            response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
-            data = json.loads(response)
-
-            if not data:
-                raise UnavailableException()
-
-            # Store response in cache
-            kodiutils.set_cache(['program', uuid], data)
-
-        return Program(
-            uuid=uuid,
-            path=data['url']['S'].strip('/'),
-            title=data['label']['S'],
-            description=data['description']['S'],
-            cover=data['image']['S'],
-        )
 
     def get_episode(self, channel, path):
         """ Get a Episode object from the specified page.
@@ -295,6 +273,9 @@ class ContentApi:
         :type data: dict
         :rtype Program
         """
+        if data is None:
+            return None
+
         # Create Program info
         program = Program(
             uuid=data['id'],
@@ -385,3 +366,62 @@ class ContentApi:
             raise Exception('Could not fetch data')
 
         return response.text
+
+    def _handle_cache(self, key, cache_mode, update, ttl=30 * 24 * 60 * 60):
+        """ Fetch something from the cache, and update if needed """
+        if cache_mode in [CACHE_AUTO, CACHE_ONLY]:
+            # Try to fetch from cache
+            data = self._get_cache(key)
+            if data is None and cache_mode == CACHE_ONLY:
+                return None
+        else:
+            data = None
+
+        if data is None:
+            try:
+                # Fetch fresh data
+                _LOGGER.debug('Fetching fresh data for key %s', '.'.join(key))
+                data = update()
+                if data:
+                    # Store fresh response in cache
+                    self._set_cache(key, data, ttl)
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.warning('Something went wrong when refreshing live data: %s. Using expired cached values.', exc)
+                data = self._get_cache(key, allow_expired=True)
+
+        return data
+
+    def _get_cache(self, key, allow_expired=False):
+        """ Get an item from the cache """
+        filename = '.'.join(key) + '.json'
+        fullpath = self._cache_path + filename
+
+        if not os.path.exists(fullpath):
+            return None
+
+        if not allow_expired and os.stat(fullpath).st_mtime < time.time():
+            return None
+
+        with open(fullpath, 'r') as fdesc:
+            try:
+                _LOGGER.debug('Fetching %s from cache', filename)
+                value = json.load(fdesc)
+                return value
+            except (ValueError, TypeError):
+                return None
+
+    def _set_cache(self, key, data, ttl):
+        """ Store an item in the cache """
+        filename = '.'.join(key) + '.json'
+        fullpath = self._cache_path + filename
+
+        if not os.path.exists(self._cache_path):
+            os.mkdir(self._cache_path)
+
+        with open(fullpath, 'w') as fdesc:
+            _LOGGER.debug('Storing to cache as %s', filename)
+            json.dump(data, fdesc)
+
+        # Set TTL by modifying modification date
+        deadline = int(time.time()) + ttl
+        os.utime(fullpath, (deadline, deadline))

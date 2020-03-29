@@ -20,16 +20,16 @@ class TestAuth(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_login(self):
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+
         # Clear any cache we have
-        AuthApi.clear_tokens()
+        auth.clear_tokens()
 
         # We should get a token by logging in
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
         token = auth.get_token()
         self.assertTrue(token)
 
         # Test it a second time, it should go from memory now
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
         token = auth.get_token()
         self.assertTrue(token)
 

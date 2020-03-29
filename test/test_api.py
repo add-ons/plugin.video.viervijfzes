@@ -18,8 +18,8 @@ _LOGGER = logging.getLogger('test-api')
 class TestApi(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
-        self._api = ContentApi(auth)
+        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+        self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
 
     def test_programs(self):
         for channel in ['vier', 'vijf', 'zes']:
@@ -39,9 +39,6 @@ class TestApi(unittest.TestCase):
     def test_get_stream(self):
         program = self._api.get_program('vier', 'auwch')
         self.assertIsInstance(program, Program)
-
-        program_by_uuid = self._api.get_program_by_uuid(program.uuid)
-        self.assertIsInstance(program_by_uuid, Program)
 
         episode = program.episodes[0]
         video = self._api.get_stream_by_uuid(episode.uuid)

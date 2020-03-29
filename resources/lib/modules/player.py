@@ -53,7 +53,7 @@ class Player:
 
             # Fetch an auth token now
             try:
-                auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'))
+                auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
 
                 # Get stream information
                 resolved_stream = ContentApi(auth).get_stream_by_uuid(item)
