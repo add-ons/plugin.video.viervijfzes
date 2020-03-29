@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 from resources.lib import kodiutils
 from resources.lib.viervijfzes import CHANNELS
-from resources.lib.viervijfzes.content import ContentApi, Program, CACHE_PREVENT, CACHE_ONLY
+from resources.lib.viervijfzes.content import ContentApi, Program, CACHE_PREVENT, CACHE_AUTO
 
 
 class Metadata:
@@ -33,6 +33,7 @@ class Metadata:
     def fetch_metadata(self, callback=None, refresh=False):
         """ Fetch the metadata for all the items in the catalog
         :type callback: callable
+        :type refresh: bool
         """
         # Fetch all items from the catalog
         items = []
@@ -43,7 +44,7 @@ class Metadata:
         # Loop over all of them and download the metadata
         for index, item in enumerate(items):
             if isinstance(item, Program):
-                self._api.get_program(item.channel, item.path, CACHE_PREVENT if refresh else CACHE_ONLY)
+                self._api.get_program(item.channel, item.path, CACHE_PREVENT if refresh else CACHE_AUTO)
 
             # Run callback after every item
             if callback and callback(index, count):
