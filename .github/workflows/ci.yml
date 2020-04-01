@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONIOENCODING: utf-8
-      PYTHONPATH: ${{ github.workspace }}/resources/lib:${{ github.workspace }}/test
+      PYTHONPATH: ${{ github.workspace }}/resources/lib:${{ github.workspace }}/tests
     strategy:
       fail-fast: false
       matrix:
@@ -49,7 +49,7 @@ jobs:
           coverage run -m unittest discover
       - name: Run addon
         run: |
-          coverage run -a test/run.py /
+          coverage run -a tests/run.py /
       - name: Run add-on service
         run: |
           coverage run -a service_entry.py
