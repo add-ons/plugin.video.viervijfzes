@@ -129,9 +129,9 @@ class DialogProgress:
         print('\033[37;44;1mPROGRESS:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, line1))
         sys.stdout.flush()
 
-    @staticmethod
-    def iscanceled():
+    def iscanceled(self):
         """A stub implementation for the xbmcgui DialogProgress class iscanceled() method"""
+        return self.percentage > 5  # Cancel at 5%
 
     def update(self, percentage, line1=None, line2=None, line3=None):
         """A stub implementation for the xbmcgui DialogProgress class update() method"""

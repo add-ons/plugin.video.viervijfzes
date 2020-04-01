@@ -5,9 +5,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 import json
 import logging
+import os
 import time
 
-from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth_awsidp import AwsIdp, InvalidLoginException, AuthenticationException
 
 _LOGGER = logging.getLogger('auth-api')
@@ -21,18 +21,18 @@ class AuthApi:
 
     TOKEN_FILE = 'auth-tokens.json'
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, token_path):
         """ Initialise object """
         self._username = username
         self._password = password
-        self._cache_dir = kodiutils.get_tokens_path()
+        self._token_path = token_path
         self._id_token = None
         self._expiry = 0
         self._refresh_token = None
 
         # Load tokens from cache
         try:
-            with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'rb') as fdesc:
+            with open(self._token_path + self.TOKEN_FILE, 'rb') as fdesc:
                 data_json = json.loads(fdesc.read())
                 self._id_token = data_json.get('id_token')
                 self._refresh_token = data_json.get('refresh_token')
@@ -72,9 +72,9 @@ class AuthApi:
             self._expiry = now + 3600
 
         # Store new tokens in cache
-        if not kodiutils.exists(self._cache_dir):
-            kodiutils.mkdirs(self._cache_dir)
-        with kodiutils.open_file(self._cache_dir + self.TOKEN_FILE, 'wb') as fdesc:
+        if not os.path.exists(self._token_path):
+            os.mkdir(self._token_path)
+        with open(self._token_path + self.TOKEN_FILE, 'wb') as fdesc:
             data = json.dumps(dict(
                 id_token=self._id_token,
                 refresh_token=self._refresh_token,
@@ -84,10 +84,10 @@ class AuthApi:
 
         return self._id_token
 
-    @staticmethod
-    def clear_tokens():
+    def clear_tokens(self):
         """ Remove the cached tokens. """
-        kodiutils.delete(kodiutils.get_tokens_path() + AuthApi.TOKEN_FILE)
+        if os.path.exists(self._token_path + AuthApi.TOKEN_FILE):
+            os.unlink(self._token_path + AuthApi.TOKEN_FILE)
 
     @staticmethod
     def _authenticate(username, password):

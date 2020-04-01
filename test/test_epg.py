@@ -9,6 +9,7 @@ import logging
 import unittest
 from datetime import date
 
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.content import ContentApi, Episode
 from resources.lib.viervijfzes.epg import EpgApi, EpgProgram
 
@@ -48,7 +49,7 @@ class TestEpg(unittest.TestCase):
         epg_program = [program for program in epg_programs if program.video_url][0]
 
         # Lookup the Episode data since we don't have an UUID
-        api = ContentApi()
+        api = ContentApi(cache_path=kodiutils.get_cache_path())
         episode = api.get_episode(epg_program.channel, epg_program.video_url)
         self.assertIsInstance(episode, Episode)
 

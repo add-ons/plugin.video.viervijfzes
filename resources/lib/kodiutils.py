@@ -4,7 +4,6 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
-from contextlib import contextmanager
 
 import xbmc
 import xbmcaddon
@@ -420,54 +419,6 @@ def get_addon_info(key):
     return to_unicode(ADDON.getAddonInfo(key))
 
 
-def listdir(path):
-    """Return all files in a directory (using xbmcvfs)"""
-    from xbmcvfs import listdir as vfslistdir
-    return vfslistdir(path)
-
-
-def mkdir(path):
-    """Create a directory (using xbmcvfs)"""
-    from xbmcvfs import mkdir as vfsmkdir
-    _LOGGER.debug("Create directory '%s'.", path)
-    return vfsmkdir(path)
-
-
-def mkdirs(path):
-    """Create directory including parents (using xbmcvfs)"""
-    from xbmcvfs import mkdirs as vfsmkdirs
-    _LOGGER.debug("Recursively create directory '%s'.", path)
-    return vfsmkdirs(path)
-
-
-def exists(path):
-    """Whether the path exists (using xbmcvfs)"""
-    from xbmcvfs import exists as vfsexists
-    return vfsexists(path)
-
-
-@contextmanager
-def open_file(path, flags='r'):
-    """Open a file (using xbmcvfs)"""
-    from xbmcvfs import File
-    fdesc = File(path, flags)
-    yield fdesc
-    fdesc.close()
-
-
-def stat_file(path):
-    """Return information about a file (using xbmcvfs)"""
-    from xbmcvfs import Stat
-    return Stat(path)
-
-
-def delete(path):
-    """Remove a file (using xbmcvfs)"""
-    from xbmcvfs import delete as vfsdelete
-    _LOGGER.debug("Delete file '%s'.", path)
-    return vfsdelete(path)
-
-
 def container_refresh(url=None):
     """Refresh the current container or (re)load a container by URL"""
     if url:
@@ -518,56 +469,3 @@ def jsonrpc(*args, **kwargs):
     if kwargs.get('jsonrpc') is None:
         kwargs.update(jsonrpc='2.0')
     return loads(xbmc.executeJSONRPC(dumps(kwargs)))
-
-
-def get_cache(key, ttl=None):
-    """ Get an item from the cache """
-    import time
-    path = get_cache_path()
-    filename = '.'.join(key)
-    fullpath = path + filename
-
-    if not exists(fullpath):
-        return None
-
-    if ttl and time.mktime(time.localtime()) - stat_file(fullpath).st_mtime() > ttl:
-        return None
-
-    with open_file(fullpath, 'r') as fdesc:
-        try:
-            _LOGGER.debug('Fetching %s from cache', filename)
-            import json
-            value = json.load(fdesc)
-            return value
-        except (ValueError, TypeError):
-            return None
-
-
-def set_cache(key, data):
-    """ Store an item in the cache """
-    path = get_cache_path()
-    filename = '.'.join(key)
-    fullpath = path + filename
-
-    if not exists(path):
-        mkdirs(path)
-
-    with open_file(fullpath, 'w') as fdesc:
-        _LOGGER.debug('Storing to cache as %s', filename)
-        import json
-        json.dump(data, fdesc)
-
-
-def invalidate_cache(ttl=None):
-    """ Clear the cache """
-    path = get_cache_path()
-    if not exists(path):
-        return
-    _, files = listdir(path)
-    import time
-    now = time.mktime(time.localtime())
-    for filename in files:
-        fullpath = path + filename
-        if ttl and now - stat_file(fullpath).st_mtime() < ttl:
-            continue
-        delete(fullpath)
