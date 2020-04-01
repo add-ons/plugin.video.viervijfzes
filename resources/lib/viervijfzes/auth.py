@@ -80,7 +80,7 @@ class AuthApi:
                 refresh_token=self._refresh_token,
                 expiry=self._expiry,
             ))
-            fdesc.write(data.encode('utf8'))
+            fdesc.write(kodiutils.from_unicode(data))
 
         return self._id_token
 

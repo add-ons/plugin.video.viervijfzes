@@ -77,7 +77,7 @@ class Catalog:
 
         # Go directly to the season when we have only one season
         if len(program.seasons) == 1:
-            self.show_program_season(channel, program_id, program.seasons.values()[0].uuid)
+            self.show_program_season(channel, program_id, list(program.seasons.values())[0].uuid)
             return
 
         studio = CHANNELS.get(program.channel, {}).get('studio_icon')
