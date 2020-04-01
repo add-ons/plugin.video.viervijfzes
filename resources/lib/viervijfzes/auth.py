@@ -8,6 +8,7 @@ import logging
 import os
 import time
 
+from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth_awsidp import AwsIdp, InvalidLoginException, AuthenticationException
 
 _LOGGER = logging.getLogger('auth-api')
