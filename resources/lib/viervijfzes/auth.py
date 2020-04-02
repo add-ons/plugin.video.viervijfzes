@@ -33,7 +33,7 @@ class AuthApi:
 
         # Load tokens from cache
         try:
-            with open(self._token_path + self.TOKEN_FILE, 'rb') as fdesc:
+            with open(self._token_path + self.TOKEN_FILE, 'r') as fdesc:
                 data_json = json.loads(fdesc.read())
                 self._id_token = data_json.get('id_token')
                 self._refresh_token = data_json.get('refresh_token')
@@ -75,7 +75,7 @@ class AuthApi:
         # Store new tokens in cache
         if not os.path.exists(self._token_path):
             os.mkdir(self._token_path)
-        with open(self._token_path + self.TOKEN_FILE, 'wb') as fdesc:
+        with open(self._token_path + self.TOKEN_FILE, 'w') as fdesc:
             data = json.dumps(dict(
                 id_token=self._id_token,
                 refresh_token=self._refresh_token,
