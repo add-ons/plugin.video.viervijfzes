@@ -11,4 +11,8 @@
         <setting label="30829" type="bool" id="metadata_update" default="true" subsetting="true"/>
         <setting label="30831" type="action" action="RunPlugin(plugin://plugin.video.viervijfzes/metadata/update)"/>
     </category>
+    <category label="30840"> <!-- Playback from cache -->
+        <setting label="30841" type="bool" id="episode_cache_enabled" default="true"/>
+        <setting label="30843" type="folder" id="episode_cache_folder" source="local" option="writeable" enable="eq(-1,true)"/>
+    </category>
 </settings>

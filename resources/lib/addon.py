@@ -92,6 +92,13 @@ def play(uuid):
     Player().play(uuid)
 
 
+@routing.route('/download/catalog/<uuid>')
+def download(uuid):
+    """ Download the requested item to cache """
+    from resources.lib.modules.player import Player
+    Player().download(uuid)
+
+
 @routing.route('/play/page/<channel>/<page>')
 def play_from_page(channel, page):
     """ Play the requested item """

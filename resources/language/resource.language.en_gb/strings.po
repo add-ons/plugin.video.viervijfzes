@@ -70,6 +70,10 @@ msgctxt "#30102"
 msgid "Go to Program"
 msgstr ""
 
+msgctxt "#30103"
+msgid "Download to cache"
+msgstr ""
+
 
 ### CODE
 msgctxt "#30204"
@@ -144,6 +148,42 @@ msgctxt "#30717"
 msgid "This program is not available in the catalogue."
 msgstr ""
 
+msgctxt "#30718"
+msgid "Could not cache this episode since the cache folder is not set or does not exist."
+msgstr ""
+
+msgctxt "#30719"
+msgid "Could not cache this episode since ffmpeg seems to be unavailable."
+msgstr ""
+
+msgctxt "#30720"
+msgid "This episode is cached locally. Do you want to play from cache or stream it?"
+msgstr ""
+
+msgctxt "#30721"
+msgid "Stream"
+msgstr ""
+
+msgctxt "#30722"
+msgid "Play from cache"
+msgstr ""
+
+msgctxt "#30723"
+msgid "Starting download..."
+msgstr ""
+
+msgctxt "#30724"
+msgid "Downloading... ({amount}%)"
+msgstr ""
+
+msgctxt "#30725"
+msgid "Download has finished. You can now play this episode from cache."
+msgstr ""
+
+msgctxt "#30726"
+msgid "This episode is already cached. Do you want to download it again?"
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"
@@ -176,4 +216,16 @@ msgstr ""
 
 msgctxt "#30831"
 msgid "Update local metadata now"
+msgstr ""
+
+msgctxt "#30840"
+msgid "Playback from cache"
+msgstr ""
+
+msgctxt "#30841"
+msgid "Allow to download episodes to a cache"
+msgstr ""
+
+msgctxt "#30843"
+msgid "Select the folder for the cached episodes"
 msgstr ""

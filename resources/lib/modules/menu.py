@@ -118,12 +118,22 @@ class Menu:
                 'duration': item.duration,
             })
 
+            if kodiutils.get_setting_bool('episode_cache_enabled'):
+                context_menu = [(
+                    kodiutils.localize(30103),  # Download to cache
+                    'Container.Update(%s)' %
+                    kodiutils.url_for('download', uuid=item.uuid)
+                )]
+            else:
+                context_menu = []
+
             return TitleItem(title=info_dict['title'],
                              path=kodiutils.url_for('play', uuid=item.uuid),
                              art_dict=art_dict,
                              info_dict=info_dict,
                              stream_dict=stream_dict,
                              prop_dict=prop_dict,
-                             is_playable=True)
+                             is_playable=True,
+                             context_menu=context_menu)
 
         raise Exception('Unknown video_type')
