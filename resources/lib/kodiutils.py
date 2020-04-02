@@ -218,15 +218,19 @@ def ok_dialog(heading='', message=''):
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
-    return Dialog().ok(heading=heading, line1=message)
+    if kodi_version_major() < 19:
+        return Dialog().ok(heading=heading, line1=message)
+    return Dialog().ok(heading=heading, message=message)
 
 
-def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None):
-    """Show Kodi's OK dialog"""
+def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None, autoclose=0):
+    """Show Kodi's Yes/No dialog"""
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
-    return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel)
+    if kodi_version_major() < 19:
+        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
+    return Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
 
 
 def notification(heading='', message='', icon='info', time=4000):
@@ -247,14 +251,27 @@ def multiselect(heading='', options=None, autoclose=0, preselect=None, use_detai
     return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
 
 
-def progress(heading='', message=''):
-    """ Show a Kodi progress dialog """
-    from xbmcgui import DialogProgress
-    if not heading:
-        heading = ADDON.getAddonInfo('name')
-    dialog_progress = DialogProgress()
-    dialog_progress.create(heading=heading, line1=message)
-    return dialog_progress
+class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,useless-object-inheritance
+    """Show Kodi's Progress dialog"""
+
+    def __init__(self, heading='', message=''):
+        """Initialize and create a progress dialog"""
+        super(progress, self).__init__()
+        if not heading:
+            heading = ADDON.getAddonInfo('name')
+        self.create(heading, message=message)
+
+    def create(self, heading, message=''):  # pylint: disable=arguments-differ
+        """Create and show a progress dialog"""
+        if kodi_version_major() < 19:
+            return super(progress, self).create(heading, line1=message)
+        return super(progress, self).create(heading, message=message)
+
+    def update(self, percent, message=''):  # pylint: disable=arguments-differ
+        """Update the progress dialog"""
+        if kodi_version_major() < 19:
+            return super(progress, self).update(percent, line1=message)
+        return super(progress, self).update(percent, message=message)
 
 
 def set_locale():
@@ -396,8 +413,13 @@ def has_addon(name):
 
 
 def kodi_version():
-    """Returns major Kodi version"""
-    return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+    """Returns full Kodi version as string"""
+    return xbmc.getInfoLabel('System.BuildVersion').split(' ')[0]
+
+
+def kodi_version_major():
+    """Returns major Kodi version as integer"""
+    return int(kodi_version().split('.')[0])
 
 
 def get_tokens_path():
