@@ -298,7 +298,7 @@ class ContentApi:
                 description=playlist['pageInfo']['description'],
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
             )
-            for key, playlist in enumerate(data['playlists'])
+            for key, playlist in enumerate(data['playlists']) if playlist['episodes']
         }
 
         # Create Episodes info
