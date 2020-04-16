@@ -65,6 +65,14 @@ msgctxt "#30056"
 msgid "Browse the Catalog for [B]{channel}[/B]"
 msgstr "Doorblader de catalogus voor [B]{channel}[/B]"
 
+msgctxt "#30057"
+msgid "Categories for [B]{channel}[/B]"
+msgstr "Categoriën voor [B]{channel}[/B]"
+
+msgctxt "#30058"
+msgid "Browse the Categories for [B]{channel}[/B]"
+msgstr "Doorblader de categoriën van [B]{channel}[/B]"
+
 
 ### CONTEXT MENU
 msgctxt "#30102"
@@ -73,6 +81,10 @@ msgstr "Ga naar programma"
 
 
 ### CODE
+msgctxt "#30203"
+msgid "Clips"
+msgstr "Clips"
+
 msgctxt "#30204"
 msgid "All seasons"
 msgstr "Alle seizoenen"

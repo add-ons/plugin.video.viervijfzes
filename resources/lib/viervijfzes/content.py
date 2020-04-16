@@ -10,8 +10,8 @@ import re
 import time
 from datetime import datetime
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser
 
 from resources.lib.viervijfzes import CHANNELS
 
@@ -37,7 +37,8 @@ class GeoblockedException(Exception):
 class Program:
     """ Defines a Program. """
 
-    def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, aired=None, cover=None, background=None, seasons=None, episodes=None):
+    def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, aired=None, cover=None, background=None, seasons=None, episodes=None,
+                 clips=None):
         """
         :type uuid: str
         :type path: str
@@ -49,6 +50,7 @@ class Program:
         :type background: str
         :type seasons: list[Season]
         :type episodes: list[Episode]
+        :type clips: list[Episode]
         """
         self.uuid = uuid
         self.path = path
@@ -60,6 +62,7 @@ class Program:
         self.background = background
         self.seasons = seasons
         self.episodes = episodes
+        self.clips = clips
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -94,8 +97,8 @@ class Season:
 class Episode:
     """ Defines an Episode. """
 
-    def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, duration=None,
-                 season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None):
+    def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, background=None,
+                 duration=None, season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None):
         """
         :type uuid: str
         :type nodeid: str
@@ -105,6 +108,7 @@ class Episode:
         :type title: str
         :type description: str
         :type cover: str
+        :type background: str
         :type duration: int
         :type season: int
         :type season_uuid: str
@@ -121,6 +125,7 @@ class Episode:
         self.title = title
         self.description = description
         self.cover = cover
+        self.background = background
         self.duration = duration
         self.season = season
         self.season_uuid = season_uuid
@@ -128,6 +133,27 @@ class Episode:
         self.rating = rating
         self.aired = aired
         self.expiry = expiry
+
+    def __repr__(self):
+        return "%r" % self.__dict__
+
+
+class Category:
+    """ Defines a Category. """
+
+    def __init__(self, uuid=None, channel=None, title=None, programs=None, episodes=None):
+        """
+        :type uuid: str
+        :type channel: str
+        :type title: str
+        :type programs: List[Program]
+        :type episodes: List[Episode]
+        """
+        self.uuid = uuid
+        self.channel = channel
+        self.title = title
+        self.programs = programs
+        self.episodes = episodes
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -206,10 +232,17 @@ class ContentApi:
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
+        # We want to use the html to extract clips
+        # This is the worst hack, since Python 2.7 doesn't support nonlocal
+        raw_html = [None]
+
         def update():
             """ Fetch the program metadata by scraping """
             # Fetch webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+
+            # Store a copy in the parent's html var.
+            raw_html[0] = page
 
             # Extract JSON
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
@@ -220,41 +253,68 @@ class ContentApi:
 
         # Fetch listing from cache or update if needed
         data = self._handle_cache(key=['program', channel, path], cache_mode=cache, update=update)
+        if not data:
+            return None
 
         program = self._parse_program_data(data)
 
+        # Also extract clips if we did a real HTTP call
+        if raw_html[0]:
+            clips = self._extract_episodes(raw_html[0], channel)
+            program.clips = clips
+
         return program
 
-    def get_episode(self, channel, path):
+    def get_episode(self, channel, path, cache=CACHE_AUTO):
         """ Get a Episode object from the specified page.
         :type channel: str
         :type path: str
+        :type cache: str
         :rtype Episode
         NOTE: This function doesn't use an API.
         """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
 
-        # Load webpage
-        page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+        def update():
+            """ Fetch the program metadata by scraping """
+            # Load webpage
+            page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
-        # Extract program JSON
-        parser = HTMLParser()
-        regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-        json_data = parser.unescape(regex_program.search(page).group(1))
-        data = json.loads(json_data)['data']
-        program = self._parse_program_data(data)
+            # Extract program JSON
+            parser = HTMLParser()
+            regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
+            result = regex_program.search(page)
+            if result:
+                json_data = parser.unescape(result.group(1))
+                data_program = json.loads(json_data)['data']
+            else:
+                data_program = None
 
-        # Extract episode JSON
-        regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
-        json_data = parser.unescape(regex_episode.search(page).group(1))
-        data = json.loads(json_data)
+            # Extract episode JSON
+            regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
+            json_data = parser.unescape(regex_episode.search(page).group(1))
+            data_episode = json.loads(json_data)
 
-        # Lookup the episode in the program JSON based on the nodeId
-        # The episode we just found doesn't contain all information
-        for episode in program.episodes:
-            if episode.nodeid == data['pageInfo']['nodeId']:
-                return episode
+            return dict(program=data_program, episode=data_episode)
+
+        # Fetch listing from cache or update if needed
+        data = self._handle_cache(key=['episode', channel, path], cache_mode=cache, update=update)
+        if not data:
+            return None
+
+        if data['program']:
+            # Lookup the episode in the program JSON based on the nodeId
+            # The episode we just found doesn't contain all information
+            program = self._parse_program_data(data['program'])
+            for episode in program.episodes:
+                if episode.nodeid == data['episode']['pageInfo']['nodeId']:
+                    return episode
+
+        else:
+            # This video is not part of a program, so we have no Program object.
+            # TODO: create a complete Episode object
+            pass
 
         return None
 
@@ -267,15 +327,141 @@ class ContentApi:
         data = json.loads(response)
         return data['video']['S']
 
+    def get_categories(self, channel):
+        """ Get a list of all categories of the specified channel.
+        :type channel: str
+        :rtype list[Category]
+        """
+        if channel not in CHANNELS:
+            raise Exception('Unknown channel %s' % channel)
+
+        # Load webpage
+        raw_html = self._get_url(CHANNELS[channel]['url'])
+
+        # Categories regexes
+        regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
+        regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
+        regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
+
+        categories = []
+        for result in regex_articles.finditer(raw_html):
+            article_info_html = result.group(1)
+            article_html = result.group(2)
+            category_title = regex_submenu_title.search(article_info_html).group(1)
+            category_id = regex_submenu_id.search(article_info_html).group(1)
+
+            # Skip empty categories or 'All programs'
+            if not category_id or category_id == 'programmas':
+                continue
+
+            # Extract items
+            programs = self._extract_programs(article_html, channel)
+            episodes = self._extract_episodes(article_html, channel)
+            categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
+
+        return categories
+
+    @staticmethod
+    def _extract_programs(html, channel):
+        """ Extract Programs from HTML code """
+        parser = HTMLParser()
+
+        # Item regexes
+        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
+                                r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
+                                r'</a>', re.DOTALL)
+
+        # Extract items
+        programs = []
+        for item in regex_item.finditer(html):
+            path = item.group('path')
+            if path.startswith('/video'):
+                continue
+
+            title = parser.unescape(item.group('title'))
+
+            # Program
+            programs.append(Program(
+                path=path.lstrip('/'),
+                channel=channel,
+                title=title,
+            ))
+
+        return programs
+
+    @staticmethod
+    def _extract_episodes(html, channel):
+        """ Extract Episodes from HTML code """
+        parser = HTMLParser()
+
+        # Item regexes
+        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>.*?</a>', re.DOTALL)
+
+        # Episode regexes
+        regex_episode_title = re.compile(r'<h3 class="(?:poster|card|image)-teaser__title">(?:<span>)?([^<]*)(?:</span>)?</h3>')
+        regex_episode_program = re.compile(r'<div class="card-teaser__label">([^<]*)</div>')
+        regex_episode_duration = re.compile(r'data-duration="([^"]*)"')
+        regex_episode_video_id = re.compile(r'data-videoid="([^"]*)"')
+        regex_episode_image = re.compile(r'data-background-image="([^"]*)"')
+        regex_episode_timestamp = re.compile(r'data-timestamp="([^"]*)"')
+
+        # Extract items
+        episodes = []
+        for item in regex_item.finditer(html):
+            item_html = item.group(0)
+            path = item.group('path')
+
+            # Extract title
+            try:
+                title = parser.unescape(regex_episode_title.search(item_html).group(1))
+            except AttributeError:
+                continue
+
+            # This is not a episode
+            if not path.startswith('/video'):
+                continue
+
+            try:
+                episode_program = regex_episode_program.search(item_html).group(1)
+            except AttributeError:
+                episode_program = None
+            try:
+                episode_duration = int(regex_episode_duration.search(item_html).group(1))
+            except AttributeError:
+                episode_duration = None
+            try:
+                episode_video_id = regex_episode_video_id.search(item_html).group(1)
+            except AttributeError:
+                episode_video_id = None
+            try:
+                episode_image = parser.unescape(regex_episode_image.search(item_html).group(1))
+            except AttributeError:
+                episode_image = None
+            try:
+                episode_timestamp = int(regex_episode_timestamp.search(item_html).group(1))
+            except AttributeError:
+                episode_timestamp = None
+
+            # Episode
+            episodes.append(Episode(
+                path=path.lstrip('/'),
+                channel=channel,
+                title=title,
+                duration=episode_duration,
+                uuid=episode_video_id,
+                aired=datetime.fromtimestamp(episode_timestamp) if episode_timestamp else None,
+                cover=episode_image,
+                program_title=episode_program,
+            ))
+
+        return episodes
+
     @staticmethod
     def _parse_program_data(data):
         """ Parse the Program JSON.
         :type data: dict
         :rtype Program
         """
-        if data is None:
-            return None
-
         # Create Program info
         program = Program(
             uuid=data['id'],
@@ -337,6 +523,7 @@ class ContentApi:
             title=data.get('title'),
             description=data.get('pageInfo', {}).get('description'),
             cover=data.get('image'),
+            background=data.get('image'),
             duration=data.get('duration'),
             season=data.get('seasonNumber'),
             season_uuid=season_uuid,
@@ -393,7 +580,7 @@ class ContentApi:
 
     def _get_cache(self, key, allow_expired=False):
         """ Get an item from the cache """
-        filename = '.'.join(key) + '.json'
+        filename = ('.'.join(key) + '.json').replace('/', '_')
         fullpath = self._cache_path + filename
 
         if not os.path.exists(fullpath):
@@ -412,7 +599,7 @@ class ContentApi:
 
     def _set_cache(self, key, data, ttl):
         """ Store an item in the cache """
-        filename = '.'.join(key) + '.json'
+        filename = ('.'.join(key) + '.json').replace('/', '_')
         fullpath = self._cache_path + filename
 
         if not os.path.exists(self._cache_path):

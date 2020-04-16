@@ -65,6 +65,7 @@ class Menu:
         art_dict = {
             'thumb': item.cover,
             'cover': item.cover,
+            'fanart': item.background or item.cover,
         }
         info_dict = {
             'title': item.title,
@@ -78,9 +79,6 @@ class Menu:
         # Program
         #
         if isinstance(item, Program):
-            art_dict.update({
-                'fanart': item.background,
-            })
             info_dict.update({
                 'mediatype': None,
                 'season': len(item.seasons) if item.seasons else None,
@@ -102,9 +100,6 @@ class Menu:
         # Episode
         #
         if isinstance(item, Episode):
-            art_dict.update({
-                'fanart': item.cover,
-            })
             info_dict.update({
                 'mediatype': 'episode',
                 'tvshowtitle': item.program_title,

@@ -122,6 +122,24 @@ class Catalog:
                 )
             )
 
+        # Add Clips
+        listing.append(
+            TitleItem(
+                title='* %s' % kodiutils.localize(30203),  # * Clips
+                path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season='clips'),
+                art_dict={
+                    'fanart': program.background,
+                },
+                info_dict={
+                    'tvshowtitle': program.title,
+                    'title': kodiutils.localize(30203),  # Clips
+                    'plot': program.description,
+                    'set': program.title,
+                    'studio': studio,
+                }
+            )
+        )
+
         # Sort by label. Some programs return seasons unordered.
         kodiutils.show_listing(listing, 30003, content='tvshows')
 
@@ -149,3 +167,20 @@ class Catalog:
 
         # Sort by episode number by default. Takes seasons into account.
         kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration'])
+
+    def show_program_clips(self, channel, program_id):
+        """ Show the clips of a program from the catalog
+        :type channel: str
+        :type program_id: str
+        """
+        try:
+            program = self._api.get_program(channel, program_id, CACHE_PREVENT)  # We need to query the backend, since we don't cache clips.
+        except UnavailableException:
+            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
+            kodiutils.end_of_directory()
+            return
+
+        listing = [self._menu.generate_titleitem(episode) for episode in program.clips]
+
+        # Sort by episode number by default. Takes seasons into account.
+        kodiutils.show_listing(listing, 30003, content='episodes', sort=['unsorted'])

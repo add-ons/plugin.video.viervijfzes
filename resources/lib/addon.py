@@ -35,18 +35,32 @@ def show_channel_menu(channel):
     Channels().show_channel_menu(channel)
 
 
-@routing.route('/tvguide/channel/<channel>')
-def show_tvguide_channel(channel):
+@routing.route('/channels/<channel>/categories')
+def show_channel_categories(channel):
+    """ Shows TV Channel categories """
+    from resources.lib.modules.channels import Channels
+    Channels().show_channel_categories(channel)
+
+
+@routing.route('/channels/<channel>/categories/<category>')
+def show_channel_category(channel, category):
+    """ Shows TV Channel categories """
+    from resources.lib.modules.channels import Channels
+    Channels().show_channel_category(channel, category)
+
+
+@routing.route('/channels/<channel>/tvguide')
+def show_channel_tvguide(channel):
     """ Shows the dates in the tv guide """
     from resources.lib.modules.tvguide import TvGuide
-    TvGuide().show_tvguide_channel(channel)
+    TvGuide().show_channel(channel)
 
 
-@routing.route('/tvguide/channel/<channel>/<date>')
-def show_tvguide_detail(channel=None, date=None):
+@routing.route('/channels/<channel>/tvguide/<date>')
+def show_channel_tvguide_detail(channel=None, date=None):
     """ Shows the programs of a specific date in the tv guide """
     from resources.lib.modules.tvguide import TvGuide
-    TvGuide().show_tvguide_detail(channel, date)
+    TvGuide().show_detail(channel, date)
 
 
 @routing.route('/catalog')
@@ -56,25 +70,28 @@ def show_catalog():
     Catalog().show_catalog()
 
 
-@routing.route('/catalog/by-channel/<channel>')
-def show_catalog_channel(channel):
+@routing.route('/catalog/<channel>')
+def show_channel_catalog(channel):
     """ Show a category in the catalog """
     from resources.lib.modules.catalog import Catalog
     Catalog().show_catalog_channel(channel)
 
 
-@routing.route('/catalog/program/<channel>/<program>')
+@routing.route('/catalog/<channel>/<program>')
 def show_catalog_program(channel, program):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
     Catalog().show_program(channel, program)
 
 
-@routing.route('/catalog/program/<channel>/<program>/<season>')
+@routing.route('/catalog/<channel>/<program>/<season>')
 def show_catalog_program_season(channel, program, season):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_season(channel, program, season)
+    if season == 'clips':
+        Catalog().show_program_clips(channel, program)
+    else:
+        Catalog().show_program_season(channel, program, season)
 
 
 @routing.route('/search')
