@@ -37,7 +37,7 @@ class GeoblockedException(Exception):
 class Program:
     """ Defines a Program. """
 
-    def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, aired=None, cover=None, background=None, seasons=None, episodes=None):
+    def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, aired=None, cover=None, background=None, seasons=None, episodes=None, clips=None):
         """
         :type uuid: str
         :type path: str
@@ -49,6 +49,7 @@ class Program:
         :type background: str
         :type seasons: list[Season]
         :type episodes: list[Episode]
+        :type clips: list[Clip]
         """
         self.uuid = uuid
         self.path = path
@@ -60,6 +61,7 @@ class Program:
         self.background = background
         self.seasons = seasons
         self.episodes = episodes
+        self.clips = clips
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -131,6 +133,34 @@ class Episode:
 
     def __repr__(self):
         return "%r" % self.__dict__
+
+class Clip:
+    """ Defines a Clip. """
+
+    def __init__(self, uuid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, duration=None):
+        """
+        :type uuid: str
+        :type path: str
+        :type channel: str
+        :type program_title: str
+        :type title: str
+        :type description: str
+        :type cover: str
+        :type duration: int
+        """
+        self.uuid = uuid
+        self.path = path
+        self.channel = channel
+        self.program_title = program_title
+        self.title = title
+        self.description = description
+        self.cover = cover
+        self.duration = duration
+
+    def __repr__(self):
+        return "%r" % self.__dict__
+
+
 
 
 class ContentApi:
@@ -216,12 +246,29 @@ class ContentApi:
             json_data = HTMLParser().unescape(regex_program.search(page).group(1))
             data = json.loads(json_data)['data']
 
-            return data
+            # Extract clips
+            parser = HTMLParser()
+            regex_clips = re.compile(r'<a class="teaser card-teaser ui-animated has-duration-bar" href="(?P<path>[^"]+)[\s\S]*?'
+                                     r'data-background-image="(?P<cover>[^"]+)[\s\S]*?'
+                                     r'data-duration="(?P<duration>[^"]+)[\s\S]*?'
+                                     r'data-videoid="(?P<uuid>[^"]+)[\s\S]*?'
+                                     r'card-teaser__title"><span>(?P<title>[^.*]+)</span>[\s\S]*?'
+                                     r'</a>', re.DOTALL)
+
+            clips = [
+                [item.group('path'), item.group('cover'), str(item.group('duration')), item.group('uuid'), parser.unescape(item.group('title')), channel]
+                for item in regex_clips.finditer(page)
+            ]
+
+            _LOGGER.warning(str('aantal: ' + str(len(clips))))
+            _LOGGER.warning(str('elementen: ' + str(len(clips[0]))))
+
+            
+            return [data, clips]
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['program', channel, path], cache_mode=cache, update=update)
-
-        program = self._parse_program_data(data)
+        data, clips = self._handle_cache(key=['program', channel, path], cache_mode=cache, update=update)
+        program = self._parse_program_data(data, clips)
 
         return program
 
@@ -243,12 +290,15 @@ class ContentApi:
         regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
         json_data = parser.unescape(regex_program.search(page).group(1))
         data = json.loads(json_data)['data']
-        program = self._parse_program_data(data)
+        program = self._parse_program_data(data, None)
 
         # Extract episode JSON
         regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
         json_data = parser.unescape(regex_episode.search(page).group(1))
         data = json.loads(json_data)
+
+        # Extract clips data
+
 
         # Lookup the episode in the program JSON based on the nodeId
         # The episode we just found doesn't contain all information
@@ -268,9 +318,10 @@ class ContentApi:
         return data['video']['S']
 
     @staticmethod
-    def _parse_program_data(data):
+    def _parse_program_data(data, clips):
         """ Parse the Program JSON.
         :type data: dict
+        :type clips: list
         :rtype Program
         """
         if data is None:
@@ -308,6 +359,19 @@ class ContentApi:
             for episode in playlist['episodes']
         ]
 
+        program.clips = [
+            Clip(
+                uuid=clip[3],
+                path=clip[0],
+                channel=clip[5],
+                program_title='title',
+                title=clip[4],
+                description='',
+                cover=clip[1],
+                duration=clip[2]
+            )
+            for clip in clips
+        ]
         return program
 
     @staticmethod
@@ -369,25 +433,28 @@ class ContentApi:
 
     def _handle_cache(self, key, cache_mode, update, ttl=30 * 24 * 60 * 60):
         """ Fetch something from the cache, and update if needed """
+        data = [None, None]
         if cache_mode in [CACHE_AUTO, CACHE_ONLY]:
             # Try to fetch from cache
-            data = self._get_cache(key)
-            if data is None and cache_mode == CACHE_ONLY:
-                return None
+            data[0] = self._get_cache(key)
+            if data[0] is None and cache_mode == CACHE_ONLY:
+                return [None, None]
         else:
-            data = None
+            data[0] = None
 
-        if data is None:
-            try:
+        if data[0] is None:
+            #try:
                 # Fetch fresh data
-                _LOGGER.debug('Fetching fresh data for key %s', '.'.join(key))
-                data = update()
-                if data:
-                    # Store fresh response in cache
-                    self._set_cache(key, data, ttl)
-            except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.warning('Something went wrong when refreshing live data: %s. Using expired cached values.', exc)
-                data = self._get_cache(key, allow_expired=True)
+            _LOGGER.debug('Fetching fresh data for key %s', '.'.join(key))
+            data = update()
+            _LOGGER.warning(data)
+            if data:
+                # Store fresh response in cache
+                self._set_cache(key, data[0], ttl)
+#            except Exception as exc:  # pylint: disable=broad-except
+#                _LOGGER.warning('Something went wrong when refreshing live data: %s. Using expired cached values.', exc)
+#                data[0] = self._get_cache(key, allow_expired=True)
+#                data[1] = None
 
         return data
 
