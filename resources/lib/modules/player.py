@@ -23,9 +23,7 @@ class Player:
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
 
         # Workaround for Raspberry Pi 3 and older
-        omxplayer = kodiutils.get_global_setting('videoplayer.useomxplayer')
-        if omxplayer is False:
-            kodiutils.set_global_setting('videoplayer.useomxplayer', True)
+        kodiutils.set_global_setting('videoplayer.useomxplayer', True)
 
     def play_from_page(self, channel, path):
         """ Play the requested item.
@@ -40,14 +38,16 @@ class Player:
             # We already have a resolved stream. Nice!
             # We don't need credentials for these streams.
             resolved_stream = episode.stream
+            _LOGGER.info('Already got a resolved stream: %s', resolved_stream)
 
         if episode.uuid:
             # Lookup the stream
             resolved_stream = self._resolve_stream(episode.uuid)
+            _LOGGER.info('Resolved stream: %s', resolved_stream)
 
         if resolved_stream:
             titleitem = Menu.generate_titleitem(episode)
-            kodiutils.play(episode.stream, info_dict=titleitem.info_dict, art_dict=titleitem.art_dict, prop_dict=titleitem.prop_dict)
+            kodiutils.play(resolved_stream, info_dict=titleitem.info_dict, art_dict=titleitem.art_dict, prop_dict=titleitem.prop_dict)
 
     def play(self, uuid):
         """ Play the requested item.

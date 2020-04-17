@@ -172,7 +172,8 @@ class Catalog:
         :type program_id: str
         """
         try:
-            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)  # We need to query the backend, since we don't cache clips.
+            # We need to query the backend, since we don't cache clips.
+            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()

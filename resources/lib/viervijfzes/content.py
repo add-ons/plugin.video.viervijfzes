@@ -262,7 +262,7 @@ class ContentApi:
 
         # Also extract clips if we did a real HTTP call
         if extract_clips and raw_html[0]:
-            clips = self._extract_episodes(raw_html[0], channel)
+            clips = self._extract_videos(raw_html[0], channel)
             program.clips = clips
 
         return program
@@ -282,27 +282,26 @@ class ContentApi:
             # Load webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
+            parser = HTMLParser()
             program_json = None
             episode_json = None
-            video_json = None
+
+            # Extract video JSON by looking for a data-video tag
+            # This is not present on every page
+            regex_video_data = re.compile(r'data-video="([^"]+)"', re.DOTALL)
+            result = regex_video_data.search(page)
+            if result:
+                video_id = json.loads(parser.unescape(result.group(1)))['id']
+                video_json_data = self._get_url('%s/video/%s' % (self.SITE_APIS[channel], video_id))
+                video_json = json.loads(video_json_data)
+                return dict(video=video_json)
 
             # Extract program JSON
-            parser = HTMLParser()
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
             result = regex_program.search(page)
             if result:
                 program_json_data = parser.unescape(result.group(1))
                 program_json = json.loads(program_json_data)['data']
-
-            else:
-                # We have no program JSON, so this probably is a clip page.
-                # CLip pages have a data-video id that we can query for more information.
-                regex_video_data = re.compile(r'data-video="([^"]+)"', re.DOTALL)
-                result = regex_video_data.search(page)
-                if result:
-                    video_id = json.loads(parser.unescape(result.group(1)))['id']
-                    video_json_data = self._get_url('%s/video/%s' % (self.SITE_APIS[channel], video_id))
-                    video_json = json.loads(video_json_data)
 
             # Extract episode JSON
             regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
@@ -311,7 +310,7 @@ class ContentApi:
                 episode_json_data = parser.unescape(result.group(1))
                 episode_json = json.loads(episode_json_data)
 
-            return dict(program=program_json, episode=episode_json, video=video_json)
+            return dict(program=program_json, episode=episode_json)
 
         # Fetch listing from cache or update if needed
         data = self._handle_cache(key=['episode', channel, path], cache_mode=cache, update=update)
@@ -371,7 +370,7 @@ class ContentApi:
 
             # Extract items
             programs = self._extract_programs(article_html, channel)
-            episodes = self._extract_episodes(article_html, channel)
+            episodes = self._extract_videos(article_html, channel)
             categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
 
         return categories
@@ -405,8 +404,8 @@ class ContentApi:
         return programs
 
     @staticmethod
-    def _extract_episodes(html, channel):
-        """ Extract Episodes from HTML code """
+    def _extract_videos(html, channel):
+        """ Extract videos from HTML code """
         parser = HTMLParser()
 
         # Item regexes
@@ -439,22 +438,27 @@ class ContentApi:
             try:
                 episode_program = regex_episode_program.search(item_html).group(1)
             except AttributeError:
+                _LOGGER.warning('Found no episode_program for %s', title)
                 episode_program = None
             try:
                 episode_duration = int(regex_episode_duration.search(item_html).group(1))
             except AttributeError:
+                _LOGGER.warning('Found no episode_duration for %s', title)
                 episode_duration = None
             try:
                 episode_video_id = regex_episode_video_id.search(item_html).group(1)
             except AttributeError:
+                _LOGGER.warning('Found no episode_video_id for %s', title)
                 episode_video_id = None
             try:
                 episode_image = parser.unescape(regex_episode_image.search(item_html).group(1))
             except AttributeError:
+                _LOGGER.warning('Found no episode_image for %s', title)
                 episode_image = None
             try:
                 episode_timestamp = int(regex_episode_timestamp.search(item_html).group(1))
             except AttributeError:
+                _LOGGER.warning('Found no episode_timestamp for %s', title)
                 episode_timestamp = None
 
             # Episode
