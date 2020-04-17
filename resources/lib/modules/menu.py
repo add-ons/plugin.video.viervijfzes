@@ -113,8 +113,20 @@ class Menu:
                 'duration': item.duration,
             })
 
+            if item.uuid:
+                # We have an UUID and can play this item directly
+                path = kodiutils.url_for('play', uuid=item.uuid)
+            else:
+                try:  # Python 3
+                    from urllib.parse import quote
+                except ImportError:  # Python 2
+                    from urllib import quote
+
+                # We don't have an UUID, and first need to fetch the video information from the page
+                path = kodiutils.url_for('play_from_page', channel=item.channel, page=quote(item.path, safe=''))
+
             return TitleItem(title=info_dict['title'],
-                             path=kodiutils.url_for('play', uuid=item.uuid),
+                             path=path,
                              art_dict=art_dict,
                              info_dict=info_dict,
                              stream_dict=stream_dict,

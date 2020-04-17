@@ -22,7 +22,6 @@ class Channels:
         """ Initialise object """
         auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
-        self._menu = Menu()
 
     @staticmethod
     def show_channels():
@@ -162,9 +161,9 @@ class Channels:
             program = self._api.get_program(channel, item.path, CACHE_ONLY)  # Get program details, but from cache only
 
             if program:
-                listing_programs.append(self._menu.generate_titleitem(program))
+                listing_programs.append(Menu.generate_titleitem(program))
             else:
-                listing_programs.append(self._menu.generate_titleitem(item))
+                listing_programs.append(Menu.generate_titleitem(item))
 
         # Add episodes
         listing_episodes = []
@@ -175,8 +174,8 @@ class Channels:
             episode = self._api.get_episode(channel, item.path, CACHE_AUTO)
 
             if episode:
-                listing_episodes.append(self._menu.generate_titleitem(episode))
+                listing_episodes.append(Menu.generate_titleitem(episode))
             else:
-                listing_episodes.append(self._menu.generate_titleitem(item))
+                listing_episodes.append(Menu.generate_titleitem(item))
 
         kodiutils.show_listing(listing_programs + listing_episodes, 30007, content='tvshows', sort=['unsorted'])

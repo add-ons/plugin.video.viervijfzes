@@ -22,7 +22,6 @@ class Catalog:
         """ Initialise object """
         auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
-        self._menu = Menu()
 
     def show_catalog(self):
         """ Show all the programs of all channels """
@@ -34,7 +33,7 @@ class Catalog:
             kodiutils.notification(message=str(ex))
             raise
 
-        listing = [self._menu.generate_titleitem(item) for item in items]
+        listing = [Menu.generate_titleitem(item) for item in items]
 
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
@@ -52,7 +51,7 @@ class Catalog:
 
         listing = []
         for item in items:
-            listing.append(self._menu.generate_titleitem(item))
+            listing.append(Menu.generate_titleitem(item))
 
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
@@ -162,7 +161,7 @@ class Catalog:
             # Show the episodes of the season that was selected
             episodes = [e for e in program.episodes if e.season_uuid == season_uuid]
 
-        listing = [self._menu.generate_titleitem(episode) for episode in episodes]
+        listing = [Menu.generate_titleitem(episode) for episode in episodes]
 
         # Sort by episode number by default. Takes seasons into account.
         kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration'])
@@ -173,13 +172,13 @@ class Catalog:
         :type program_id: str
         """
         try:
-            program = self._api.get_program(channel, program_id, CACHE_PREVENT)  # We need to query the backend, since we don't cache clips.
+            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)  # We need to query the backend, since we don't cache clips.
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 
-        listing = [self._menu.generate_titleitem(episode) for episode in program.clips]
+        listing = [Menu.generate_titleitem(episode) for episode in program.clips]
 
         # Sort like we get our results back.
         kodiutils.show_listing(listing, 30003, content='episodes')

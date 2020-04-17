@@ -10,8 +10,8 @@ import re
 import time
 from datetime import datetime
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser
 
 from resources.lib.viervijfzes import CHANNELS
 
@@ -98,7 +98,7 @@ class Episode:
     """ Defines an Episode. """
 
     def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, background=None,
-                 duration=None, season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None):
+                 duration=None, season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None, stream=None):
         """
         :type uuid: str
         :type nodeid: str
@@ -116,6 +116,7 @@ class Episode:
         :type rating: str
         :type aired: datetime
         :type expiry: datetime
+        :type stream: string
         """
         self.uuid = uuid
         self.nodeid = nodeid
@@ -133,6 +134,7 @@ class Episode:
         self.rating = rating
         self.aired = aired
         self.expiry = expiry
+        self.stream = stream
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -222,7 +224,7 @@ class ContentApi:
                                         title=title))
         return programs
 
-    def get_program(self, channel, path, cache=CACHE_AUTO):
+    def get_program(self, channel, path, extract_clips=False, cache=CACHE_AUTO):
         """ Get a Program object from the specified page.
         :type channel: str
         :type path: str
@@ -241,7 +243,7 @@ class ContentApi:
             # Fetch webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
-            # Store a copy in the parent's html var.
+            # Store a copy in the parent's raw_html var.
             raw_html[0] = page
 
             # Extract JSON
@@ -259,7 +261,7 @@ class ContentApi:
         program = self._parse_program_data(data)
 
         # Also extract clips if we did a real HTTP call
-        if raw_html[0]:
+        if extract_clips and raw_html[0]:
             clips = self._extract_episodes(raw_html[0], channel)
             program.clips = clips
 
@@ -271,7 +273,6 @@ class ContentApi:
         :type path: str
         :type cache: str
         :rtype Episode
-        NOTE: This function doesn't use an API.
         """
         if channel not in CHANNELS:
             raise Exception('Unknown channel %s' % channel)
@@ -281,40 +282,54 @@ class ContentApi:
             # Load webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
+            program_json = None
+            episode_json = None
+            video_json = None
+
             # Extract program JSON
             parser = HTMLParser()
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
             result = regex_program.search(page)
             if result:
-                json_data = parser.unescape(result.group(1))
-                data_program = json.loads(json_data)['data']
+                program_json_data = parser.unescape(result.group(1))
+                program_json = json.loads(program_json_data)['data']
+
             else:
-                data_program = None
+                # We have no program JSON, so this probably is a clip page.
+                # CLip pages have a data-video id that we can query for more information.
+                regex_video_data = re.compile(r'data-video="([^"]+)"', re.DOTALL)
+                result = regex_video_data.search(page)
+                if result:
+                    video_id = json.loads(parser.unescape(result.group(1)))['id']
+                    video_json_data = self._get_url('%s/video/%s' % (self.SITE_APIS[channel], video_id))
+                    video_json = json.loads(video_json_data)
 
             # Extract episode JSON
             regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
-            json_data = parser.unescape(regex_episode.search(page).group(1))
-            data_episode = json.loads(json_data)
+            result = regex_episode.search(page)
+            if result:
+                episode_json_data = parser.unescape(result.group(1))
+                episode_json = json.loads(episode_json_data)
 
-            return dict(program=data_program, episode=data_episode)
+            return dict(program=program_json, episode=episode_json, video=video_json)
 
         # Fetch listing from cache or update if needed
         data = self._handle_cache(key=['episode', channel, path], cache_mode=cache, update=update)
         if not data:
             return None
 
-        if data['program']:
-            # Lookup the episode in the program JSON based on the nodeId
-            # The episode we just found doesn't contain all information
+        if 'video' in data and data['video']:
+            # We have found detailed episode information
+            episode = self._parse_episode_data(data['video'])
+            return episode
+
+        if 'program' in data and 'episode' in data and data['program'] and data['episode']:
+            # We don't have detailed episode information
+            # We need to lookup the episode in the program JSON
             program = self._parse_program_data(data['program'])
             for episode in program.episodes:
                 if episode.nodeid == data['episode']['pageInfo']['nodeId']:
                     return episode
-
-        else:
-            # This video is not part of a program, so we have no Program object.
-            # TODO: create a complete Episode object
-            pass
 
         return None
 
@@ -497,7 +512,7 @@ class ContentApi:
         return program
 
     @staticmethod
-    def _parse_episode_data(data, season_uuid):
+    def _parse_episode_data(data, season_uuid=None):
         """ Parse the Episode JSON.
         :type data: dict
         :type season_uuid: str
@@ -530,7 +545,8 @@ class ContentApi:
             number=episode_number,
             aired=datetime.fromtimestamp(data.get('createdDate')),
             expiry=datetime.fromtimestamp(data.get('unpublishDate')) if data.get('unpublishDate') else None,
-            rating=data.get('parentalRating')
+            rating=data.get('parentalRating'),
+            stream=data.get('path'),
         )
         return episode
 

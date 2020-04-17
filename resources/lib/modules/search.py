@@ -18,7 +18,6 @@ class Search:
     def __init__(self):
         """ Initialise object """
         self._search = SearchApi()
-        self._menu = Menu()
 
     def show_search(self, query=None):
         """ Shows the search dialog
@@ -40,7 +39,7 @@ class Search:
             return
 
         # Display results
-        listing = [self._menu.generate_titleitem(item) for item in items]
+        listing = [Menu.generate_titleitem(item) for item in items]
 
         # Sort like we get our results back.
         kodiutils.show_listing(listing, 30009, content='tvshows')

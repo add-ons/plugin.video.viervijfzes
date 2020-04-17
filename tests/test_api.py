@@ -36,11 +36,21 @@ class TestApi(unittest.TestCase):
 
     def test_episodes(self):
         for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
-            program = self._api.get_program(channel, program, CACHE_PREVENT)
+            program = self._api.get_program(channel, program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
+
+    def test_clips(self):
+        for channel, program in [('vier', 'gert-late-night')]:
+            program = self._api.get_program(channel, program, extract_clips=True, cache=CACHE_PREVENT)
+
+            self.assertIsInstance(program.clips, list)
+            self.assertIsInstance(program.clips[0], Episode)
+
+            episode = self._api.get_episode(channel, program.clips[0].path, cache=CACHE_PREVENT)
+            self.assertIsInstance(episode, Episode)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
