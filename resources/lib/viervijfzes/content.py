@@ -10,8 +10,8 @@ import re
 import time
 from datetime import datetime
 
-import requests
 from six.moves.html_parser import HTMLParser
+import requests
 
 from resources.lib.viervijfzes import CHANNELS
 
