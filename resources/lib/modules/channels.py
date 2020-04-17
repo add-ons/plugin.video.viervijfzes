@@ -172,11 +172,9 @@ class Channels:
             # We don't have the Program Name without making a request to the page, so we use CACHE_AUTO instead of CACHE_ONLY.
             # This will make a request for each item in this view (about 12 items), but it goes quite fast.
             # Results are cached, so this will only happen once.
-            _LOGGER.error(item)
             episode = self._api.get_episode(channel, item.path, CACHE_AUTO)
 
             if episode:
-                # episode.cover = item.cover  # We have a better cover
                 listing_episodes.append(self._menu.generate_titleitem(episode))
             else:
                 listing_episodes.append(self._menu.generate_titleitem(item))

@@ -125,15 +125,14 @@ class Catalog:
         # Add Clips
         listing.append(
             TitleItem(
-                title='* %s' % kodiutils.localize(30203),  # * Clips
-                path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season='clips'),
+                title=kodiutils.localize(30203),  # Clips
+                path=kodiutils.url_for('show_catalog_program_clips', channel=channel, program=program_id),
                 art_dict={
                     'fanart': program.background,
                 },
                 info_dict={
                     'tvshowtitle': program.title,
                     'title': kodiutils.localize(30203),  # Clips
-                    'plot': program.description,
                     'set': program.title,
                     'studio': studio,
                 }
@@ -182,5 +181,5 @@ class Catalog:
 
         listing = [self._menu.generate_titleitem(episode) for episode in program.clips]
 
-        # Sort by episode number by default. Takes seasons into account.
-        kodiutils.show_listing(listing, 30003, content='episodes', sort=['unsorted'])
+        # Sort like we get our results back.
+        kodiutils.show_listing(listing, 30003, content='episodes')

@@ -84,14 +84,18 @@ def show_catalog_program(channel, program):
     Catalog().show_program(channel, program)
 
 
-@routing.route('/catalog/<channel>/<program>/<season>')
-def show_catalog_program_season(channel, program, season):
-    """ Show a program from the catalog """
+@routing.route('/catalog/<channel>/<program>/clips')
+def show_catalog_program_clips(channel, program):
+    """ Show the clips from a program """
     from resources.lib.modules.catalog import Catalog
-    if season == 'clips':
-        Catalog().show_program_clips(channel, program)
-    else:
-        Catalog().show_program_season(channel, program, season)
+    Catalog().show_program_clips(channel, program)
+
+
+@routing.route('/catalog/<channel>/<program>/season/<season>')
+def show_catalog_program_season(channel, program, season):
+    """ Show a season from a program """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_program_season(channel, program, season)
 
 
 @routing.route('/search')
