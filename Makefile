@@ -31,6 +31,7 @@ check-translations:
 	@$(foreach lang,$(languages), \
 		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
 	)
+	@scripts/check-for-unused-translations.py
 
 check-addon: clean build
 	@echo ">>> Running addon checks"
