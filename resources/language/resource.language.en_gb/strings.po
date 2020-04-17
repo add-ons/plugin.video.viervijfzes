@@ -72,6 +72,14 @@ msgctxt "#30058"
 msgid "Browse the Categories for [B]{channel}[/B]"
 msgstr ""
 
+msgctxt "#30059"
+msgid "Clips of [B]{program}[/B]"
+msgstr ""
+
+msgctxt "#30060"
+msgid "Watch short clips of [B]{program}[/B]"
+msgstr ""
+
 
 ### CONTEXT MENU
 msgctxt "#30102"
@@ -80,10 +88,6 @@ msgstr ""
 
 
 ### CODE
-msgctxt "#30203"
-msgid "Clips"
-msgstr ""
-
 msgctxt "#30204"
 msgid "All seasons"
 msgstr ""

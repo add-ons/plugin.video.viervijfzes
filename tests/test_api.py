@@ -43,7 +43,7 @@ class TestApi(unittest.TestCase):
             self.assertIsInstance(program.episodes[0], Episode)
 
     def test_clips(self):
-        for channel, program in [('vier', 'gert-late-night')]:
+        for channel, program in [('vier', 'gert-late-night'), ('zes', 'macgyver')]:
             program = self._api.get_program(channel, program, extract_clips=True, cache=CACHE_PREVENT)
 
             self.assertIsInstance(program.clips, list)
