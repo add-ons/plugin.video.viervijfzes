@@ -65,6 +65,22 @@ msgctxt "#30056"
 msgid "Browse the Catalog for [B]{channel}[/B]"
 msgstr "Doorblader de catalogus voor [B]{channel}[/B]"
 
+msgctxt "#30057"
+msgid "Categories for [B]{channel}[/B]"
+msgstr "Categoriën voor [B]{channel}[/B]"
+
+msgctxt "#30058"
+msgid "Browse the Categories for [B]{channel}[/B]"
+msgstr "Doorblader de categoriën van [B]{channel}[/B]"
+
+msgctxt "#30059"
+msgid "Clips of [B]{program}[/B]"
+msgstr "Clips van [B]{program}[/B]"
+
+msgctxt "#30060"
+msgid "Watch short clips of [B]{program}[/B]"
+msgstr "Bekijk korte videoclips van [B]{program}[/B]"
+
 
 ### CONTEXT MENU
 msgctxt "#30102"

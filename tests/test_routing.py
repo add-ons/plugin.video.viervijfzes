@@ -40,7 +40,7 @@ class TestRouting(unittest.TestCase):
         routing.run([routing.url_for(addon.show_catalog), '0', ''])
 
     def test_catalog_channel_menu(self):
-        routing.run([routing.url_for(addon.show_catalog_channel, channel='vier'), '0', ''])
+        routing.run([routing.url_for(addon.show_channel_catalog, channel='vier'), '0', ''])
 
     def test_catalog_program_menu(self):
         routing.run([routing.url_for(addon.show_catalog_program, channel='vier', program='de-mol'), '0', ''])
@@ -53,8 +53,8 @@ class TestRouting(unittest.TestCase):
         routing.run([routing.url_for(addon.show_search, query='de mol'), '0', ''])
 
     def test_tvguide_menu(self):
-        routing.run([routing.url_for(addon.show_tvguide_channel, channel='vier'), '0', ''])
-        routing.run([routing.url_for(addon.show_tvguide_detail, channel='vier', date='today'), '0', ''])
+        routing.run([routing.url_for(addon.show_channel_tvguide, channel='vier'), '0', ''])
+        routing.run([routing.url_for(addon.show_channel_tvguide_detail, channel='vier', date='today'), '0', ''])
 
     def test_metadata_update(self):
         routing.run([routing.url_for(addon.metadata_update), '0', ''])

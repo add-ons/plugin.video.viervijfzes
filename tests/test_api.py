@@ -10,7 +10,7 @@ import unittest
 
 import resources.lib.kodiutils as kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.content import ContentApi, Program, Episode
+from resources.lib.viervijfzes.content import ContentApi, Program, Episode, Category, CACHE_PREVENT
 
 _LOGGER = logging.getLogger('test-api')
 
@@ -27,13 +27,30 @@ class TestApi(unittest.TestCase):
             self.assertIsInstance(programs, list)
             self.assertIsInstance(programs[0], Program)
 
+    def test_categories(self):
+        for channel in ['vier', 'vijf', 'zes']:
+            categories = self._api.get_categories(channel)
+        self.assertIsInstance(categories, list)
+        if categories:
+            self.assertIsInstance(categories[0], Category)
+
     def test_episodes(self):
         for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
-            program = self._api.get_program(channel, program)
+            program = self._api.get_program(channel, program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
+
+    def test_clips(self):
+        for channel, program in [('vier', 'gert-late-night'), ('zes', 'macgyver')]:
+            program = self._api.get_program(channel, program, extract_clips=True, cache=CACHE_PREVENT)
+
+            self.assertIsInstance(program.clips, list)
+            self.assertIsInstance(program.clips[0], Episode)
+
+            episode = self._api.get_episode(channel, program.clips[0].path, cache=CACHE_PREVENT)
+            self.assertIsInstance(episode, Episode)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):

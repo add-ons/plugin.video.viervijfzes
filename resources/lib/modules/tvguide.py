@@ -12,11 +12,6 @@ from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import UnavailableException
 from resources.lib.viervijfzes.epg import EpgApi
 
-try:  # Python 3
-    from urllib.parse import quote
-except ImportError:  # Python 2
-    from urllib import quote
-
 _LOGGER = logging.getLogger('tvguide')
 
 
@@ -70,7 +65,7 @@ class TvGuide:
 
         return dates
 
-    def show_tvguide_channel(self, channel):
+    def show_channel(self, channel):
         """ Shows the dates in the tv guide
         :type channel: str
         """
@@ -83,7 +78,7 @@ class TvGuide:
 
             listing.append(
                 TitleItem(title=title,
-                          path=kodiutils.url_for('show_tvguide_detail', channel=channel, date=day.get('key')),
+                          path=kodiutils.url_for('show_channel_tvguide_detail', channel=channel, date=day.get('key')),
                           art_dict={
                               'icon': 'DefaultYear.png',
                               'thumb': 'DefaultYear.png',
@@ -96,7 +91,7 @@ class TvGuide:
 
         kodiutils.show_listing(listing, 30013, content='files', sort=['date'])
 
-    def show_tvguide_detail(self, channel=None, date=None):
+    def show_detail(self, channel=None, date=None):
         """ Shows the programs of a specific date in the tv guide
         :type channel: str
         :type date: str
@@ -107,6 +102,11 @@ class TvGuide:
             kodiutils.notification(message=str(ex))
             kodiutils.end_of_directory()
             return
+
+        try:  # Python 3
+            from urllib.parse import quote
+        except ImportError:  # Python 2
+            from urllib import quote
 
         listing = []
         for program in programs:

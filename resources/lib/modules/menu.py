@@ -65,6 +65,7 @@ class Menu:
         art_dict = {
             'thumb': item.cover,
             'cover': item.cover,
+            'fanart': item.background or item.cover,
         }
         info_dict = {
             'title': item.title,
@@ -78,9 +79,6 @@ class Menu:
         # Program
         #
         if isinstance(item, Program):
-            art_dict.update({
-                'fanart': item.background,
-            })
             info_dict.update({
                 'mediatype': None,
                 'season': len(item.seasons) if item.seasons else None,
@@ -102,9 +100,6 @@ class Menu:
         # Episode
         #
         if isinstance(item, Episode):
-            art_dict.update({
-                'fanart': item.cover,
-            })
             info_dict.update({
                 'mediatype': 'episode',
                 'tvshowtitle': item.program_title,
@@ -118,8 +113,21 @@ class Menu:
                 'duration': item.duration,
             })
 
+            if item.path:
+                try:  # Python 3
+                    from urllib.parse import quote
+                except ImportError:  # Python 2
+                    from urllib import quote
+
+                # We don't have an UUID, and first need to fetch the video information from the page
+                path = kodiutils.url_for('play_from_page', channel=item.channel, page=quote(item.path, safe=''))
+            else:
+                # We have an UUID and can play this item directly
+                # This is not preferred since we will lack metadata
+                path = kodiutils.url_for('play', uuid=item.uuid)
+
             return TitleItem(title=info_dict['title'],
-                             path=kodiutils.url_for('play', uuid=item.uuid),
+                             path=path,
                              art_dict=art_dict,
                              info_dict=info_dict,
                              stream_dict=stream_dict,

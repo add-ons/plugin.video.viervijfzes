@@ -22,7 +22,6 @@ class Catalog:
         """ Initialise object """
         auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
-        self._menu = Menu()
 
     def show_catalog(self):
         """ Show all the programs of all channels """
@@ -34,7 +33,7 @@ class Catalog:
             kodiutils.notification(message=str(ex))
             raise
 
-        listing = [self._menu.generate_titleitem(item) for item in items]
+        listing = [Menu.generate_titleitem(item) for item in items]
 
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
@@ -52,7 +51,7 @@ class Catalog:
 
         listing = []
         for item in items:
-            listing.append(self._menu.generate_titleitem(item))
+            listing.append(Menu.generate_titleitem(item))
 
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
@@ -64,19 +63,19 @@ class Catalog:
         :type program_id: str
          """
         try:
-            program = self._api.get_program(channel, program_id, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
+            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 
-        if not program.episodes:
+        if not program.episodes and not program.clips:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
             return
 
-        # Go directly to the season when we have only one season
-        if len(program.seasons) == 1:
+        # Go directly to the season when we have only one season and no clips
+        if not program.clips and len(program.seasons) == 1:
             self.show_program_season(channel, program_id, list(program.seasons.values())[0].uuid)
             return
 
@@ -85,7 +84,7 @@ class Catalog:
         listing = []
 
         # Add an '* All seasons' entry when configured in Kodi
-        if kodiutils.get_global_setting('videolibrary.showallitems') is True:
+        if program.seasons and kodiutils.get_global_setting('videolibrary.showallitems') is True:
             listing.append(
                 TitleItem(
                     title='* %s' % kodiutils.localize(30204),  # * All seasons
@@ -122,6 +121,25 @@ class Catalog:
                 )
             )
 
+        # Add Clips
+        if program.clips:
+            listing.append(
+                TitleItem(
+                    title=kodiutils.localize(30059, program=program.title),  # Clips for {program}
+                    path=kodiutils.url_for('show_catalog_program_clips', channel=channel, program=program_id),
+                    art_dict={
+                        'fanart': program.background,
+                    },
+                    info_dict={
+                        'tvshowtitle': program.title,
+                        'title': kodiutils.localize(30059, program=program.title),  # Clips for {program}
+                        'plot': kodiutils.localize(30060, program=program.title),  # Watch short clips of {program}
+                        'set': program.title,
+                        'studio': studio,
+                    }
+                )
+            )
+
         # Sort by label. Some programs return seasons unordered.
         kodiutils.show_listing(listing, 30003, content='tvshows')
 
@@ -145,7 +163,25 @@ class Catalog:
             # Show the episodes of the season that was selected
             episodes = [e for e in program.episodes if e.season_uuid == season_uuid]
 
-        listing = [self._menu.generate_titleitem(episode) for episode in episodes]
+        listing = [Menu.generate_titleitem(episode) for episode in episodes]
 
         # Sort by episode number by default. Takes seasons into account.
         kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration'])
+
+    def show_program_clips(self, channel, program_id):
+        """ Show the clips of a program from the catalog
+        :type channel: str
+        :type program_id: str
+        """
+        try:
+            # We need to query the backend, since we don't cache clips.
+            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)
+        except UnavailableException:
+            kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
+            kodiutils.end_of_directory()
+            return
+
+        listing = [Menu.generate_titleitem(episode) for episode in program.clips]
+
+        # Sort like we get our results back.
+        kodiutils.show_listing(listing, 30003, content='episodes')
