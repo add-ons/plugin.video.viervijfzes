@@ -19,10 +19,6 @@ msgctxt "#30003"
 msgid "Catalogue"
 msgstr "Catalogus"
 
-msgctxt "#30004"
-msgid "TV Shows and Movies listed by category"
-msgstr "Programma's en films per categorie"
-
 msgctxt "#30007"
 msgid "Channels"
 msgstr "Kanalen"
@@ -42,10 +38,6 @@ msgstr "Doorzoek de catalogus"
 msgctxt "#30013"
 msgid "TV guide"
 msgstr "Tv-gids"
-
-msgctxt "#30014"
-msgid "Browse the TV Guide"
-msgstr "Doorblader de tv-gids"
 
 
 ### SUBMENUS
@@ -144,10 +136,6 @@ msgstr "Deze video is niet beschikbaar en kan nu niet worden afgespeeld."
 msgctxt "#30713"
 msgid "The requested video was not found in the guide."
 msgstr "De gevraagde video werd niet gevonden in de tv-gids."
-
-msgctxt "#30714"
-msgid "Local metadata is cleared."
-msgstr "De lokale metadata is verwijderd."
 
 msgctxt "#30715"
 msgid "Updating metadata"
