@@ -4,7 +4,6 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
-
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -118,7 +117,7 @@ def url_for(name, *args, **kwargs):
 
 
 def show_listing(title_items, category=None, sort=None, content=None, cache=True):
-    """ Show a virtual directory in Kodi """
+    """Show a virtual directory in Kodi"""
     from resources.lib.addon import routing
 
     if content:
@@ -200,11 +199,20 @@ def play(stream, title=None, art_dict=None, info_dict=None, prop_dict=None):
     if prop_dict:
         play_item.setProperties(prop_dict)
 
+    # Setup Inputstream Adaptive
+    if kodi_version_major() >= 19:
+        play_item.setProperty('inputstream', 'inputstream.adaptive')
+    else:
+        play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+    play_item.setProperty('inputstream.adaptive.manifest_type', 'hls')
+    play_item.setMimeType('application/vnd.apple.mpegurl')
+    play_item.setContentLookup(False)
+
     xbmcplugin.setResolvedUrl(routing.handle, True, listitem=play_item)
 
 
 def get_search_string(heading='', message=''):
-    """ Ask the user for a search string """
+    """Ask the user for a search string"""
     search_string = None
     keyboard = xbmc.Keyboard(message, heading)
     keyboard.doModal()
@@ -265,7 +273,7 @@ class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,
         """Create and show a progress dialog"""
         if kodi_version_major() < 19:
             lines = message.split('\n', 2)
-            line1, line2, line3 = (lines + [None] * (3-len(lines)))
+            line1, line2, line3 = (lines + [None] * (3 - len(lines)))
             return super(progress, self).create(heading, line1=line1, line2=line2, line3=line3)
         return super(progress, self).create(heading, message=message)
 
@@ -273,7 +281,7 @@ class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,
         """Update the progress dialog"""
         if kodi_version_major() < 19:
             lines = message.split('\n', 2)
-            line1, line2, line3 = (lines + [None] * (3-len(lines)))
+            line1, line2, line3 = (lines + [None] * (3 - len(lines)))
             return super(progress, self).update(percent, line1=line1, line2=line2, line3=line3)
         return super(progress, self).update(percent, message=message)
 
