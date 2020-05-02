@@ -182,3 +182,15 @@ msgstr "Vernieuw de lokale metdata automatisch in de achtergrond"
 msgctxt "#30831"
 msgid "Update local metadata now"
 msgstr "De lokale metadata nu vernieuwen"
+
+msgctxt "#30880"
+msgid "Expert"
+msgstr "Expert"
+
+msgctxt "#30881"
+msgid "Logging"
+msgstr "Logboek"
+
+msgctxt "#30882"
+msgid "Enable debug logging"
+msgstr "Activeer debug logging"

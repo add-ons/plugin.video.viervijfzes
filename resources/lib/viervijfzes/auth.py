@@ -39,7 +39,7 @@ class AuthApi:
                 self._refresh_token = data_json.get('refresh_token')
                 self._expiry = int(data_json.get('expiry', 0))
         except (IOError, TypeError, ValueError):
-            _LOGGER.info('We could not use the cache since it is invalid or non-existent.')
+            _LOGGER.warning('We could not use the cache since it is invalid or non-existent.')
 
     def get_token(self):
         """ Get a valid token """

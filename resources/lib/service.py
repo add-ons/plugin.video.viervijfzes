@@ -28,7 +28,7 @@ class BackgroundService(Monitor):
 
     def run(self):
         """ Background loop for maintenance tasks """
-        _LOGGER.info('Service started')
+        _LOGGER.debug('Service started')
 
         while not self.abortRequested():
             # Update every `update_interval` after the last update
@@ -39,12 +39,12 @@ class BackgroundService(Monitor):
             if self.waitForAbort(10):
                 break
 
-        _LOGGER.info('Service stopped')
+        _LOGGER.debug('Service stopped')
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         """ Callback when a setting has changed """
         if self._has_credentials_changed():
-            _LOGGER.info('Clearing auth tokens due to changed credentials')
+            _LOGGER.debug('Clearing auth tokens due to changed credentials')
             self._auth.clear_tokens()
 
             # Refresh container

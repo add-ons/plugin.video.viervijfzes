@@ -181,3 +181,15 @@ msgstr ""
 msgctxt "#30831"
 msgid "Update local metadata now"
 msgstr ""
+
+msgctxt "#30880"
+msgid "Expert"
+msgstr ""
+
+msgctxt "#30881"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30882"
+msgid "Enable debug logging"
+msgstr ""
