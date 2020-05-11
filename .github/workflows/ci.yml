@@ -1,16 +1,10 @@
 name: CI
-
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+  - pull_request
+  - push
 jobs:
   tests:
-    name: Unit tests
+    name: Add-on testing
     runs-on: ubuntu-latest
     env:
       PYTHONIOENCODING: utf-8
@@ -33,26 +27,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run pylint
-        run: |
-          make check-pylint
+        run: make check-pylint
       - name: Run tox
-        run: |
-          make check-tox
+        run: make check-tox
       - name: Check translations
-        run: |
-          make check-translations
+        run: make check-translations
       - name: Run unit tests
+        run: coverage run -m unittest discover
         env:
-          ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
-        run: |
-          coverage run -m unittest discover
-      - name: Run addon
-        run: |
-          coverage run -a tests/run.py /
-      - name: Run add-on service
-        run: |
-          coverage run -a service_entry.py
+          ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
+      - name: Run addon service
+        run: coverage run -a service.py
+        env:
+          ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
+          ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
       - name: Upload code coverage to CodeCov
         uses: codecov/codecov-action@v1
         continue-on-error: true
