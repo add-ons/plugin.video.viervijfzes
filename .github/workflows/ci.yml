@@ -38,7 +38,7 @@ jobs:
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
           ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
       - name: Run addon service
-        run: coverage run -a service.py
+        run: coverage run -a service_entry.py
         env:
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
           ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
