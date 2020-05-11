@@ -38,12 +38,12 @@ class Player:
             # We already have a resolved stream. Nice!
             # We don't need credentials for these streams.
             resolved_stream = episode.stream
-            _LOGGER.info('Already got a resolved stream: %s', resolved_stream)
+            _LOGGER.debug('Already got a resolved stream: %s', resolved_stream)
 
         if episode.uuid:
             # Lookup the stream
             resolved_stream = self._resolve_stream(episode.uuid)
-            _LOGGER.info('Resolved stream: %s', resolved_stream)
+            _LOGGER.debug('Resolved stream: %s', resolved_stream)
 
         if resolved_stream:
             titleitem = Menu.generate_titleitem(episode)

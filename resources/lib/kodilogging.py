@@ -8,14 +8,15 @@ import logging
 import xbmc
 import xbmcaddon
 
+ADDON = xbmcaddon.Addon()
+
 
 class KodiLogHandler(logging.StreamHandler):
     """ A log handler for Kodi """
 
     def __init__(self):
         logging.StreamHandler.__init__(self)
-        addon_id = xbmcaddon.Addon().getAddonInfo("id")
-        formatter = logging.Formatter("[{}] [%(name)s] %(message)s".format(addon_id))
+        formatter = logging.Formatter("[{}] [%(name)s] %(message)s".format(ADDON.getAddonInfo("id")))
         self.setFormatter(formatter)
 
     def emit(self, record):
@@ -24,10 +25,16 @@ class KodiLogHandler(logging.StreamHandler):
             logging.CRITICAL: xbmc.LOGFATAL,
             logging.ERROR: xbmc.LOGERROR,
             logging.WARNING: xbmc.LOGWARNING,
-            logging.INFO: xbmc.LOGINFO,
+            logging.INFO: xbmc.LOGNOTICE,
             logging.DEBUG: xbmc.LOGDEBUG,
             logging.NOTSET: xbmc.LOGNONE,
         }
+
+        # Map DEBUG level to LOGNOTICE if debug logging setting has been activated
+        # This is for troubleshooting only
+        if ADDON.getSetting('debug_logging') == 'true':
+            levels[logging.DEBUG] = xbmc.LOGNOTICE
+
         try:
             xbmc.log(self.format(record), levels[record.levelno])
         except UnicodeEncodeError:
