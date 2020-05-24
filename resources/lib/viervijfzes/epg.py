@@ -7,7 +7,8 @@ import json
 import logging
 from datetime import datetime, timedelta
 
-import dateutil
+import dateutil.parser
+import dateutil.tz
 import requests
 
 _LOGGER = logging.getLogger('epg-api')
@@ -90,8 +91,8 @@ class EpgApi:
         duration = int(data.get('duration')) if data.get('duration') else None
 
         # Check if this broadcast is currently airing
-        timestamp = datetime.now()
-        start = datetime.fromtimestamp(data.get('timestamp'))
+        timestamp = datetime.now().replace(tzinfo=dateutil.tz.gettz('CET'))
+        start = datetime.fromtimestamp(data.get('timestamp')).replace(tzinfo=dateutil.tz.gettz('CET'))
         if duration:
             airing = bool(start <= timestamp < (start + timedelta(seconds=duration)))
         else:
@@ -132,7 +133,7 @@ class EpgApi:
         :rtype: EpgProgram
         """
         # Parse to a real datetime
-        timestamp = dateutil.parser.parse(timestamp)
+        timestamp = dateutil.parser.parse(timestamp).replace(tzinfo=dateutil.tz.gettz('CET'))
 
         # Load guide info for this date
         programs = self.get_epg(channel=channel, date=timestamp.strftime('%Y-%m-%d'))

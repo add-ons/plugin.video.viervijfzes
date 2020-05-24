@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
+from resources.lib.modules.player import Player
 from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import UnavailableException
 from resources.lib.viervijfzes.epg import EpgApi
@@ -171,9 +172,13 @@ class TvGuide:
         """
         broadcast = self._epg.get_broadcast(channel, timestamp)
         if not broadcast:
-            kodiutils.ok_dialog(heading=kodiutils.localize(30711), message=kodiutils.localize(30713))  # The requested video was not found in the guide.
+            kodiutils.ok_dialog(message=kodiutils.localize(30713))  # The requested video was not found in the guide.
             kodiutils.end_of_directory()
             return
 
-        kodiutils.container_update(
-            kodiutils.url_for('play', uuid=broadcast.video_url))
+        if not broadcast.video_url:
+            kodiutils.ok_dialog(message=kodiutils.localize(30712))  # The video is unavailable and can't be played right now.
+            kodiutils.end_of_directory()
+            return
+
+        Player().play_from_page(channel, broadcast.video_url)

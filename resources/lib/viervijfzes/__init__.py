@@ -11,6 +11,8 @@ CHANNELS = OrderedDict([
         logo='vier.png',
         background='vier-background.jpg',
         studio_icon='vier',
+        iptv_preset=4,
+        iptv_id='vier.be',
         youtube=[
             dict(
                 label='VIER / VIJF',
@@ -25,6 +27,8 @@ CHANNELS = OrderedDict([
         logo='vijf.png',
         background='vijf-background.jpg',
         studio_icon='vijf',
+        iptv_preset=5,
+        iptv_id='vijf.be',
         youtube=[
             dict(
                 label='VIER / VIJF',
@@ -39,6 +43,8 @@ CHANNELS = OrderedDict([
         logo='zes.png',
         background='zes-background.jpg',
         studio_icon='zes',
+        iptv_preset=6,
+        iptv_id='zes.be',
         youtube=[],
     ))
 ])

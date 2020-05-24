@@ -7,6 +7,7 @@ import logging
 
 from resources.lib import kodiutils
 from resources.lib.modules.menu import Menu
+from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.auth_awsidp import InvalidLoginException, AuthenticationException
 from resources.lib.viervijfzes.content import ContentApi, UnavailableException, GeoblockedException
@@ -25,6 +26,15 @@ class Player:
         # Workaround for Raspberry Pi 3 and older
         kodiutils.set_global_setting('videoplayer.useomxplayer', True)
 
+    @staticmethod
+    def live(channel):
+        """ Play the live channel.
+        :type channel: string
+        """
+        channel_name = CHANNELS.get(channel, dict(name=channel))
+        kodiutils.ok_dialog(message=kodiutils.localize(30718, channel=channel_name.get('name')))  # There is no live stream available for {channel}.
+        kodiutils.end_of_directory()
+
     def play_from_page(self, channel, path):
         """ Play the requested item.
         :type channel: string
@@ -33,6 +43,10 @@ class Player:
         # Get episode information
         episode = self._api.get_episode(channel, path)
         resolved_stream = None
+
+        if episode is None:
+            kodiutils.ok_dialog(message=kodiutils.localize(30712))
+            return
 
         if episode.stream:
             # We already have a resolved stream. Nice!

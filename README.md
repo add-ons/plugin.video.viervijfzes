@@ -23,6 +23,7 @@ De volgende features worden ondersteund:
 * Programma's rechtstreeks afspelen vanuit de tv-gids
 * Doorzoeken van alle programma's
 * Afspelen van gerelateerde Youtube content
+* Integratie met [IPTV Manager](https://github.com/add-ons/service.iptv.manager)
 
 ## Screenshots
 
