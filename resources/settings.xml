@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <setting id="metadata_last_updated" visible="false"/>
+    <setting id="iptv.enabled" default="true" visible="false"/>
+    <setting id="iptv.channels_uri" default="plugin://plugin.video.viervijfzes/iptv/channels" visible="false"/>
+    <setting id="iptv.epg_uri" default="plugin://plugin.video.viervijfzes/iptv/epg" visible="false"/>
     <category label="30800"> <!-- Credentials -->
         <setting label="30801" type="lsep"/> <!-- Credentials -->
         <setting label="30803" type="text" id="username"/>

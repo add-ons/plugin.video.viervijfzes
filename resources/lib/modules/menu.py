@@ -124,7 +124,7 @@ class Menu:
             else:
                 # We have an UUID and can play this item directly
                 # This is not preferred since we will lack metadata
-                path = kodiutils.url_for('play', uuid=item.uuid)
+                path = kodiutils.url_for('play_catalog', uuid=item.uuid)
 
             return TitleItem(title=info_dict['title'],
                              path=path,

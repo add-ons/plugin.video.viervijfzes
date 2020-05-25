@@ -106,8 +106,22 @@ def show_search(query=None):
     Search().show_search(query)
 
 
+@routing.route('/play/live/<channel>')
+def play_live(channel):
+    """ Play the requested item """
+    from resources.lib.modules.player import Player
+    Player().live(channel)
+
+
+@routing.route('/play/epg/<channel>/<timestamp>')
+def play_epg(channel, timestamp):
+    """ Play the requested item """
+    from resources.lib.modules.tvguide import TvGuide
+    TvGuide().play_epg_datetime(channel, timestamp)
+
+
 @routing.route('/play/catalog/<uuid>')
-def play(uuid):
+def play_catalog(uuid):
     """ Play the requested item """
     from resources.lib.modules.player import Player
     Player().play(uuid)
@@ -130,6 +144,20 @@ def metadata_update():
     """ Update the metadata for the listings (called from settings) """
     from resources.lib.modules.metadata import Metadata
     Metadata().update()
+
+
+@routing.route('/iptv/channels')
+def iptv_channels():
+    """ Generate channel data for the Kodi PVR integration """
+    from resources.lib.modules.iptvmanager import IPTVManager
+    IPTVManager(int(routing.args['port'][0])).send_channels()  # pylint: disable=too-many-function-args
+
+
+@routing.route('/iptv/epg')
+def iptv_epg():
+    """ Generate EPG data for the Kodi PVR integration """
+    from resources.lib.modules.iptvmanager import IPTVManager
+    IPTVManager(int(routing.args['port'][0])).send_epg()  # pylint: disable=too-many-function-args
 
 
 def run(params):
