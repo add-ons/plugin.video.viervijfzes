@@ -30,7 +30,7 @@ class IPTVManager:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect(('127.0.0.1', self.port))
             try:
-                sock.send(json.dumps(func()))  # pylint: disable=not-callable
+                sock.send(json.dumps(func()).encode())  # pylint: disable=not-callable
             finally:
                 sock.close()
 
@@ -44,7 +44,8 @@ class IPTVManager:
             item = dict(
                 id=channel.get('iptv_id'),
                 name=channel.get('name'),
-                logo='special://home/addons/{addon}/resources/logos/{logo}'.format(addon=kodiutils.addon_id(), logo=channel.get('logo')),
+                logo='special://home/addons/{addon}/resources/logos/{logo}'.format(addon=kodiutils.addon_id(),
+                                                                                   logo=channel.get('logo')),
                 preset=channel.get('iptv_preset'),
                 stream='plugin://plugin.video.viervijfzes/play/live/{channel}'.format(channel=key),
                 vod='plugin://plugin.video.viervijfzes/play/epg/{channel}/{{date}}'.format(channel=key)
@@ -58,6 +59,11 @@ class IPTVManager:
     def send_epg():  # pylint: disable=no-method-argument
         """Return JSON-EPG formatted information to IPTV Manager"""
         epg_api = EpgApi()
+
+        try:  # Python 3
+            from urllib.parse import quote
+        except ImportError:  # Python 2
+            from urllib import quote
 
         results = dict()
         for key, channel in CHANNELS.items():
@@ -74,7 +80,9 @@ class IPTVManager:
                         title=program.program_title,
                         description=program.description,
                         image=program.cover,
-                        available=bool(program.video_url))
+                        stream=kodiutils.url_for('play_from_page',
+                                                 channel=key,
+                                                 page=quote(program.video_url, safe='')) if program.video_url else None)
                     for program in epg if program.duration
                 ])
 
