@@ -53,6 +53,18 @@ class TestEpg(unittest.TestCase):
         episode = api.get_episode(epg_program.channel, epg_program.video_url)
         self.assertIsInstance(episode, Episode)
 
+    # def test_map_epg_genre(self):
+    #     genres = []
+    #     for channel in ['vier', 'vijf', 'zes']:
+    #         for day in ['yesterday', 'today', 'tomorrow']:
+    #             programs = self._epg.get_epg(channel, day)
+    #
+    #         for program in programs:
+    #             if program.genre not in genres:
+    #                 genres.append(program.genre)
+    #
+    #     print(genres)
+    #
 
 if __name__ == '__main__':
     unittest.main()
