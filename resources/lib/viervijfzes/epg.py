@@ -13,13 +13,32 @@ import requests
 
 _LOGGER = logging.getLogger('epg-api')
 
+GENRE_MAPPING = {
+    'Detective': 0x11,
+    'Dramaserie': 0x15,
+    'Fantasy': 0x13,
+    'Human Interest': 0x00,
+    'Informatief': 0x20,
+    'Komedie': 0x14,
+    'Komische serie': 0x14,
+    'Kookprogramma': '',
+    'Misdaadserie': 0x15,
+    'Politieserie': 0x17,
+    'Reality': 0x31,
+    'Science Fiction': 0x13,
+    'Show': 0x30,
+    'Thriller': 0x11,
+    'Voetbal': 0x43,
+}
+
 
 class EpgProgram:
     """ Defines a Program in the EPG. """
 
     # pylint: disable=invalid-name
-    def __init__(self, channel, program_title, episode_title, episode_title_original, number, season, genre, start, won_id, won_program_id, program_description,
-                 description, duration, program_url, video_url, cover, airing):
+    def __init__(self, channel, program_title, episode_title, episode_title_original, number, season, genre, start,
+                 won_id, won_program_id, program_description, description, duration, program_url, video_url, cover,
+                 airing):
         self.channel = channel
         self.program_title = program_title
         self.episode_title = episode_title
@@ -38,6 +57,11 @@ class EpgProgram:
         self.cover = cover
         self.airing = airing
 
+        if GENRE_MAPPING.get(self.genre):
+            self.genre_id = GENRE_MAPPING.get(self.genre)
+        else:
+            self.genre_id = None
+
     def __repr__(self):
         return "%r" % self.__dict__
 
@@ -50,6 +74,8 @@ class EpgApi:
         'vijf': 'https://www.vijf.be/api/epg/{date}',
         'zes': 'https://www.zestv.be/api/epg/{date}',
     }
+
+    EPG_NO_BROADCAST = 'Geen uitzending'
 
     def __init__(self):
         """ Initialise object """
@@ -79,7 +105,7 @@ class EpgApi:
         data = json.loads(response)
 
         # Parse the results
-        return [self._parse_program(channel, x) for x in data]
+        return [self._parse_program(channel, x) for x in data if x.get('program_title') != self.EPG_NO_BROADCAST]
 
     @staticmethod
     def _parse_program(channel, data):
