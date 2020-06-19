@@ -1,5 +1,34 @@
 # Changelog
 
+## [v0.2.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.2.0) (2020-06-19)
+
+[Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.1.0...v0.2.0)
+
+**Implemented enhancements:**
+
+- Add IPTV Manager to settings [\#35](https://github.com/add-ons/plugin.video.viervijfzes/pull/35) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add "Clean Metadata" setting [\#34](https://github.com/add-ons/plugin.video.viervijfzes/pull/34) ([michaelarnauts](https://github.com/michaelarnauts))
+- Pass genre, program title and episode number to IPTV Manager [\#31](https://github.com/add-ons/plugin.video.viervijfzes/pull/31) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add stream info for direct playing in Kodi 19 [\#30](https://github.com/add-ons/plugin.video.viervijfzes/pull/30) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add support for playing from the Guide with IPTV Manager [\#29](https://github.com/add-ons/plugin.video.viervijfzes/pull/29) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add option for debug logging and fix CI [\#27](https://github.com/add-ons/plugin.video.viervijfzes/pull/27) ([michaelarnauts](https://github.com/michaelarnauts))
+- Use inputstream.adaptive for playback [\#25](https://github.com/add-ons/plugin.video.viervijfzes/pull/25) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add categories and clips [\#23](https://github.com/add-ons/plugin.video.viervijfzes/pull/23) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add compatibility for Kodi 19 Python API [\#20](https://github.com/add-ons/plugin.video.viervijfzes/pull/20) ([mediaminister](https://github.com/mediaminister))
+- Py2/3 compatibility fixes [\#16](https://github.com/add-ons/plugin.video.viervijfzes/pull/16) ([mediaminister](https://github.com/mediaminister))
+- Rework cache [\#15](https://github.com/add-ons/plugin.video.viervijfzes/pull/15) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Fixed bugs:**
+
+- Fix data transfers over 1 MB to IPTV Manager [\#32](https://github.com/add-ons/plugin.video.viervijfzes/pull/32) ([michaelarnauts](https://github.com/michaelarnauts))
+- Fix multi-line text in progress dialog [\#21](https://github.com/add-ons/plugin.video.viervijfzes/pull/21) ([mediaminister](https://github.com/mediaminister))
+- Fix token encoding in auth [\#19](https://github.com/add-ons/plugin.video.viervijfzes/pull/19) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Merged pull requests:**
+
+- Check for unused translations [\#24](https://github.com/add-ons/plugin.video.viervijfzes/pull/24) ([michaelarnauts](https://github.com/michaelarnauts))
+- Move test/ to tests/ [\#17](https://github.com/add-ons/plugin.video.viervijfzes/pull/17) ([dagwieers](https://github.com/dagwieers))
+
 ## [v0.1.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.1.0) (2020-03-27)
 
 [Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/89f55f70b017d0add645d1e1d88f0ce8192d11c4...v0.1.0)
