@@ -194,6 +194,26 @@ msgctxt "#30824"
 msgid "Clear local metadata…"
 msgstr "De lokale metadata verwijderen…"
 
+msgctxt "#30840"
+msgid "Integration"
+msgstr ""
+
+msgctxt "#30841"
+msgid "IPTV Manager"
+msgstr ""
+
+msgctxt "#30842"
+msgid "Install IPTV Manager add-on…"
+msgstr ""
+
+msgctxt "#30843"
+msgid "Enable IPTV Manager integration"
+msgstr ""
+
+msgctxt "#30844"
+msgid "IPTV Manager settings…"
+msgstr ""
+
 msgctxt "#30880"
 msgid "Expert"
 msgstr ""
