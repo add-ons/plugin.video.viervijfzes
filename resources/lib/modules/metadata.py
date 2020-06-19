@@ -18,11 +18,12 @@ class Metadata:
     def update(self):
         """ Update the metadata with a foreground progress indicator """
         # Create progress indicator
-        progress = kodiutils.progress(message=kodiutils.localize(30715))  # Updating metadata
+        progress = kodiutils.progress(message=kodiutils.localize(30715))  # Updating metadata...
 
         def update_status(i, total):
             """ Update the progress indicator """
-            progress.update(int(((i + 1) / total) * 100), kodiutils.localize(30716, index=i + 1, total=total))  # Updating metadata ({index}/{total})
+            progress.update(int(((i + 1) / total) * 100),
+                            kodiutils.localize(30716, index=i + 1, total=total))  # Updating metadata ({index}/{total})...
             return progress.iscanceled()
 
         self.fetch_metadata(callback=update_status, refresh=True)
@@ -48,7 +49,18 @@ class Metadata:
 
             # Run callback after every item
             if callback and callback(index, count):
-                # Stop when callback returns False
+                # Stop when callback returns True
                 return False
 
         return True
+
+    @staticmethod
+    def clean():
+        """ Clear metadata (called from settings) """
+        cache_path = kodiutils.get_cache_path()
+        _, files = kodiutils.listdir(cache_path)
+        for filename in files:
+            kodiutils.delete(cache_path + filename)
+
+        kodiutils.set_setting('metadata_last_updated', '0')
+        kodiutils.ok_dialog(message=kodiutils.localize(30714))  # Local metadata is cleared

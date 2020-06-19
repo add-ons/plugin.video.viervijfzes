@@ -213,7 +213,7 @@ class ContentApi:
         programs = []
         for path in data:
             title = data[path]
-            program = self.get_program(channel, path, CACHE_ONLY)  # Get program details, but from cache only
+            program = self.get_program(channel, path, cache=CACHE_ONLY)  # Get program details, but from cache only
             if program:
                 # Use program with metadata from cache
                 programs.append(program)
@@ -228,6 +228,7 @@ class ContentApi:
         """ Get a Program object from the specified page.
         :type channel: str
         :type path: str
+        :type extract_clips: bool
         :type cache: int
         :rtype Program
         """

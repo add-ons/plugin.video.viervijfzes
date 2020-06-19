@@ -137,9 +137,13 @@ msgctxt "#30713"
 msgid "The requested video was not found in the guide."
 msgstr "De gevraagde video werd niet gevonden in de tv-gids."
 
+msgctxt "#30714"
+msgid "Local metadata is cleared."
+msgstr "De lokale metadata is verwijderd."
+
 msgctxt "#30715"
-msgid "Updating metadata"
-msgstr "Vernieuwen metadata"
+msgid "Updating metadata..."
+msgstr "Vernieuwen metadata..."
 
 msgctxt "#30716"
 msgid "Updating metadata ({index}/{total})..."
@@ -164,11 +168,11 @@ msgctxt "#30801"
 msgid "Credentials"
 msgstr "Inloggegevens"
 
-msgctxt "#30803"
+msgctxt "#30802"
 msgid "Email address"
 msgstr "E-mailadres"
 
-msgctxt "#30805"
+msgctxt "#30803"
 msgid "Password"
 msgstr "Wachtwoord"
 
@@ -176,17 +180,21 @@ msgctxt "#30820"
 msgid "Interface"
 msgstr "Interface"
 
-msgctxt "#30827"
+msgctxt "#30821"
 msgid "Metadata"
 msgstr "Metadata"
 
-msgctxt "#30829"
+msgctxt "#30822"
 msgid "Periodically refresh metadata in the background"
 msgstr "Vernieuw de lokale metdata automatisch in de achtergrond"
 
-msgctxt "#30831"
-msgid "Update local metadata now"
-msgstr "De lokale metadata nu vernieuwen"
+msgctxt "#30823"
+msgid "Update local metadata now…"
+msgstr "De lokale metadata nu vernieuwen…"
+
+msgctxt "#30824"
+msgid "Clear local metadata…"
+msgstr "De lokale metadata verwijderen…"
 
 msgctxt "#30880"
 msgid "Expert"
