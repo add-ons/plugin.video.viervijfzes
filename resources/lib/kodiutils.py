@@ -30,7 +30,8 @@ _LOGGER = logging.getLogger('kodiutils')
 class TitleItem:
     """ This helper object holds all information to be used with Kodi xbmc's ListItem object """
 
-    def __init__(self, title, path=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None, context_menu=None, subtitles_path=None,
+    def __init__(self, title, path=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None,
+                 context_menu=None, subtitles_path=None,
                  is_playable=False):
         """ The constructor for the TitleItem class
         :type title: str
@@ -256,7 +257,8 @@ def multiselect(heading='', options=None, autoclose=0, preselect=None, use_detai
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
-    return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
+    return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect,
+                                useDetails=use_details)
 
 
 class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,useless-object-inheritance
@@ -503,3 +505,15 @@ def jsonrpc(*args, **kwargs):
     if kwargs.get('jsonrpc') is None:
         kwargs.update(jsonrpc='2.0')
     return loads(xbmc.executeJSONRPC(dumps(kwargs)))
+
+
+def listdir(path):
+    """Return all files in a directory (using xbmcvfs)"""
+    from xbmcvfs import listdir as vfslistdir
+    return vfslistdir(path)
+
+
+def delete(path):
+    """Remove a file (using xbmcvfs)"""
+    from xbmcvfs import delete as vfsdelete
+    return vfsdelete(path)

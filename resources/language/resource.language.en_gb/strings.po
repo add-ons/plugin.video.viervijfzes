@@ -136,8 +136,12 @@ msgctxt "#30713"
 msgid "The requested video was not found in the guide."
 msgstr ""
 
+msgctxt "#30714"
+msgid "Local metadata is cleared."
+msgstr ""
+
 msgctxt "#30715"
-msgid "Updating metadata"
+msgid "Updating metadata..."
 msgstr ""
 
 msgctxt "#30716"
@@ -162,11 +166,11 @@ msgctxt "#30801"
 msgid "Credentials"
 msgstr ""
 
-msgctxt "#30803"
+msgctxt "#30802"
 msgid "Email address"
 msgstr ""
 
-msgctxt "#30805"
+msgctxt "#30803"
 msgid "Password"
 msgstr ""
 
@@ -174,17 +178,21 @@ msgctxt "#30820"
 msgid "Interface"
 msgstr ""
 
-msgctxt "#30827"
+msgctxt "#30821"
 msgid "Metadata"
 msgstr ""
 
-msgctxt "#30829"
+msgctxt "#30822"
 msgid "Periodically refresh metadata in the background"
 msgstr ""
 
-msgctxt "#30831"
-msgid "Update local metadata now"
-msgstr ""
+msgctxt "#30823"
+msgid "Update local metadata now…"
+msgstr "De lokale metadata nu vernieuwen…"
+
+msgctxt "#30824"
+msgid "Clear local metadata…"
+msgstr "De lokale metadata verwijderen…"
 
 msgctxt "#30880"
 msgid "Expert"

@@ -146,6 +146,13 @@ def metadata_update():
     Metadata().update()
 
 
+@routing.route('/metadata/clean')
+def metadata_clean():
+    """ Clear the metadata for the listings (called from settings) """
+    from resources.lib.modules.metadata import Metadata
+    Metadata().clean()
+
+
 @routing.route('/iptv/channels')
 def iptv_channels():
     """ Generate channel data for the Kodi PVR integration """
