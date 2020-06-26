@@ -621,10 +621,10 @@ class ContentApi:
     def _set_cache(self, key, data, ttl):
         """ Store an item in the cache """
         filename = ('.'.join(key) + '.json').replace('/', '_')
-        fullpath = self._cache_path + filename
+        fullpath = os.path.join(self._cache_path, filename)
 
         if not os.path.exists(self._cache_path):
-            os.mkdir(self._cache_path)
+            os.makedirs(self._cache_path)
 
         with open(fullpath, 'w') as fdesc:
             _LOGGER.debug('Storing to cache as %s', filename)

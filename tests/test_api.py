@@ -12,7 +12,7 @@ import resources.lib.kodiutils as kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import ContentApi, Program, Episode, Category, CACHE_PREVENT
 
-_LOGGER = logging.getLogger('test-api')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TestApi(unittest.TestCase):

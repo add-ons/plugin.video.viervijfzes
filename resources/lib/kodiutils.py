@@ -4,6 +4,8 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
+import os
+
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -228,7 +230,7 @@ def ok_dialog(heading='', message=''):
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().ok(heading=heading, line1=message)
+        return Dialog().ok(heading=heading, line1=message)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
     return Dialog().ok(heading=heading, message=message)
 
 
@@ -238,7 +240,7 @@ def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None, autoclose=
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
+        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
     return Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
 
 
@@ -276,7 +278,7 @@ class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,
         if kodi_version_major() < 19:
             lines = message.split('\n', 2)
             line1, line2, line3 = (lines + [None] * (3 - len(lines)))
-            return super(progress, self).create(heading, line1=line1, line2=line2, line3=line3)
+            return super(progress, self).create(heading, line1=line1, line2=line2, line3=line3)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
         return super(progress, self).create(heading, message=message)
 
     def update(self, percent, message=''):  # pylint: disable=arguments-differ
@@ -284,7 +286,7 @@ class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,
         if kodi_version_major() < 19:
             lines = message.split('\n', 2)
             line1, line2, line3 = (lines + [None] * (3 - len(lines)))
-            return super(progress, self).update(percent, line1=line1, line2=line2, line3=line3)
+            return super(progress, self).update(percent, line1=line1, line2=line2, line3=line3)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
         return super(progress, self).update(percent, message=message)
 
 
@@ -439,14 +441,14 @@ def kodi_version_major():
 def get_tokens_path():
     """Cache and return the userdata tokens path"""
     if not hasattr(get_tokens_path, 'cached'):
-        get_tokens_path.cached = addon_profile() + 'tokens/'
+        get_tokens_path.cached = os.path.join(addon_profile(), 'tokens')
     return getattr(get_tokens_path, 'cached')
 
 
 def get_cache_path():
     """Cache and return the userdata cache path"""
     if not hasattr(get_cache_path, 'cached'):
-        get_cache_path.cached = addon_profile() + 'cache/'
+        get_cache_path.cached = os.path.join(addon_profile(), 'cache')
     return getattr(get_cache_path, 'cached')
 
 

@@ -11,7 +11,7 @@ import unittest
 from resources.lib.viervijfzes.content import Program
 from resources.lib.viervijfzes.search import SearchApi
 
-_LOGGER = logging.getLogger('test-search')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TestSearch(unittest.TestCase):

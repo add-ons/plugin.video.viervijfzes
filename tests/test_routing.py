@@ -9,11 +9,6 @@ import unittest
 
 from resources.lib import addon
 
-xbmc = __import__('xbmc')  # pylint: disable=invalid-name
-xbmcaddon = __import__('xbmcaddon')  # pylint: disable=invalid-name
-xbmcgui = __import__('xbmcgui')  # pylint: disable=invalid-name
-xbmcplugin = __import__('xbmcplugin')  # pylint: disable=invalid-name
-xbmcvfs = __import__('xbmcvfs')  # pylint: disable=invalid-name
 
 routing = addon.routing  # pylint: disable=invalid-name
 
@@ -56,8 +51,8 @@ class TestRouting(unittest.TestCase):
         routing.run([routing.url_for(addon.show_channel_tvguide, channel='vier'), '0', ''])
         routing.run([routing.url_for(addon.show_channel_tvguide_detail, channel='vier', date='today'), '0', ''])
 
-    def test_metadata_update(self):
-        routing.run([routing.url_for(addon.metadata_update), '0', ''])
+    # def test_metadata_update(self):
+    #     routing.run([routing.url_for(addon.metadata_update), '0', ''])
 
 
 if __name__ == '__main__':

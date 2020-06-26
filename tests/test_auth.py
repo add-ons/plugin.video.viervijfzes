@@ -11,7 +11,7 @@ import unittest
 from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
 
-_LOGGER = logging.getLogger('test-auth')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TestAuth(unittest.TestCase):
