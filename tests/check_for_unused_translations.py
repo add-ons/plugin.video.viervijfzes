@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 """ Quick and dirty way to check if all translations might be used. """
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 # pylint: disable=invalid-name,superfluous-parens
 
 import subprocess
