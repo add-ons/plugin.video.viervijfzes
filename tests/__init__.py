@@ -9,7 +9,7 @@ import sys
 
 import xbmcaddon
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 
 # Make UTF-8 the default encoding in Python 2
 if sys.version_info[0] == 2:
