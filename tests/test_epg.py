@@ -13,7 +13,7 @@ from resources.lib import kodiutils
 from resources.lib.viervijfzes.content import ContentApi, Episode
 from resources.lib.viervijfzes.epg import EpgApi, EpgProgram
 
-_LOGGER = logging.getLogger('test-epg')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TestEpg(unittest.TestCase):
@@ -65,6 +65,7 @@ class TestEpg(unittest.TestCase):
     #
     #     print(genres)
     #
+
 
 if __name__ == '__main__':
     unittest.main()

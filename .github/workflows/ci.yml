@@ -8,7 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONIOENCODING: utf-8
-      PYTHONPATH: ${{ github.workspace }}/resources/lib:${{ github.workspace }}/tests
+      PYTHONPATH: ${{ github.workspace }}/resources/lib
+      KODI_HOME: ${{ github.workspace }}/tests/home
+      KODI_INTERACTIVE: 0
     strategy:
       fail-fast: false
       matrix:
@@ -37,8 +39,8 @@ jobs:
         env:
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
           ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
-      - name: Run addon service
-        run: coverage run -a service_entry.py
+      - name: Run addon service for 10 seconds
+        run: timeout --preserve-status -s SIGINT 10 coverage run -a service_entry.py
         env:
           ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
           ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}

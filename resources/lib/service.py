@@ -89,7 +89,7 @@ class BackgroundService(Monitor):
 
         now = time()
         for filename in os.listdir(path):
-            fullpath = path + filename
+            fullpath = os.path.join(path, filename)
             if keep_expired and os.stat(fullpath).st_mtime + keep_expired > now:
                 continue
             os.unlink(fullpath)
