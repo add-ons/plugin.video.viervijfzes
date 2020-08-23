@@ -157,6 +157,13 @@ msgctxt "#30718"
 msgid "There is no live stream available for {channel}."
 msgstr "Er is geen live stream beschikbaar voor {channel}."
 
+msgctxt "#30719"
+msgid "This video cannot be played."
+msgstr "Deze video kan niet afgespeeld worden."
+
+msgctxt "#30720"
+msgid "This video is not available abroad."
+msgstr "Deze video is niet beschikbaar in het buitenland."
 
 
 ### SETTINGS

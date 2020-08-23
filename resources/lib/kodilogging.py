@@ -48,3 +48,4 @@ def config():
     """ Setup the logger with this handler """
     logger = logging.getLogger()
     logger.addHandler(KodiLogHandler())
+    logger.setLevel(logging.DEBUG)
