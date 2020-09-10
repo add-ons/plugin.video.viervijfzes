@@ -47,5 +47,6 @@ class KodiLogHandler(logging.StreamHandler):
 def config():
     """ Setup the logger with this handler """
     logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)  # Make sure we pass all messages, Kodi will do some filtering itself.
     logger.addHandler(KodiLogHandler())
     logger.setLevel(logging.DEBUG)
