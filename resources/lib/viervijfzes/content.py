@@ -602,7 +602,7 @@ class ContentApi:
     def _get_cache(self, key, allow_expired=False):
         """ Get an item from the cache """
         filename = ('.'.join(key) + '.json').replace('/', '_')
-        fullpath = self._cache_path + filename
+        fullpath = os.path.join(self._cache_path, filename)
 
         if not os.path.exists(fullpath):
             return None
