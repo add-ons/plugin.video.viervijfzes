@@ -49,7 +49,7 @@ class SearchApi:
             if hit['_source']['bundle'] == 'program':
                 results.append(Program(
                     channel=hit['_source']['site'],
-                    path=hit['_source']['url'].strip('/'),
+                    path=hit['_source']['url'].split('/')[-1],
                     title=hit['_source']['title'],
                     description=hit['_source']['intro'],
                     cover=hit['_source']['img'],
