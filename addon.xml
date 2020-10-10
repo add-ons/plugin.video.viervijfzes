@@ -20,7 +20,7 @@
         <description lang="en_GB">This add-on gives access to video-on-demand content available on the websites of VIER, VIJF and ZES.</description>
         <disclaimer lang="en_GB">This add-on is not officially commissioned/supported by SBS Belgium and is provided 'as is' without any warranty of any kind. The VIER, VIJF and ZES logos are property of SBS Belgium.</disclaimer>
         <platform>all</platform>
-        <license>GPL-3.0</license>
+        <license>GPL-3.0-only</license>
         <news>v0.2.0</news>
         <source>https://github.com/add-ons/plugin.video.viervijfzes</source>
         <assets>
