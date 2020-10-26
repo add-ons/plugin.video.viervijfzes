@@ -10,12 +10,12 @@ import re
 import time
 from datetime import datetime
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser  # pylint: disable=wrong-import-order
 
 from resources.lib.viervijfzes import CHANNELS
 
-_LOGGER = logging.getLogger('content-api')
+_LOGGER = logging.getLogger(__name__)
 
 CACHE_AUTO = 1  # Allow to use the cache, and query the API if no cache is available
 CACHE_ONLY = 2  # Only use the cache, don't use the API

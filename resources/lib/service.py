@@ -8,13 +8,13 @@ import logging
 import os
 from time import time
 
-from xbmc import getInfoLabel, Monitor, Player
+from xbmc import Monitor, Player, getInfoLabel
 
 from resources.lib import kodilogging, kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
 
 kodilogging.config()
-_LOGGER = logging.getLogger('service')
+_LOGGER = logging.getLogger(__name__)
 
 
 class BackgroundService(Monitor):
@@ -176,6 +176,7 @@ class KodiPlayer(Player):
         if not self.listen:
             return
         _LOGGER.debug('KodiPlayer onPlayBackEnded')
+
 
 def run():
     """ Run the BackgroundService """

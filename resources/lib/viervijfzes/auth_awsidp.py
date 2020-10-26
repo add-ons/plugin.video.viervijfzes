@@ -17,7 +17,7 @@ import sys
 import requests
 import six
 
-_LOGGER = logging.getLogger('auth-awsidp')
+_LOGGER = logging.getLogger(__name__)
 
 
 class InvalidLoginException(Exception):

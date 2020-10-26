@@ -13,7 +13,7 @@ from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import UnavailableException
 from resources.lib.viervijfzes.epg import EpgApi
 
-_LOGGER = logging.getLogger('tvguide')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TvGuide:

@@ -11,7 +11,7 @@ from resources.lib import kodilogging
 
 kodilogging.config()
 routing = Plugin()  # pylint: disable=invalid-name
-_LOGGER = logging.getLogger('addon')
+_LOGGER = logging.getLogger(__name__)
 
 
 @routing.route('/')

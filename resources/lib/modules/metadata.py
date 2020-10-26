@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 from resources.lib import kodiutils
 from resources.lib.viervijfzes import CHANNELS
-from resources.lib.viervijfzes.content import ContentApi, Program, CACHE_PREVENT, CACHE_AUTO
+from resources.lib.viervijfzes.content import CACHE_AUTO, CACHE_PREVENT, ContentApi, Program
 
 
 class Metadata:

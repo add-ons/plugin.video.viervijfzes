@@ -26,7 +26,7 @@ DEFAULT_SORT_METHODS = [
     'unsorted', 'title'
 ]
 
-_LOGGER = logging.getLogger('kodiutils')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TitleItem:
@@ -230,7 +230,8 @@ def ok_dialog(heading='', message=''):
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().ok(heading=heading, line1=message)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        return Dialog().ok(heading=heading, line1=message)
     return Dialog().ok(heading=heading, message=message)
 
 
@@ -240,7 +241,8 @@ def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None, autoclose=
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
     return Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
 
 
@@ -294,7 +296,7 @@ def set_locale():
     """Load the proper locale for date strings, only once"""
     if hasattr(set_locale, 'cached'):
         return getattr(set_locale, 'cached')
-    from locale import Error, LC_ALL, setlocale
+    from locale import LC_ALL, Error, setlocale
     locale_lang = get_global_setting('locale.language').split('.')[-1]
     locale_lang = locale_lang[:-2] + locale_lang[-2:].upper()
     # NOTE: setlocale() only works if the platform supports the Kodi configured locale

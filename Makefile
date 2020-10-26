@@ -41,6 +41,9 @@ check-addon: clean build
 	cd ${TMPDIR} && kodi-addon-checker --branch=leia
 	@rm -rf ${TMPDIR}
 
+codefix:
+	@isort -l 160 resources/
+
 test: test-unit
 
 test-unit:
