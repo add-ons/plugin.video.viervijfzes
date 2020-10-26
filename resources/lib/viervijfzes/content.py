@@ -539,7 +539,7 @@ class ContentApi:
             nodeid=data.get('pageInfo', {}).get('nodeId'),
             path=data.get('link').lstrip('/'),
             channel=data.get('pageInfo', {}).get('site'),
-            program_title=data.get('program', {}).get('title'),
+            program_title=data.get('program', {}).get('title') if data.get('program') else data.get('title'),
             title=data.get('title'),
             description=data.get('pageInfo', {}).get('description'),
             cover=data.get('image'),
