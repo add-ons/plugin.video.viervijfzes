@@ -346,7 +346,7 @@ class ContentApi:
         if 'videoDash' in data:
             # DRM protected stream
             # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
-            drm_key = data['drmKey']['S'],
+            drm_key = data['drmKey']['S']
 
             _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
             response_drm = self._get_url(self.API2_ENDPOINT + '/decode/%s' % drm_key, authentication=True)

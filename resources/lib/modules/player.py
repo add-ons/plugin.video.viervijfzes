@@ -66,13 +66,19 @@ class Player:
             titleitem = Menu.generate_titleitem(episode)
             if resolved_stream.license_url:
                 # Generate license key
-                license_key = self.create_license_key(resolved_stream.license_url, key_headers=dict(
-                    customdata=resolved_stream.auth,
-                ))
+                license_key = self.create_license_key(resolved_stream.license_url,
+                                                      key_headers=dict(
+                                                          customdata=resolved_stream.auth,
+                                                      ))
             else:
                 license_key = None
 
-            kodiutils.play(resolved_stream.url, resolved_stream.stream_type, license_key, info_dict=titleitem.info_dict, art_dict=titleitem.art_dict, prop_dict=titleitem.prop_dict)
+            kodiutils.play(resolved_stream.url,
+                           resolved_stream.stream_type,
+                           license_key,
+                           info_dict=titleitem.info_dict,
+                           art_dict=titleitem.art_dict,
+                           prop_dict=titleitem.prop_dict)
 
     def play(self, uuid):
         """ Play the requested item.
@@ -154,4 +160,3 @@ class Player:
             key_value = quote(key_value)
 
         return '%s|%s|%s|' % (key_url, header, key_value)
-

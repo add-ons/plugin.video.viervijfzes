@@ -68,9 +68,6 @@ class TestApi(unittest.TestCase):
         resolved_stream = self._api.get_stream_by_uuid('5bd7211d-de78-490f-b40c-bacbee5919d2')
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
-        print(resolved_stream)
-        exit(1)
-
 
 if __name__ == '__main__':
     unittest.main()
