@@ -12,7 +12,7 @@ from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.auth_awsidp import AuthenticationException, InvalidLoginException
 from resources.lib.viervijfzes.content import ContentApi, GeoblockedException, UnavailableException
 
-_LOGGER = logging.getLogger('player')
+_LOGGER = logging.getLogger(__name__)
 
 
 class Player:

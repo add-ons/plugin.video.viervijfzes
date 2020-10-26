@@ -14,7 +14,7 @@ from resources.lib import kodilogging, kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
 
 kodilogging.config()
-_LOGGER = logging.getLogger('service')
+_LOGGER = logging.getLogger(__name__)
 
 
 class BackgroundService(Monitor):

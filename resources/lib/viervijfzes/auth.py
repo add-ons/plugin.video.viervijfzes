@@ -11,7 +11,7 @@ import time
 from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth_awsidp import AuthenticationException, AwsIdp, InvalidLoginException
 
-_LOGGER = logging.getLogger('auth-api')
+_LOGGER = logging.getLogger(__name__)
 
 
 class AuthApi:

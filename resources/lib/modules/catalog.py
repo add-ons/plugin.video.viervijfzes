@@ -12,7 +12,7 @@ from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import CACHE_PREVENT, ContentApi, UnavailableException
 
-_LOGGER = logging.getLogger('catalog')
+_LOGGER = logging.getLogger(__name__)
 
 
 class Catalog:

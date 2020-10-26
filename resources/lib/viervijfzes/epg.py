@@ -11,7 +11,7 @@ import dateutil.parser
 import dateutil.tz
 import requests
 
-_LOGGER = logging.getLogger('epg-api')
+_LOGGER = logging.getLogger(__name__)
 
 GENRE_MAPPING = {
     'Detective': 0x11,

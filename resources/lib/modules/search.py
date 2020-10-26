@@ -9,7 +9,7 @@ from resources.lib import kodiutils
 from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes.search import SearchApi
 
-_LOGGER = logging.getLogger('search')
+_LOGGER = logging.getLogger(__name__)
 
 
 class Search:

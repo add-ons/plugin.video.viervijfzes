@@ -26,7 +26,7 @@ DEFAULT_SORT_METHODS = [
     'unsorted', 'title'
 ]
 
-_LOGGER = logging.getLogger('kodiutils')
+_LOGGER = logging.getLogger(__name__)
 
 
 class TitleItem:

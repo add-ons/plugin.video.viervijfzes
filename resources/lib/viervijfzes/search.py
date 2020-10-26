@@ -10,7 +10,7 @@ import requests
 
 from resources.lib.viervijfzes.content import Program
 
-_LOGGER = logging.getLogger('search-api')
+_LOGGER = logging.getLogger(__name__)
 
 
 class SearchApi:

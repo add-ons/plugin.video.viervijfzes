@@ -12,7 +12,7 @@ from resources.lib.viervijfzes import CHANNELS, STREAM_DICT
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import CACHE_AUTO, CACHE_ONLY, ContentApi
 
-_LOGGER = logging.getLogger('channels')
+_LOGGER = logging.getLogger(__name__)
 
 
 class Channels:
