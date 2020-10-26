@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Make UTF-8 the default encoding in Python 2
 if sys.version_info[0] == 2:
-    reload(sys)  # pylint: disable=undefined-variable
+    reload(sys)  # pylint: disable=undefined-variable  # noqa: F821
     sys.setdefaultencoding("utf-8")  # pylint: disable=no-member
 
 # Set credentials based on environment data

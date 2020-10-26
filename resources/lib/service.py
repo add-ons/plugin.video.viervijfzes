@@ -177,6 +177,7 @@ class KodiPlayer(Player):
             return
         _LOGGER.debug('KodiPlayer onPlayBackEnded')
 
+
 def run():
     """ Run the BackgroundService """
     BackgroundService().run()

@@ -230,7 +230,8 @@ def ok_dialog(heading='', message=''):
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().ok(heading=heading, line1=message)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        return Dialog().ok(heading=heading, line1=message)
     return Dialog().ok(heading=heading, message=message)
 
 
@@ -240,7 +241,8 @@ def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None, autoclose=
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
-        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)  # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
+        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
     return Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
 
 
