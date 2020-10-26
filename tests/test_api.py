@@ -9,6 +9,7 @@ import logging
 import unittest
 
 import resources.lib.kodiutils as kodiutils
+from resources.lib.viervijfzes import ResolvedStream
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import ContentApi, Program, Episode, Category, CACHE_PREVENT
 
@@ -58,8 +59,17 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(program, Program)
 
         episode = program.episodes[0]
-        video = self._api.get_stream_by_uuid(episode.uuid)
-        self.assertTrue(video)
+        resolved_stream = self._api.get_stream_by_uuid(episode.uuid)
+        self.assertIsInstance(resolved_stream, ResolvedStream)
+
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
+    def test_get_drm_stream(self):
+        # https://www.zestv.be/video/ncis-new-orleans/ncis-new-orleans-seizoen-3/ncis-new-orleans-s3-aflevering-8
+        resolved_stream = self._api.get_stream_by_uuid('5bd7211d-de78-490f-b40c-bacbee5919d2')
+        self.assertIsInstance(resolved_stream, ResolvedStream)
+
+        print(resolved_stream)
+        exit(1)
 
 
 if __name__ == '__main__':
