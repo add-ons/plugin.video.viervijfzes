@@ -10,8 +10,8 @@ import re
 import time
 from datetime import datetime
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser  # pylint: disable=wrong-import-order
 
 from resources.lib.viervijfzes import CHANNELS
 

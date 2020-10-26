@@ -296,7 +296,7 @@ def set_locale():
     """Load the proper locale for date strings, only once"""
     if hasattr(set_locale, 'cached'):
         return getattr(set_locale, 'cached')
-    from locale import Error, LC_ALL, setlocale
+    from locale import LC_ALL, Error, setlocale
     locale_lang = get_global_setting('locale.language').split('.')[-1]
     locale_lang = locale_lang[:-2] + locale_lang[-2:].upper()
     # NOTE: setlocale() only works if the platform supports the Kodi configured locale

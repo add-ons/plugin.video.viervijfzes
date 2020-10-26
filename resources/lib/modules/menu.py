@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
 from resources.lib.viervijfzes import CHANNELS, STREAM_DICT
-from resources.lib.viervijfzes.content import Program, Episode
+from resources.lib.viervijfzes.content import Episode, Program
 
 
 class Menu:

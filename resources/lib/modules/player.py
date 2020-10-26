@@ -9,8 +9,8 @@ from resources.lib import kodiutils
 from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.auth_awsidp import InvalidLoginException, AuthenticationException
-from resources.lib.viervijfzes.content import ContentApi, UnavailableException, GeoblockedException
+from resources.lib.viervijfzes.auth_awsidp import AuthenticationException, InvalidLoginException
+from resources.lib.viervijfzes.content import ContentApi, GeoblockedException, UnavailableException
 
 _LOGGER = logging.getLogger('player')
 

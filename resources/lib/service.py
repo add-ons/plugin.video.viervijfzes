@@ -8,7 +8,7 @@ import logging
 import os
 from time import time
 
-from xbmc import getInfoLabel, Monitor, Player
+from xbmc import Monitor, Player, getInfoLabel
 
 from resources.lib import kodilogging, kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
