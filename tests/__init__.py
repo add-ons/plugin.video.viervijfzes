@@ -27,7 +27,6 @@ if sys.version_info[0] == 2:
 # Set credentials based on environment data
 # Use the .env file with Pipenv to make this work nicely during development
 ADDON = xbmcaddon.Addon()
-ADDON.setSetting('loginprovider', '0')  # Streamz login
 if os.environ.get('ADDON_USERNAME'):
     ADDON.setSetting('username', os.environ.get('ADDON_USERNAME'))
 if os.environ.get('ADDON_PASSWORD'):
