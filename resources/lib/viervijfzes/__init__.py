@@ -54,3 +54,24 @@ STREAM_DICT = {
     'height': 544,
     'width': 960,
 }
+
+
+class ResolvedStream:
+    """ Defines a stream that we can play"""
+
+    def __init__(self, uuid=None, url=None, stream_type=None, license_url=None, auth=None):
+        """
+        :type uuid: str
+        :type url: str
+        :type stream_type: str
+        :type license_url: str
+        :type auth: str
+        """
+        self.uuid = uuid
+        self.url = url
+        self.stream_type = stream_type
+        self.license_url = license_url
+        self.auth = auth
+
+    def __repr__(self):
+        return "%r" % self.__dict__

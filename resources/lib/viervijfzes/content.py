@@ -13,7 +13,8 @@ from datetime import datetime
 import requests
 from six.moves.html_parser import HTMLParser  # pylint: disable=wrong-import-order
 
-from resources.lib.viervijfzes import CHANNELS
+from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS
+from resources.lib.viervijfzes import CHANNELS, ResolvedStream
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -164,6 +165,7 @@ class Category:
 class ContentApi:
     """ VIER/VIJF/ZES Content API"""
     API_ENDPOINT = 'https://api.viervijfzes.be'
+    API2_ENDPOINT = 'https://api2.viervijfzes.be'
     SITE_APIS = {
         'vier': 'https://www.vier.be/api',
         'vijf': 'https://www.vijf.be/api',
@@ -340,7 +342,30 @@ class ContentApi:
         """
         response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
         data = json.loads(response)
-        return data['video']['S']
+
+        if 'videoDash' in data:
+            # DRM protected stream
+            # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
+            drm_key = data['drmKey']['S']
+
+            _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
+            response_drm = self._get_url(self.API2_ENDPOINT + '/decode/%s' % drm_key, authentication=True)
+            data_drm = json.loads(response_drm)
+
+            return ResolvedStream(
+                uuid=uuid,
+                url=data['videoDash']['S'],
+                stream_type=STREAM_DASH,
+                license_url='https://wv-keyos.licensekeyserver.com/',
+                auth=data_drm.get('auth'),
+            )
+
+        # Normal HLS stream
+        return ResolvedStream(
+            uuid=uuid,
+            url=data['video']['S'],
+            stream_type=STREAM_HLS,
+        )
 
     def get_categories(self, channel):
         """ Get a list of all categories of the specified channel.
