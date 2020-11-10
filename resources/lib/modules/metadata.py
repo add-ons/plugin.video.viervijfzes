@@ -3,6 +3,8 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import os
+
 from resources.lib import kodiutils
 from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.content import CACHE_AUTO, CACHE_PREVENT, ContentApi, Program
@@ -60,7 +62,8 @@ class Metadata:
         cache_path = kodiutils.get_cache_path()
         _, files = kodiutils.listdir(cache_path)
         for filename in files:
-            kodiutils.delete(cache_path + filename)
+            if not kodiutils.delete(os.path.join(cache_path, filename)):
+                return kodiutils.ok_dialog(message=kodiutils.localize(30721))  # Clearing local metadata failed
 
         kodiutils.set_setting('metadata_last_updated', '0')
-        kodiutils.ok_dialog(message=kodiutils.localize(30714))  # Local metadata is cleared
+        return kodiutils.ok_dialog(message=kodiutils.localize(30714))  # Local metadata is cleared
