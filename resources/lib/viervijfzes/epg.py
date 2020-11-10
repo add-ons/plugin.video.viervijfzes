@@ -138,7 +138,7 @@ class EpgApi:
             episode_title=data.get('episode_title'),
             episode_title_original=data.get('original_title'),
             number=int(data.get('episode_nr')) if data.get('episode_nr') else None,
-            season=int(data.get('season')) if data.get('season') else None,
+            season=data.get('season'),
             genre=data.get('genre'),
             start=start,
             won_id=int(data.get('won_id')) if data.get('won_id') else None,

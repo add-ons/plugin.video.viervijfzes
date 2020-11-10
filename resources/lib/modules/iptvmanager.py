@@ -80,7 +80,7 @@ class IPTVManager:
                         title=program.program_title,
                         subtitle=program.episode_title,
                         description=program.description,
-                        episode='S%dE%d' % (program.season, program.number) if program.season and program.number else None,
+                        episode='S%sE%s' % (program.season, program.number) if program.season and program.number else None,
                         genre=program.genre,
                         genre_id=program.genre_id,
                         image=program.cover,
