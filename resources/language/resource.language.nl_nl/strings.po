@@ -165,6 +165,10 @@ msgctxt "#30720"
 msgid "This video is not available abroad."
 msgstr "Deze video is niet beschikbaar in het buitenland."
 
+msgctxt "#30721"
+msgid "Clearing local metadata failed."
+msgstr "Wissen van lokale metadata is mislukt."
+
 
 ### SETTINGS
 msgctxt "#30800"
