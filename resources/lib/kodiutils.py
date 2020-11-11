@@ -220,9 +220,12 @@ def play(stream, stream_type=STREAM_HLS, license_key=None, title=None, art_dict=
     elif stream_type == STREAM_DASH:
         play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
         play_item.setMimeType('application/dash+xml')
-        if license_key:
-            play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-            play_item.setProperty('inputstream.adaptive.license_key', license_key)
+        if license_key is not None:
+            import inputstreamhelper
+            is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
+            if is_helper.check_inputstream():
+                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                play_item.setProperty('inputstream.adaptive.license_key', license_key)
 
     play_item.setContentLookup(False)
 
