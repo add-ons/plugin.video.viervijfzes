@@ -10,11 +10,7 @@
 
 > Note: Je moet eerst een account aanmaken op één van bovenstaande websites.
 
-## Installatie
-
-Deze addon staat momenteel nog niet de repository van Kodi zelf, je moet deze voorlopig nog handmatig installeren en updaten.
-
-Je kan de [laatste release](https://github.com/add-ons/plugin.video.viervijfzes/releases) downloaden, of een [development zip](https://github.com/add-ons/plugin.video.viervijfzes/archive/master.zip) van Github downloaden met de laatste wijzigingen.
+Meer informatie kan je vinden op de [Wiki pagina](https://github.com/add-ons/plugin.video.viervijfzes/wiki).
 
 ## Features
 
