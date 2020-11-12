@@ -1,5 +1,29 @@
 # Changelog
 
+## [v0.3.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.3.0) (2020-11-12)
+
+[Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.2.0...v0.3.0)
+
+**Implemented enhancements:**
+
+- Add inputstreamhelper [\#57](https://github.com/add-ons/plugin.video.viervijfzes/pull/57) ([mediaminister](https://github.com/mediaminister))
+- Allow to install and run Kodi Logfile Uploader from the settings [\#50](https://github.com/add-ons/plugin.video.viervijfzes/pull/50) ([michaelarnauts](https://github.com/michaelarnauts))
+- Allow to install IPTV Manager from the settings [\#49](https://github.com/add-ons/plugin.video.viervijfzes/pull/49) ([michaelarnauts](https://github.com/michaelarnauts))
+- Allow playing drm protected content [\#47](https://github.com/add-ons/plugin.video.viervijfzes/pull/47) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Fixed bugs:**
+
+- Fix clearing local metadata [\#55](https://github.com/add-ons/plugin.video.viervijfzes/pull/55) ([mediaminister](https://github.com/mediaminister))
+- Fix EPG due to parsing issue of the season [\#54](https://github.com/add-ons/plugin.video.viervijfzes/pull/54) ([michaelarnauts](https://github.com/michaelarnauts))
+- Fix logging for Kodi Matrix [\#48](https://github.com/add-ons/plugin.video.viervijfzes/pull/48) ([michaelarnauts](https://github.com/michaelarnauts))
+- Opening some programs without a title could throw an error [\#45](https://github.com/add-ons/plugin.video.viervijfzes/pull/45) ([dagwieers](https://github.com/dagwieers))
+- Show message when Kodi Player fails to get the stream [\#40](https://github.com/add-ons/plugin.video.viervijfzes/pull/40) ([mediaminister](https://github.com/mediaminister))
+
+**Merged pull requests:**
+
+- Various fixes [\#46](https://github.com/add-ons/plugin.video.viervijfzes/pull/46) ([michaelarnauts](https://github.com/michaelarnauts))
+- Use sake for Kodi stubs [\#36](https://github.com/add-ons/plugin.video.viervijfzes/pull/36) ([michaelarnauts](https://github.com/michaelarnauts))
+
 ## [v0.2.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.2.0) (2020-06-19)
 
 [Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.1.0...v0.2.0)
