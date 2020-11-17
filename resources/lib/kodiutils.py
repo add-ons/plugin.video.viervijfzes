@@ -280,7 +280,7 @@ def multiselect(heading='', options=None, autoclose=0, preselect=None, use_detai
     if not heading:
         heading = addon_name()
     return xbmcgui.Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect,
-                                useDetails=use_details)
+                                        useDetails=use_details)
 
 
 class progress(xbmcgui.DialogProgress, object):  # pylint: disable=invalid-name,useless-object-inheritance
