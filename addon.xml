@@ -22,7 +22,7 @@
         <disclaimer lang="en_GB">This add-on is not officially commissioned/supported by SBS Belgium and is provided 'as is' without any warranty of any kind. The VIER, VIJF and ZES logos are property of SBS Belgium.</disclaimer>
         <platform>all</platform>
         <license>GPL-3.0-only</license>
-        <news>v0.3.0 (2020-11-12)
+        <news>v0.3.0 (2020-11-17)
 - Supports DRM protected content with a new Inputstream Adapative
 - Various bugfixes
 </news>
