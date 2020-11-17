@@ -10,6 +10,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 
@@ -113,7 +114,10 @@ def addon_path():
 
 def addon_profile():
     """Cache and return add-on profile"""
-    return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
+    try:  # Kodi 19
+        return to_unicode(xbmcvfs.translatePath(ADDON.getAddonInfo('profile')))
+    except AttributeError:  # Kodi 18
+        return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
 
 
 def url_for(name, *args, **kwargs):
@@ -244,42 +248,38 @@ def get_search_string(heading='', message=''):
 
 def ok_dialog(heading='', message=''):
     """Show Kodi's OK dialog"""
-    from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
         # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
-        return Dialog().ok(heading=heading, line1=message)
-    return Dialog().ok(heading=heading, message=message)
+        return xbmcgui.Dialog().ok(heading=heading, line1=message)
+    return xbmcgui.Dialog().ok(heading=heading, message=message)
 
 
 def yesno_dialog(heading='', message='', nolabel=None, yeslabel=None, autoclose=0):
     """Show Kodi's Yes/No dialog"""
-    from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
     if kodi_version_major() < 19:
         # pylint: disable=unexpected-keyword-arg,no-value-for-parameter
-        return Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
-    return Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
+        return xbmcgui.Dialog().yesno(heading=heading, line1=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
+    return xbmcgui.Dialog().yesno(heading=heading, message=message, nolabel=nolabel, yeslabel=yeslabel, autoclose=autoclose)
 
 
 def notification(heading='', message='', icon='info', time=4000):
     """Show a Kodi notification"""
-    from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
     if not icon:
         icon = addon_icon()
-    Dialog().notification(heading=heading, message=message, icon=icon, time=time)
+    xbmcgui.Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
 
 def multiselect(heading='', options=None, autoclose=0, preselect=None, use_details=False):
     """Show a Kodi multi-select dialog"""
-    from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
-    return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect,
+    return xbmcgui.Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect,
                                 useDetails=use_details)
 
 
@@ -531,11 +531,9 @@ def jsonrpc(*args, **kwargs):
 
 def listdir(path):
     """Return all files in a directory (using xbmcvfs)"""
-    from xbmcvfs import listdir as vfslistdir
-    return vfslistdir(path)
+    return xbmcvfs.listdir(path)
 
 
 def delete(path):
     """Remove a file (using xbmcvfs)"""
-    from xbmcvfs import delete as vfsdelete
-    return vfsdelete(path)
+    return xbmcvfs.delete(path)
