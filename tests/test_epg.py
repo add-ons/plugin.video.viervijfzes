@@ -45,7 +45,7 @@ class TestEpg(unittest.TestCase):
         self.assertEqual(programs, [])
 
     def test_play_video_from_epg(self):
-        epg_programs = self._epg.get_epg('vier', date.today().strftime('%Y-%m-%d'))
+        epg_programs = self._epg.get_epg('vier', 'yesterday')
         epg_program = [program for program in epg_programs if program.video_url][0]
 
         # Lookup the Episode data since we don't have an UUID

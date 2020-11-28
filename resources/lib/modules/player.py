@@ -120,7 +120,7 @@ class Player:
                 return resolved_stream
 
             except (InvalidLoginException, AuthenticationException) as ex:
-                _LOGGER.error(ex)
+                _LOGGER.exception(ex)
                 kodiutils.ok_dialog(message=kodiutils.localize(30702, error=str(ex)))
                 kodiutils.end_of_directory()
                 return None
