@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.3.1](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.3.1) (2020-11-28)
+
+[Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.3.0...v0.3.1)
+
+**Fixed bugs:**
+
+- Fix authentication on some older Android devices [\#58](https://github.com/add-ons/plugin.video.viervijfzes/pull/58) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Merged pull requests:**
+
+- Fix CI tests [\#59](https://github.com/add-ons/plugin.video.viervijfzes/pull/59) ([michaelarnauts](https://github.com/michaelarnauts))
+
 ## [v0.3.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.3.0) (2020-11-17)
 
 [Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.2.0...v0.3.0)
@@ -61,7 +73,6 @@
 
 - Improve EPG metadata [\#13](https://github.com/add-ons/plugin.video.viervijfzes/pull/13) ([michaelarnauts](https://github.com/michaelarnauts))
 - Implement program caching for more metadata in listings [\#8](https://github.com/add-ons/plugin.video.viervijfzes/pull/8) ([michaelarnauts](https://github.com/michaelarnauts))
-- Assorted fixes [\#1](https://github.com/add-ons/plugin.video.viervijfzes/pull/1) ([dagwieers](https://github.com/dagwieers))
 
 **Fixed bugs:**
 
