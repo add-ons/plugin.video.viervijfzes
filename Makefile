@@ -55,7 +55,7 @@ test: test-unit
 
 test-unit:
 	@echo ">>> Running unit tests"
-	@$(PYTHON) -m unittest discover -v -b -f
+	@$(PYTHON) -m pytest tests
 
 clean:
 	@find . -name '*.py[cod]' -type f -delete

@@ -64,8 +64,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        # https://www.zestv.be/video/ncis-new-orleans/ncis-new-orleans-seizoen-3/ncis-new-orleans-s3-aflevering-8
-        resolved_stream = self._api.get_stream_by_uuid('5bd7211d-de78-490f-b40c-bacbee5919d2')
+        resolved_stream = self._api.get_stream_by_uuid('b56a41d9-5a6a-4ff0-b16a-56dc7b2e1f25')
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
 
