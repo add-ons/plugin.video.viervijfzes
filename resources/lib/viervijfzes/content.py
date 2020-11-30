@@ -11,10 +11,16 @@ import time
 from datetime import datetime
 
 import requests
-from six.moves.html_parser import HTMLParser  # pylint: disable=wrong-import-order
 
 from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS
 from resources.lib.viervijfzes import CHANNELS, ResolvedStream
+
+try:  # Python 3
+    from html import unescape
+except ImportError:  # Python 2
+    from HTMLParser import HTMLParser
+
+    unescape = HTMLParser().unescape
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -193,12 +199,11 @@ class ContentApi:
             raw_html = self._get_url(CHANNELS[channel]['url'])
 
             # Parse programs
-            parser = HTMLParser()
             regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
                                         r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
                                         r'</a>', re.DOTALL)
             data = {
-                item.group('path').lstrip('/'): parser.unescape(item.group('title').strip())
+                item.group('path').lstrip('/'): unescape(item.group('title').strip())
                 for item in regex_programs.finditer(raw_html)
             }
 
@@ -251,7 +256,7 @@ class ContentApi:
 
             # Extract JSON
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
-            json_data = HTMLParser().unescape(regex_program.search(page).group(1))
+            json_data = unescape(regex_program.search(page).group(1))
             data = json.loads(json_data)['data']
 
             return data
@@ -285,7 +290,6 @@ class ContentApi:
             # Load webpage
             page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
 
-            parser = HTMLParser()
             program_json = None
             episode_json = None
 
@@ -294,7 +298,7 @@ class ContentApi:
             regex_video_data = re.compile(r'data-video="([^"]+)"', re.DOTALL)
             result = regex_video_data.search(page)
             if result:
-                video_id = json.loads(parser.unescape(result.group(1)))['id']
+                video_id = json.loads(unescape(result.group(1)))['id']
                 video_json_data = self._get_url('%s/video/%s' % (self.SITE_APIS[channel], video_id))
                 video_json = json.loads(video_json_data)
                 return dict(video=video_json)
@@ -303,14 +307,14 @@ class ContentApi:
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
             result = regex_program.search(page)
             if result:
-                program_json_data = parser.unescape(result.group(1))
+                program_json_data = unescape(result.group(1))
                 program_json = json.loads(program_json_data)['data']
 
             # Extract episode JSON
             regex_episode = re.compile(r'<script type="application/json" data-drupal-selector="drupal-settings-json">(.*?)</script>', re.DOTALL)
             result = regex_episode.search(page)
             if result:
-                episode_json_data = parser.unescape(result.group(1))
+                episode_json_data = unescape(result.group(1))
                 episode_json = json.loads(episode_json_data)
 
             return dict(program=program_json, episode=episode_json)
@@ -404,8 +408,6 @@ class ContentApi:
     @staticmethod
     def _extract_programs(html, channel):
         """ Extract Programs from HTML code """
-        parser = HTMLParser()
-
         # Item regexes
         regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
                                 r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
@@ -418,7 +420,7 @@ class ContentApi:
             if path.startswith('/video'):
                 continue
 
-            title = parser.unescape(item.group('title'))
+            title = unescape(item.group('title'))
 
             # Program
             programs.append(Program(
@@ -432,8 +434,6 @@ class ContentApi:
     @staticmethod
     def _extract_videos(html, channel):
         """ Extract videos from HTML code """
-        parser = HTMLParser()
-
         # Item regexes
         regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>.*?</a>', re.DOTALL)
 
@@ -453,7 +453,7 @@ class ContentApi:
 
             # Extract title
             try:
-                title = parser.unescape(regex_episode_title.search(item_html).group(1))
+                title = unescape(regex_episode_title.search(item_html).group(1))
             except AttributeError:
                 continue
 
@@ -477,7 +477,7 @@ class ContentApi:
                 _LOGGER.warning('Found no episode_video_id for %s', title)
                 episode_video_id = None
             try:
-                episode_image = parser.unescape(regex_episode_image.search(item_html).group(1))
+                episode_image = unescape(regex_episode_image.search(item_html).group(1))
             except AttributeError:
                 _LOGGER.warning('Found no episode_image for %s', title)
                 episode_image = None
