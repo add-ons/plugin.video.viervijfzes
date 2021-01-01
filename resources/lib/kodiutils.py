@@ -197,43 +197,59 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
     xbmcplugin.endOfDirectory(routing.handle, succeeded, cacheToDisc=cache)
 
 
-def play(stream, stream_type=STREAM_HLS, license_key=None, title=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None):
+def play(stream, stream_type=STREAM_HLS, license_key=None, title=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None, ads_list=None):
     """Play the given stream"""
     from resources.lib.addon import routing
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
 
-    play_item = xbmcgui.ListItem(label=title, path=stream)
-    if art_dict:
-        play_item.setArt(art_dict)
-    if info_dict:
-        play_item.setInfo(type='video', infoLabels=info_dict)
-    if prop_dict:
-        play_item.setProperties(prop_dict)
-    if stream_dict:
-        play_item.addStreamInfo('video', stream_dict)
+    if ads_list:
+        ads_list.append(stream)
+        stream = ads_list
 
-    # Setup Inputstream Adaptive
-    if kodi_version_major() >= 19:
-        play_item.setProperty('inputstream', 'inputstream.adaptive')
-    else:
-        play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+    if not isinstance(stream, list):
+        stream = [stream]
 
-    if stream_type == STREAM_HLS:
-        play_item.setProperty('inputstream.adaptive.manifest_type', 'hls')
-        play_item.setMimeType('application/vnd.apple.mpegurl')
+    for i, url in enumerate(stream):
+        play_item = xbmcgui.ListItem(label=title, path=url)
+        if art_dict:
+            play_item.setArt(art_dict)
+        if info_dict:
+            play_item.setInfo(type='video', infoLabels=info_dict)
+        if prop_dict:
+            play_item.setProperties(prop_dict)
+        if stream_dict:
+            play_item.addStreamInfo('video', stream_dict)
 
-    elif stream_type == STREAM_DASH:
-        play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-        play_item.setMimeType('application/dash+xml')
-        if license_key is not None:
-            import inputstreamhelper
-            is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
-            if is_helper.check_inputstream():
-                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                play_item.setProperty('inputstream.adaptive.license_key', license_key)
+        if not url.endswith('.mp4'):
+            # Setup Inputstream Adaptive
+            if kodi_version_major() >= 19:
+                play_item.setProperty('inputstream', 'inputstream.adaptive')
+            else:
+                play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
 
-    play_item.setContentLookup(False)
+            if stream_type == STREAM_HLS:
+                play_item.setProperty('inputstream.adaptive.manifest_type', 'hls')
+                play_item.setMimeType('application/vnd.apple.mpegurl')
 
-    xbmcplugin.setResolvedUrl(routing.handle, True, listitem=play_item)
+            elif stream_type == STREAM_DASH:
+                play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+                play_item.setMimeType('application/dash+xml')
+                if license_key is not None:
+                    import inputstreamhelper
+                    is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
+                    if is_helper.check_inputstream():
+                        play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                        play_item.setProperty('inputstream.adaptive.license_key', license_key)
+
+            play_item.setContentLookup(False)
+
+        if i == 0:
+            first_item = play_item
+
+        playlist.add(url=url, listitem=play_item, index=i)
+
+    xbmcplugin.setResolvedUrl(routing.handle, True, listitem=first_item)
 
 
 def get_search_string(heading='', message=''):

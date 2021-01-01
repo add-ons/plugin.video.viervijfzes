@@ -104,10 +104,11 @@ class Season:
 class Episode:
     """ Defines an Episode. """
 
-    def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None, background=None,
-                 duration=None, season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None, stream=None):
+    def __init__(self, uuid=None, video_type=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, cover=None,
+                 background=None, duration=None, season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None, stream=None):
         """
         :type uuid: str
+        :type video_type: str
         :type nodeid: str
         :type path: str
         :type channel: str
@@ -126,6 +127,7 @@ class Episode:
         :type stream: string
         """
         self.uuid = uuid
+        self.video_type = video_type
         self.nodeid = nodeid
         self.path = path
         self.channel = channel
@@ -405,6 +407,73 @@ class ContentApi:
 
         return categories
 
+    def get_weather(self, channel):
+        """ Get a weather dictionary.
+        :type channel: str
+        :rtype dict
+        """
+        response = self._get_url(self.SITE_APIS[channel] + '/weather', authentication=True)
+        weather = json.loads(response)
+        return weather
+
+    def get_ad_streams(self, channel, program, path, uuid, video_type, username):
+        """ Get a list of advertisement stream URLs to use for this video.
+        :type channel: str
+        :type path: str
+        :rtype list
+        """
+        ad_streams = []
+        ad_url = 'https://pubads.g.doubleclick.net/gampad/ads'
+        weather = self.get_weather(channel)
+        channel_info = dict(
+            vier=dict(cmsid='2493239', network_id='21797861328'),
+            vijf=dict(cmsid='2493512', network_id='21797861328'),
+            zes=dict(cmsid='2496240', network_id='21797861328')
+        )
+        network_id = channel_info.get(channel).get('network_id')
+        from unicodedata import normalize
+        program = normalize('NFD', program).replace(' ', '-')
+        program = re.sub(r'[^A-Za-z0-9-]+', '', program).lower()
+        from hashlib import sha1
+        ppid = sha1(username.encode('utf-8')).hexdigest()
+        if program:
+            iu_id = '/{}/{}/{}/{}'.format(network_id, channel, 'programmas', program)
+        else:
+            iu_id = '/{}/{}/'.format(network_id, channel)
+        params = dict(ad_rule=1,
+                      cmsid=channel_info.get(channel).get('cmsid'),
+                      correlator=int(round(time.time() * 1000)),
+                      sbs_weather_cond=weather.get('summary'),
+                      sbs_weather_temp=weather.get('temperature'),
+                      description_url=path,
+                      env='vp',
+                      gdfp_req=1,
+                      impl='s',
+                      iu=iu_id,
+                      output='vast',
+                      pp='SBSNoDash',
+                      ppid=ppid,
+                      sz='640x360',
+                      unviewed_position_start=1,
+                      url=path,
+                      vid=uuid,
+                      video_type=video_type)
+
+        xml = self._get_url(ad_url, params)
+        import xml.etree.ElementTree as ET
+        tree = ET.fromstring(xml)
+        for item in tree:
+            if item.tag == 'Preroll':
+                url = item.find('Ad').text
+                xml = self._get_url(url)
+                tree = ET.fromstring(xml)
+                for adv in tree.findall('.//Ad'):
+                    for stream in adv.findall('.//MediaFile'):
+                        if stream.get('type') == 'video/mp4' and stream.get('width') == '1920':
+                            ad_streams.append(stream.text)
+                            break
+        return ad_streams
+
     @staticmethod
     def _extract_programs(html, channel):
         """ Extract Programs from HTML code """
@@ -561,6 +630,7 @@ class ContentApi:
 
         episode = Episode(
             uuid=data.get('videoUuid'),
+            video_type=data.get('type', {}),
             nodeid=data.get('pageInfo', {}).get('nodeId'),
             path=data.get('link').lstrip('/'),
             channel=data.get('pageInfo', {}).get('site'),

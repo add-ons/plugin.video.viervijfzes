@@ -48,6 +48,10 @@ class Player:
             kodiutils.ok_dialog(message=kodiutils.localize(30712))
             return
 
+        # Get advertisements
+        ad_streams = self._api.get_ad_streams(episode.channel, episode.program_title, path, episode.uuid, episode.video_type, kodiutils.get_setting('username'))
+        _LOGGER.info('Advertisements: %s', ad_streams)
+
         if episode.stream:
             # We already have a resolved stream. Nice!
             # We don't need credentials for these streams.
@@ -78,7 +82,8 @@ class Player:
                            license_key,
                            info_dict=titleitem.info_dict,
                            art_dict=titleitem.art_dict,
-                           prop_dict=titleitem.prop_dict)
+                           prop_dict=titleitem.prop_dict,
+                           ads_list=ad_streams)
 
     def play(self, uuid):
         """ Play the requested item.
