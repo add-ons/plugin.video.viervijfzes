@@ -70,9 +70,9 @@ class EpgApi:
     """ VIER/VIJF/ZES EPG API """
 
     EPG_ENDPOINTS = {
-        'vier': 'https://www.vier.be/api/epg/{date}',
-        'vijf': 'https://www.vijf.be/api/epg/{date}',
-        'zes': 'https://www.zestv.be/api/epg/{date}',
+        'Play4': 'https://www.goplay.be/api/epg/vier/{date}',
+        'Play5': 'https://www.goplay.be/api/epg/vijf/{date}',
+        'Play6': 'https://www.goplay.be/api/epg/zes/{date}'
     }
 
     EPG_NO_BROADCAST = 'Geen uitzending'

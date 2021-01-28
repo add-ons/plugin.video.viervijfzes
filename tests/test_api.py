@@ -23,39 +23,38 @@ class TestApi(unittest.TestCase):
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
 
     def test_programs(self):
-        for channel in ['vier', 'vijf', 'zes']:
-            programs = self._api.get_programs(channel)
-            self.assertIsInstance(programs, list)
-            self.assertIsInstance(programs[0], Program)
+        programs = self._api.get_programs()
+        self.assertIsInstance(programs, list)
+        self.assertIsInstance(programs[0], Program)
 
-    def test_categories(self):
-        for channel in ['vier', 'vijf', 'zes']:
-            categories = self._api.get_categories(channel)
-        self.assertIsInstance(categories, list)
-        if categories:
-            self.assertIsInstance(categories[0], Category)
+    # def test_categories(self):
+    #     for channel in ['vier', 'vijf', 'zes']:
+    #         categories = self._api.get_categories(channel)
+    #     self.assertIsInstance(categories, list)
+    #     if categories:
+    #         self.assertIsInstance(categories[0], Category)
 
     def test_episodes(self):
-        for channel, program in [('vier', 'auwch'), ('vijf', 'zo-man-zo-vrouw')]:
-            program = self._api.get_program(channel, program, cache=CACHE_PREVENT)
+        for program in ['auwch', 'zo-man-zo-vrouw']:
+            program = self._api.get_program(program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
             self.assertIsInstance(program.episodes, list)
             self.assertIsInstance(program.episodes[0], Episode)
 
     def test_clips(self):
-        for channel, program in [('vier', 'gert-late-night')]:
-            program = self._api.get_program(channel, program, extract_clips=True, cache=CACHE_PREVENT)
+        for program in ['gert-late-night']:
+            program = self._api.get_program(program, extract_clips=True, cache=CACHE_PREVENT)
 
             self.assertIsInstance(program.clips, list)
             self.assertIsInstance(program.clips[0], Episode)
 
-            episode = self._api.get_episode(channel, program.clips[0].path, cache=CACHE_PREVENT)
+            episode = self._api.get_episode(program.clips[0].path, cache=CACHE_PREVENT)
             self.assertIsInstance(episode, Episode)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
-        program = self._api.get_program('vier', 'auwch')
+        program = self._api.get_program('auwch')
         self.assertIsInstance(program, Program)
 
         episode = program.episodes[0]
@@ -64,7 +63,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        resolved_stream = self._api.get_stream_by_uuid('b56a41d9-5a6a-4ff0-b16a-56dc7b2e1f25')
+        resolved_stream = self._api.get_stream_by_uuid('a545bb4f-0f4c-4588-92a2-5086041c0e08')  # Hawaii Five-O 8x12
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
 

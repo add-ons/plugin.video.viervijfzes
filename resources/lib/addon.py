@@ -63,6 +63,13 @@ def show_channel_tvguide_detail(channel=None, date=None):
     TvGuide().show_detail(channel, date)
 
 
+@routing.route('/channels/<channel>/catalog')
+def show_channel_catalog(channel):
+    """ Show a category in the catalog """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_catalog_channel(channel)
+
+
 @routing.route('/catalog')
 def show_catalog():
     """ Show the catalog """
@@ -70,32 +77,25 @@ def show_catalog():
     Catalog().show_catalog()
 
 
-@routing.route('/catalog/<channel>')
-def show_channel_catalog(channel):
-    """ Show a category in the catalog """
-    from resources.lib.modules.catalog import Catalog
-    Catalog().show_catalog_channel(channel)
-
-
-@routing.route('/catalog/<channel>/<program>')
-def show_catalog_program(channel, program):
+@routing.route('/catalog/<program>')
+def show_catalog_program(program):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program(channel, program)
+    Catalog().show_program(program)
 
 
-@routing.route('/catalog/<channel>/<program>/clips')
-def show_catalog_program_clips(channel, program):
+@routing.route('/catalog/<program>/clips')
+def show_catalog_program_clips(program):
     """ Show the clips from a program """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_clips(channel, program)
+    Catalog().show_program_clips(program)
 
 
-@routing.route('/catalog/<channel>/<program>/season/<season>')
-def show_catalog_program_season(channel, program, season):
+@routing.route('/catalog/<program>/season/<season>')
+def show_catalog_program_season(program, season):
     """ Show a season from a program """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_season(channel, program, season)
+    Catalog().show_program_season(program, season)
 
 
 @routing.route('/search')
@@ -127,8 +127,8 @@ def play_catalog(uuid):
     Player().play(uuid)
 
 
-@routing.route('/play/page/<channel>/<page>')
-def play_from_page(channel, page):
+@routing.route('/play/page/<page>')
+def play_from_page(page):
     """ Play the requested item """
     try:  # Python 3
         from urllib.parse import unquote
@@ -136,7 +136,7 @@ def play_from_page(channel, page):
         from urllib import unquote
 
     from resources.lib.modules.player import Player
-    Player().play_from_page(channel, unquote(page))
+    Player().play_from_page(unquote(page))
 
 
 @routing.route('/metadata/update')

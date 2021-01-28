@@ -14,12 +14,12 @@
     </extension>
     <extension point="xbmc.service" library="service_entry.py"/>
     <extension point="xbmc.addon.metadata">
-        <summary lang="nl_NL">Bekijk programma's van VIER, VIJF en ZES.</summary>
-        <description lang="nl_NL">Deze add-on geeft toegang tot de programma's die aangeboden worden op de websites van VIER, VIJF en ZES.</description>
-        <disclaimer lang="nl_NL">Deze add-on wordt niet ondersteund door SBS België, en wordt aangeboden 'as is', zonder enige garantie. De logo's van VIER, VIJF en ZES zijn eigendom van SBS België.</disclaimer>
-        <summary lang="en_GB">Watch content from VIER, VIJF and ZES.</summary>
-        <description lang="en_GB">This add-on gives access to video-on-demand content available on the websites of VIER, VIJF and ZES.</description>
-        <disclaimer lang="en_GB">This add-on is not officially commissioned/supported by SBS Belgium and is provided 'as is' without any warranty of any kind. The VIER, VIJF and ZES logos are property of SBS Belgium.</disclaimer>
+        <summary lang="nl_NL">Bekijk programma's van Play 4, Play 5 en Play 6.</summary>
+        <description lang="nl_NL">Deze add-on geeft toegang tot de programma's die aangeboden worden op de websites van Play 4, Play 5 en Play 6.</description>
+        <disclaimer lang="nl_NL">Deze add-on wordt niet ondersteund door SBS België, en wordt aangeboden 'as is', zonder enige garantie. De logo's van Play 4, Play 5 en Play 6 zijn eigendom van SBS België.</disclaimer>
+        <summary lang="en_GB">Watch content from Play 4, Play 5 and Play 6.</summary>
+        <description lang="en_GB">This add-on gives access to video-on-demand content available on the websites of Play 4, Play 5 and Play 6.</description>
+        <disclaimer lang="en_GB">This add-on is not officially commissioned/supported by SBS Belgium and is provided 'as is' without any warranty of any kind. The Play 4, Play 5 and Play 6 logos are property of SBS Belgium.</disclaimer>
         <platform>all</platform>
         <license>GPL-3.0-only</license>
 	<news>v0.3.1 (2020-11-28)

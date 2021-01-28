@@ -35,13 +35,12 @@ class Player:
         kodiutils.ok_dialog(message=kodiutils.localize(30718, channel=channel_name.get('name')))  # There is no live stream available for {channel}.
         kodiutils.end_of_directory()
 
-    def play_from_page(self, channel, path):
+    def play_from_page(self, path):
         """ Play the requested item.
-        :type channel: string
         :type path: string
         """
         # Get episode information
-        episode = self._api.get_episode(channel, path)
+        episode = self._api.get_episode(path)
         resolved_stream = None
 
         if episode is None:

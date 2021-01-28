@@ -32,7 +32,7 @@ class Channels:
 
             # Lookup the high resolution logo based on the channel name
             icon = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('logo'))
-            fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('background'))
+            # fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('background'))
 
             context_menu = [
                 (
@@ -49,7 +49,7 @@ class Channels:
                     art_dict={
                         'icon': icon,
                         'thumb': icon,
-                        'fanart': fanart,
+                        # 'fanart': fanart,
                     },
                     info_dict={
                         'plot': None,
@@ -74,18 +74,24 @@ class Channels:
         # Lookup the high resolution logo based on the channel name
         fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel_info.get('background'))
 
-        listing = [
-            TitleItem(
-                title=kodiutils.localize(30053, channel=channel_info.get('name')),  # TV Guide for {channel}
-                path=kodiutils.url_for('show_channel_tvguide', channel=channel),
-                art_dict={
-                    'icon': 'DefaultAddonTvInfo.png',
-                    'fanart': fanart,
-                },
-                info_dict={
-                    'plot': kodiutils.localize(30054, channel=channel_info.get('name')),  # Browse the TV Guide for {channel}
-                }
-            ),
+        listing = []
+
+        if channel_info.get('epg_id'):
+            listing.append(
+                TitleItem(
+                    title=kodiutils.localize(30053, channel=channel_info.get('name')),  # TV Guide for {channel}
+                    path=kodiutils.url_for('show_channel_tvguide', channel=channel),
+                    art_dict={
+                        'icon': 'DefaultAddonTvInfo.png',
+                        'fanart': fanart,
+                    },
+                    info_dict={
+                        'plot': kodiutils.localize(30054, channel=channel_info.get('name')),  # Browse the TV Guide for {channel}
+                    }
+                )
+            )
+
+        listing.append(
             TitleItem(
                 title=kodiutils.localize(30055, channel=channel_info.get('name')),  # Catalog for {channel}
                 path=kodiutils.url_for('show_channel_catalog', channel=channel),
@@ -96,19 +102,22 @@ class Channels:
                 info_dict={
                     'plot': kodiutils.localize(30056, channel=channel_info.get('name')),  # Browse the Catalog for {channel}
                 }
-            ),
-            TitleItem(
-                title=kodiutils.localize(30057, channel=channel_info.get('name')),  # Categories for {channel}
-                path=kodiutils.url_for('show_channel_categories', channel=channel),
-                art_dict={
-                    'icon': 'DefaultGenre.png',
-                    'fanart': fanart,
-                },
-                info_dict={
-                    'plot': kodiutils.localize(30058, channel=channel_info.get('name')),  # Browse the Categories for {channel}
-                }
-            ),
-        ]
+            )
+        )
+
+        # listing.append(
+        #     TitleItem(
+        #         title=kodiutils.localize(30057, channel=channel_info.get('name')),  # Categories for {channel}
+        #         path=kodiutils.url_for('show_channel_categories', channel=channel),
+        #         art_dict={
+        #             'icon': 'DefaultGenre.png',
+        #             'fanart': fanart,
+        #         },
+        #         info_dict={
+        #             'plot': kodiutils.localize(30058, channel=channel_info.get('name')),  # Browse the Categories for {channel}
+        #         }
+        #     )
+        # )
 
         # Add YouTube channels
         if kodiutils.get_cond_visibility('System.HasAddon(plugin.video.youtube)') != 0:
@@ -158,7 +167,7 @@ class Channels:
         # Add programs
         listing_programs = []
         for item in category.programs:
-            program = self._api.get_program(channel, item.path, CACHE_ONLY)  # Get program details, but from cache only
+            program = self._api.get_program(item.path, CACHE_ONLY)  # Get program details, but from cache only
 
             if program:
                 listing_programs.append(Menu.generate_titleitem(program))
@@ -171,7 +180,7 @@ class Channels:
             # We don't have the Program Name without making a request to the page, so we use CACHE_AUTO instead of CACHE_ONLY.
             # This will make a request for each item in this view (about 12 items), but it goes quite fast.
             # Results are cached, so this will only happen once.
-            episode = self._api.get_episode(channel, item.path, CACHE_AUTO)
+            episode = self._api.get_episode(item.path, CACHE_AUTO)
 
             if episode:
                 listing_episodes.append(Menu.generate_titleitem(episode))

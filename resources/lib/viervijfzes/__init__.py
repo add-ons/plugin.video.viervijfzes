@@ -5,14 +5,15 @@ from __future__ import absolute_import, division, unicode_literals
 from collections import OrderedDict
 
 CHANNELS = OrderedDict([
-    ('vier', dict(
-        name='VIER',
-        url='https://www.vier.be',
-        logo='vier.png',
-        background='vier-background.jpg',
+    ('Play4', dict(
+        name='Play 4',
+        epg_id='vier',
+        url='https://www.goplay.be',
+        logo='play4.png',
+        # background='vier-background.jpg',
         studio_icon='vier',
         iptv_preset=4,
-        iptv_id='vier.be',
+        iptv_id='play4.be',
         youtube=[
             dict(
                 label='VIER / VIJF',
@@ -21,14 +22,15 @@ CHANNELS = OrderedDict([
             ),
         ],
     )),
-    ('vijf', dict(
-        name='VIJF',
-        url='https://www.vijf.be',
-        logo='vijf.png',
-        background='vijf-background.jpg',
+    ('Play5', dict(
+        name='Play 5',
+        epg_id='vijf',
+        url='https://www.goplay.be',
+        logo='play5.png',
+        # background='vijf-background.jpg',
         studio_icon='vijf',
         iptv_preset=5,
-        iptv_id='vijf.be',
+        iptv_id='play5.be',
         youtube=[
             dict(
                 label='VIER / VIJF',
@@ -37,14 +39,35 @@ CHANNELS = OrderedDict([
             ),
         ],
     )),
-    ('zes', dict(
-        name='ZES',
-        url='https://www.zestv.be',
-        logo='zes.png',
-        background='zes-background.jpg',
+    ('Play6', dict(
+        name='Play 6',
+        epg_id='zes',
+        url='https://www.goplay.be',
+        logo='play6.png',
+        # background='zes-background.jpg',
         studio_icon='zes',
         iptv_preset=6,
-        iptv_id='zes.be',
+        iptv_id='play6.be',
+        youtube=[],
+    )),
+    # ('play7', dict(
+    #     name='Play 7',
+    #     url='https://www.goplay.be',
+    #     logo='zes.png',
+    #     background='zes-background.jpg',
+    #     studio_icon='zes',
+    #     iptv_preset=6,
+    #     iptv_id='play7.be',
+    #     youtube=[],
+    # )),
+    ('GoPlay', dict(
+        name='Go Play',
+        url='https://www.goplay.be',
+        # logo='zes.png',
+        # background='zes-background.jpg',
+        # studio_icon='zes',
+        iptv_preset=7,
+        iptv_id='goplay.be',
         youtube=[],
     ))
 ])
