@@ -383,7 +383,7 @@ class ContentApi:
 
             # Extract items
             programs = self._extract_programs(article_html, channel)
-            episodes = self._extract_videos(article_html, channel)
+            episodes = self._extract_videos(article_html)
             categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
 
         return categories
@@ -473,7 +473,7 @@ class ContentApi:
             # Episode
             episodes.append(Episode(
                 path=path.lstrip('/'),
-                channel='', # TODO
+                channel='',  # TODO
                 title=title,
                 duration=episode_duration,
                 uuid=episode_video_id,

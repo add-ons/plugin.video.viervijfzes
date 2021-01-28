@@ -181,4 +181,4 @@ class TvGuide:
             kodiutils.end_of_directory()
             return
 
-        Player().play_from_page(channel, broadcast.video_url)
+        Player().play_from_page(broadcast.video_url)
