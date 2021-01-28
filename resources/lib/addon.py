@@ -35,18 +35,18 @@ def show_channel_menu(channel):
     Channels().show_channel_menu(channel)
 
 
-@routing.route('/channels/<channel>/categories')
-def show_channel_categories(channel):
-    """ Shows TV Channel categories """
-    from resources.lib.modules.channels import Channels
-    Channels().show_channel_categories(channel)
+# @routing.route('/channels/<channel>/categories')
+# def show_channel_categories(channel):
+#     """ Shows TV Channel categories """
+#     from resources.lib.modules.channels import Channels
+#     Channels().show_channel_categories(channel)
 
 
-@routing.route('/channels/<channel>/categories/<category>')
-def show_channel_category(channel, category):
-    """ Shows TV Channel categories """
-    from resources.lib.modules.channels import Channels
-    Channels().show_channel_category(channel, category)
+# @routing.route('/channels/<channel>/categories/<category>')
+# def show_channel_category(channel, category):
+#     """ Shows TV Channel categories """
+#     from resources.lib.modules.channels import Channels
+#     Channels().show_channel_category(channel, category)
 
 
 @routing.route('/channels/<channel>/tvguide')
@@ -65,7 +65,7 @@ def show_channel_tvguide_detail(channel=None, date=None):
 
 @routing.route('/channels/<channel>/catalog')
 def show_channel_catalog(channel):
-    """ Show a category in the catalog """
+    """ Show the catalog of a channel """
     from resources.lib.modules.catalog import Catalog
     Catalog().show_catalog_channel(channel)
 

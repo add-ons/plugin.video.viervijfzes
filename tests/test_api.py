@@ -28,11 +28,9 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(programs[0], Program)
 
     # def test_categories(self):
-    #     for channel in ['vier', 'vijf', 'zes']:
-    #         categories = self._api.get_categories(channel)
+    #     categories = self._api.get_categories()
     #     self.assertIsInstance(categories, list)
-    #     if categories:
-    #         self.assertIsInstance(categories[0], Category)
+    #     self.assertIsInstance(categories[0], Category)
 
     def test_episodes(self):
         for program in ['auwch', 'zo-man-zo-vrouw']:

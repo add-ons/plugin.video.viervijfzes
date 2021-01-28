@@ -7,10 +7,9 @@ import logging
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
-from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes import CHANNELS, STREAM_DICT
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.content import CACHE_AUTO, CACHE_ONLY, ContentApi
+from resources.lib.viervijfzes.content import ContentApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -133,57 +132,57 @@ class Channels:
 
         kodiutils.show_listing(listing, 30007, sort=['unsorted'])
 
-    def show_channel_categories(self, channel):
-        """ Shows the categories of a channel
-        :type channel: str
-        """
-        categories = self._api.get_categories(channel)
+    # def show_channel_categories(self, channel):
+    #     """ Shows the categories of a channel
+    #     :type channel: str
+    #     """
+    #     categories = self._api.get_categories(channel)
+    #
+    #     listing = [
+    #         TitleItem(
+    #             title=category.title,
+    #             path=kodiutils.url_for('show_channel_category', channel=category.channel, category=category.uuid),
+    #             art_dict={
+    #                 'icon': 'DefaultGenre.png',
+    #             },
+    #         ) for category in categories
+    #     ]
+    #
+    #     kodiutils.show_listing(listing, 30007, sort=['unsorted'])
 
-        listing = [
-            TitleItem(
-                title=category.title,
-                path=kodiutils.url_for('show_channel_category', channel=category.channel, category=category.uuid),
-                art_dict={
-                    'icon': 'DefaultGenre.png',
-                },
-            ) for category in categories
-        ]
-
-        kodiutils.show_listing(listing, 30007, sort=['unsorted'])
-
-    def show_channel_category(self, channel, category_id):
-        """ Shows a selected category of a channel
-        :type channel: str
-        :type category_id: str
-        """
-        categories = self._api.get_categories(channel)
-
-        # Extract selected category
-        category = next(category for category in categories if category.uuid == category_id)
-        if not category:
-            raise Exception('Unknown category')
-
-        # Add programs
-        listing_programs = []
-        for item in category.programs:
-            program = self._api.get_program(item.path, CACHE_ONLY)  # Get program details, but from cache only
-
-            if program:
-                listing_programs.append(Menu.generate_titleitem(program))
-            else:
-                listing_programs.append(Menu.generate_titleitem(item))
-
-        # Add episodes
-        listing_episodes = []
-        for item in category.episodes:
-            # We don't have the Program Name without making a request to the page, so we use CACHE_AUTO instead of CACHE_ONLY.
-            # This will make a request for each item in this view (about 12 items), but it goes quite fast.
-            # Results are cached, so this will only happen once.
-            episode = self._api.get_episode(item.path, CACHE_AUTO)
-
-            if episode:
-                listing_episodes.append(Menu.generate_titleitem(episode))
-            else:
-                listing_episodes.append(Menu.generate_titleitem(item))
-
-        kodiutils.show_listing(listing_programs + listing_episodes, 30007, content='tvshows', sort=['unsorted'])
+    # def show_channel_category(self, channel, category_id):
+    #     """ Shows a selected category of a channel
+    #     :type channel: str
+    #     :type category_id: str
+    #     """
+    #     categories = self._api.get_categories(channel)
+    #
+    #     # Extract selected category
+    #     category = next(category for category in categories if category.uuid == category_id)
+    #     if not category:
+    #         raise Exception('Unknown category')
+    #
+    #     # Add programs
+    #     listing_programs = []
+    #     for item in category.programs:
+    #         program = self._api.get_program(item.path, CACHE_ONLY)  # Get program details, but from cache only
+    #
+    #         if program:
+    #             listing_programs.append(Menu.generate_titleitem(program))
+    #         else:
+    #             listing_programs.append(Menu.generate_titleitem(item))
+    #
+    #     # Add episodes
+    #     listing_episodes = []
+    #     for item in category.episodes:
+    #         # We don't have the Program Name without making a request to the page, so we use CACHE_AUTO instead of CACHE_ONLY.
+    #         # This will make a request for each item in this view (about 12 items), but it goes quite fast.
+    #         # Results are cached, so this will only happen once.
+    #         episode = self._api.get_episode(item.path, CACHE_AUTO)
+    #
+    #         if episode:
+    #             listing_episodes.append(Menu.generate_titleitem(episode))
+    #         else:
+    #             listing_episodes.append(Menu.generate_titleitem(item))
+    #
+    #     kodiutils.show_listing(listing_programs + listing_episodes, 30007, content='tvshows', sort=['unsorted'])

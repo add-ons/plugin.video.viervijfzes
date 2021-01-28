@@ -67,7 +67,7 @@ class EpgProgram:
 
 
 class EpgApi:
-    """ VIER/VIJF/ZES EPG API """
+    """ GoPlay EPG API """
 
     EPG_ENDPOINTS = {
         'Play4': 'https://www.goplay.be/api/epg/vier/{date}',

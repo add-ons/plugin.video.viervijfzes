@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AuthApi:
-    """ VIER/VIJF/ZES Authentication API """
+    """ GoPlay Authentication API """
     COGNITO_REGION = 'eu-west-1'
     COGNITO_POOL_ID = 'eu-west-1_dViSsKM5Y'
     COGNITO_CLIENT_ID = '6s1h851s8uplco5h6mqh1jac8m'

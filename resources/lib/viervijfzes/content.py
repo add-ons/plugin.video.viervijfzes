@@ -13,7 +13,7 @@ from datetime import datetime
 import requests
 
 from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS
-from resources.lib.viervijfzes import CHANNELS, ResolvedStream
+from resources.lib.viervijfzes import ResolvedStream
 
 try:  # Python 3
     from html import unescape
@@ -169,7 +169,7 @@ class Category:
 
 
 class ContentApi:
-    """ VIER/VIJF/ZES Content API"""
+    """ GoPlay Content API"""
     SITE_URL = 'https://www.goplay.be'
     API_VIERVIJFZES = 'https://api.viervijfzes.be'
     API_GOPLAY = 'https://api.goplay.be'
@@ -185,6 +185,7 @@ class ContentApi:
         :type cache: str
         :rtype list[Program]
         """
+
         def update():
             """ Fetch the program listing by scraping """
             # Load webpage
@@ -265,6 +266,7 @@ class ContentApi:
         :type cache: str
         :rtype Episode
         """
+
         def update():
             """ Fetch the program metadata by scraping """
             # Load webpage
@@ -351,65 +353,61 @@ class ContentApi:
             stream_type=STREAM_HLS,
         )
 
-    def get_categories(self, channel):
-        """ Get a list of all categories of the specified channel.
-        :type channel: str
-        :rtype list[Category]
-        """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
+    # def get_categories(self):
+    #     """ Get a list of all categories.
+    #     :rtype list[Category]
+    #     """
+    #     # Load webpage
+    #     raw_html = self._get_url(self.SITE_URL)
+    #
+    #     # Categories regexes
+    #     regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
+    #     regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
+    #     regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
+    #
+    #     categories = []
+    #     for result in regex_articles.finditer(raw_html):
+    #         article_info_html = result.group(1)
+    #         article_html = result.group(2)
+    #         category_title = regex_submenu_title.search(article_info_html).group(1)
+    #         category_id = regex_submenu_id.search(article_info_html).group(1)
+    #
+    #         # Skip empty categories or 'All programs'
+    #         if not category_id or category_id == 'programmas':
+    #             continue
+    #
+    #         # Extract items
+    #         programs = self._extract_programs(article_html, channel)
+    #         episodes = self._extract_videos(article_html)
+    #         categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
+    #
+    #     return categories
 
-        # Load webpage
-        raw_html = self._get_url(CHANNELS[channel]['url'])
-
-        # Categories regexes
-        regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
-        regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
-        regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
-
-        categories = []
-        for result in regex_articles.finditer(raw_html):
-            article_info_html = result.group(1)
-            article_html = result.group(2)
-            category_title = regex_submenu_title.search(article_info_html).group(1)
-            category_id = regex_submenu_id.search(article_info_html).group(1)
-
-            # Skip empty categories or 'All programs'
-            if not category_id or category_id == 'programmas':
-                continue
-
-            # Extract items
-            programs = self._extract_programs(article_html, channel)
-            episodes = self._extract_videos(article_html)
-            categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
-
-        return categories
-
-    @staticmethod
-    def _extract_programs(html, channel):
-        """ Extract Programs from HTML code """
-        # Item regexes
-        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
-                                r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
-                                r'</a>', re.DOTALL)
-
-        # Extract items
-        programs = []
-        for item in regex_item.finditer(html):
-            path = item.group('path')
-            if path.startswith('/video'):
-                continue
-
-            title = unescape(item.group('title'))
-
-            # Program
-            programs.append(Program(
-                path=path.lstrip('/'),
-                channel=channel,
-                title=title,
-            ))
-
-        return programs
+    # @staticmethod
+    # def _extract_programs(html, channel):
+    #     """ Extract Programs from HTML code """
+    #     # Item regexes
+    #     regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
+    #                             r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
+    #                             r'</a>', re.DOTALL)
+    #
+    #     # Extract items
+    #     programs = []
+    #     for item in regex_item.finditer(html):
+    #         path = item.group('path')
+    #         if path.startswith('/video'):
+    #             continue
+    #
+    #         title = unescape(item.group('title'))
+    #
+    #         # Program
+    #         programs.append(Program(
+    #             path=path.lstrip('/'),
+    #             channel=channel,
+    #             title=title,
+    #         ))
+    #
+    #     return programs
 
     @staticmethod
     def _extract_videos(html):

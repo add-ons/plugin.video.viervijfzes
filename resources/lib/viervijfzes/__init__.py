@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" SBS API """
+""" GoPlay API """
 from __future__ import absolute_import, division, unicode_literals
 
 from collections import OrderedDict
@@ -60,7 +60,7 @@ CHANNELS = OrderedDict([
         name='Go Play',
         url='https://www.goplay.be',
         logo='goplay.png',
-        background='goplay-background.jpg',
+        background='goplay-background.png',
         youtube=[],
     ))
 ])
