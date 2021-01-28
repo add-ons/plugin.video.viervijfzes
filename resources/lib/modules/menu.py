@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
-from resources.lib.viervijfzes import CHANNELS, STREAM_DICT
+from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import Episode, Program
 
 
@@ -70,7 +70,6 @@ class Menu:
         info_dict = {
             'title': item.title,
             'plot': item.description,
-            'studio': CHANNELS.get(item.channel, {}).get('studio_icon'),
             'aired': item.aired.strftime('%Y-%m-%d') if item.aired else None,
         }
         prop_dict = {}

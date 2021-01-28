@@ -208,9 +208,6 @@ class ContentApi:
         if not data:
             return []
 
-        for meh in data:
-            _LOGGER.warning(meh['pageInfo']['brand'])
-
         if channel:
             programs = [
                 self._parse_program_data(record) for record in data if record['pageInfo']['brand'] == channel

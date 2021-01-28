@@ -8,7 +8,6 @@ import logging
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
 from resources.lib.modules.menu import Menu
-from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import CACHE_PREVENT, ContentApi, UnavailableException
 
@@ -76,8 +75,6 @@ class Catalog:
             self.show_program_season(program_id, list(program.seasons.values())[0].uuid)
             return
 
-        studio = CHANNELS.get(program.channel, {}).get('studio_icon')
-
         listing = []
 
         # Add an '* All seasons' entry when configured in Kodi
@@ -94,7 +91,6 @@ class Catalog:
                         'title': kodiutils.localize(30204),  # All seasons
                         'plot': program.description,
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )
@@ -113,7 +109,6 @@ class Catalog:
                         'title': kodiutils.localize(30205, season=season.number),  # Season {season}
                         'plot': season.description,
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )
@@ -132,7 +127,6 @@ class Catalog:
                         'title': kodiutils.localize(30059, program=program.title),  # Clips for {program}
                         'plot': kodiutils.localize(30060, program=program.title),  # Watch short clips of {program}
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )

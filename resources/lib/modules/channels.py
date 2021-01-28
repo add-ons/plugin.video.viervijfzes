@@ -32,7 +32,7 @@ class Channels:
 
             # Lookup the high resolution logo based on the channel name
             icon = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('logo'))
-            # fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('background'))
+            fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel.get('background'))
 
             context_menu = [
                 (
@@ -49,13 +49,12 @@ class Channels:
                     art_dict={
                         'icon': icon,
                         'thumb': icon,
-                        # 'fanart': fanart,
+                        'fanart': fanart,
                     },
                     info_dict={
                         'plot': None,
                         'playcount': 0,
                         'mediatype': 'video',
-                        'studio': channel.get('studio_icon'),
                     },
                     stream_dict=STREAM_DICT,
                     context_menu=context_menu
