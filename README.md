@@ -15,7 +15,7 @@ Meer informatie kan je vinden op de [Wiki pagina](https://github.com/add-ons/plu
 ## Features
 
 De volgende features worden ondersteund:
-* Bekijk on-demand content van Play 4, Play 5 en Play 6
+* Bekijk on-demand content van Play4, Play5 en Play6
 * Programma's rechtstreeks afspelen vanuit de tv-gids
 * Doorzoeken van alle programma's
 * Afspelen van gerelateerde Youtube content
@@ -34,4 +34,4 @@ De volgende features worden ondersteund:
 ## Disclaimer
 
 Deze add-on wordt niet ondersteund door SBS Belgium, en wordt aangeboden 'as is', zonder enige garantie.
-De logo's van GoPlay, Play 4, Play 5 en Play 6 zijn eigendom van SBS België.
+De logo's van GoPlay, Play4, Play5 en Play6 zijn eigendom van SBS België.

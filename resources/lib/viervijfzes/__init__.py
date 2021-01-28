@@ -6,49 +6,53 @@ from collections import OrderedDict
 
 CHANNELS = OrderedDict([
     ('Play4', dict(
-        name='Play 4',
+        name='Play4',
         epg_id='vier',
-        url='https://www.goplay.be',
         logo='play4.png',
         background='play4-background.png',
         iptv_preset=4,
         iptv_id='play4.be',
         youtube=[
             dict(
-                label='VIER / VIJF',
-                logo='vier.png',
+                label='GoPlay',
+                logo='goplay.png',
                 path='plugin://plugin.video.youtube/user/viertv/',
             ),
         ],
     )),
     ('Play5', dict(
-        name='Play 5',
+        name='Play5',
         epg_id='vijf',
-        url='https://www.goplay.be',
         logo='play5.png',
         background='play5-background.png',
         iptv_preset=5,
         iptv_id='play5.be',
         youtube=[
             dict(
-                label='VIER / VIJF',
-                logo='vijf.png',
+                label='GoPlay',
+                logo='goplay.png',
                 path='plugin://plugin.video.youtube/user/viertv/',
             ),
         ],
     )),
     ('Play6', dict(
-        name='Play 6',
+        name='Play6',
         epg_id='zes',
-        url='https://www.goplay.be',
         logo='play6.png',
         background='play6-background.png',
         iptv_preset=6,
         iptv_id='play6.be',
-        youtube=[],
+        youtube=[
+            dict(
+                label='GoPlay',
+                logo='goplay.png',
+                path='plugin://plugin.video.youtube/user/viertv/',
+            ),
+        ],
     )),
-    # ('play7', dict(
-    #     name='Play 7',
+    # ('Play7', dict(
+    #     name='Play7',
+    #     epg_id='zeven',
     #     url='https://www.goplay.be',
     #     logo='play7.png',
     #     background='play7-background.png',
