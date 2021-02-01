@@ -91,7 +91,7 @@ class Menu:
                 title = item.title
 
             return TitleItem(title=title,
-                             path=kodiutils.url_for('show_catalog_program', channel=item.channel, program=item.path),
+                             path=kodiutils.url_for('show_catalog_program', program=item.path),
                              art_dict=art_dict,
                              info_dict=info_dict)
 
@@ -119,7 +119,7 @@ class Menu:
                     from urllib import quote
 
                 # We don't have an UUID, and first need to fetch the video information from the page
-                path = kodiutils.url_for('play_from_page', channel=item.channel, page=quote(item.path, safe=''))
+                path = kodiutils.url_for('play_from_page', page=quote(item.path, safe=''))
             else:
                 # We have an UUID and can play this item directly
                 # This is not preferred since we will lack metadata

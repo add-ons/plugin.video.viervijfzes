@@ -166,7 +166,7 @@ class EpgApi:
 
         # Find a matching broadcast
         for broadcast in programs:
-            if timestamp <= broadcast.start < (broadcast.start + timedelta(seconds=broadcast.duration)):
+            if broadcast.start <= timestamp < (broadcast.start + timedelta(seconds=broadcast.duration)):
                 return broadcast
 
         return None
