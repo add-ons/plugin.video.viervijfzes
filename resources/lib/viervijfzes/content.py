@@ -13,7 +13,7 @@ from datetime import datetime
 import requests
 
 from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS
-from resources.lib.viervijfzes import CHANNELS, ResolvedStream
+from resources.lib.viervijfzes import ResolvedStream
 
 try:  # Python 3
     from html import unescape
@@ -169,14 +169,10 @@ class Category:
 
 
 class ContentApi:
-    """ VIER/VIJF/ZES Content API"""
-    API_ENDPOINT = 'https://api.viervijfzes.be'
-    API2_ENDPOINT = 'https://api2.viervijfzes.be'
-    SITE_APIS = {
-        'vier': 'https://www.vier.be/api',
-        'vijf': 'https://www.vijf.be/api',
-        'zes': 'https://www.zestv.be/api',
-    }
+    """ GoPlay Content API"""
+    SITE_URL = 'https://www.goplay.be'
+    API_VIERVIJFZES = 'https://api.viervijfzes.be'
+    API_GOPLAY = 'https://api.goplay.be'
 
     def __init__(self, auth=None, cache_path=None):
         """ Initialise object """
@@ -184,64 +180,53 @@ class ContentApi:
         self._auth = auth
         self._cache_path = cache_path
 
-    def get_programs(self, channel, cache=CACHE_AUTO):
+    def get_programs(self, channel=None, cache=CACHE_AUTO):
         """ Get a list of all programs of the specified channel.
-        :type channel: str
         :type cache: str
         :rtype list[Program]
         """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
 
         def update():
             """ Fetch the program listing by scraping """
             # Load webpage
-            raw_html = self._get_url(CHANNELS[channel]['url'])
+            raw_html = self._get_url(self.SITE_URL + '/programmas')
 
             # Parse programs
-            regex_programs = re.compile(r'<a class="program-overview__link" href="(?P<path>[^"]+)">\s+'
-                                        r'<span class="program-overview__title">\s+(?P<title>[^<]+)</span>.*?'
-                                        r'</a>', re.DOTALL)
-            data = {
-                item.group('path').lstrip('/'): unescape(item.group('title').strip())
+            regex_programs = re.compile(r'data-program="(?P<json>[^"]+)"', re.DOTALL)
+
+            data = [
+                json.loads(unescape(item.group('json')))
                 for item in regex_programs.finditer(raw_html)
-            }
+            ]
 
             if not data:
-                raise Exception('No programs found for %s' % channel)
+                raise Exception('No programs found')
 
             return data
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['programs', channel], cache_mode=cache, update=update, ttl=30 * 5)
+        data = self._handle_cache(key=['programs'], cache_mode=cache, update=update, ttl=30 * 5)
         if not data:
             return []
 
-        programs = []
-        for path in data:
-            title = data[path]
-            program = self.get_program(channel, path, cache=CACHE_ONLY)  # Get program details, but from cache only
-            if program:
-                # Use program with metadata from cache
-                programs.append(program)
-            else:
-                # Use program with the values that we've parsed from the page
-                programs.append(Program(channel=channel,
-                                        path=path,
-                                        title=title))
+        if channel:
+            programs = [
+                self._parse_program_data(record) for record in data if record['pageInfo']['brand'] == channel
+            ]
+        else:
+            programs = [
+                self._parse_program_data(record) for record in data
+            ]
+
         return programs
 
-    def get_program(self, channel, path, extract_clips=False, cache=CACHE_AUTO):
+    def get_program(self, path, extract_clips=False, cache=CACHE_AUTO):
         """ Get a Program object from the specified page.
-        :type channel: str
         :type path: str
         :type extract_clips: bool
         :type cache: int
         :rtype Program
         """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
-
         # We want to use the html to extract clips
         # This is the worst hack, since Python 2.7 doesn't support nonlocal
         raw_html = [None]
@@ -249,7 +234,7 @@ class ContentApi:
         def update():
             """ Fetch the program metadata by scraping """
             # Fetch webpage
-            page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+            page = self._get_url(self.SITE_URL + '/' + path)
 
             # Store a copy in the parent's raw_html var.
             raw_html[0] = page
@@ -262,7 +247,7 @@ class ContentApi:
             return data
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['program', channel, path], cache_mode=cache, update=update)
+        data = self._handle_cache(key=['program', path], cache_mode=cache, update=update)
         if not data:
             return None
 
@@ -270,25 +255,22 @@ class ContentApi:
 
         # Also extract clips if we did a real HTTP call
         if extract_clips and raw_html[0]:
-            clips = self._extract_videos(raw_html[0], channel)
+            clips = self._extract_videos(raw_html[0])
             program.clips = clips
 
         return program
 
-    def get_episode(self, channel, path, cache=CACHE_AUTO):
+    def get_episode(self, path, cache=CACHE_AUTO):
         """ Get a Episode object from the specified page.
-        :type channel: str
         :type path: str
         :type cache: str
         :rtype Episode
         """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
 
         def update():
             """ Fetch the program metadata by scraping """
             # Load webpage
-            page = self._get_url(CHANNELS[channel]['url'] + '/' + path)
+            page = self._get_url(self.SITE_URL + '/' + path)
 
             program_json = None
             episode_json = None
@@ -299,7 +281,7 @@ class ContentApi:
             result = regex_video_data.search(page)
             if result:
                 video_id = json.loads(unescape(result.group(1)))['id']
-                video_json_data = self._get_url('%s/video/%s' % (self.SITE_APIS[channel], video_id))
+                video_json_data = self._get_url('%s/api/video/%s' % (self.SITE_URL, video_id))
                 video_json = json.loads(video_json_data)
                 return dict(video=video_json)
 
@@ -320,7 +302,7 @@ class ContentApi:
             return dict(program=program_json, episode=episode_json)
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['episode', channel, path], cache_mode=cache, update=update)
+        data = self._handle_cache(key=['episode', path], cache_mode=cache, update=update)
         if not data:
             return None
 
@@ -344,7 +326,7 @@ class ContentApi:
         :type uuid: str
         :rtype str
         """
-        response = self._get_url(self.API_ENDPOINT + '/content/%s' % uuid, authentication=True)
+        response = self._get_url(self.API_VIERVIJFZES + '/content/%s' % uuid, authentication=True)
         data = json.loads(response)
 
         if 'videoDash' in data:
@@ -353,7 +335,7 @@ class ContentApi:
             drm_key = data['drmKey']['S']
 
             _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
-            response_drm = self._get_url(self.API2_ENDPOINT + '/decode/%s' % drm_key, authentication=True)
+            response_drm = self._get_url(self.API_GOPLAY + '/restricted/decode/%s' % drm_key, authentication=True)
             data_drm = json.loads(response_drm)
 
             return ResolvedStream(
@@ -371,68 +353,64 @@ class ContentApi:
             stream_type=STREAM_HLS,
         )
 
-    def get_categories(self, channel):
-        """ Get a list of all categories of the specified channel.
-        :type channel: str
-        :rtype list[Category]
-        """
-        if channel not in CHANNELS:
-            raise Exception('Unknown channel %s' % channel)
+    # def get_categories(self):
+    #     """ Get a list of all categories.
+    #     :rtype list[Category]
+    #     """
+    #     # Load webpage
+    #     raw_html = self._get_url(self.SITE_URL)
+    #
+    #     # Categories regexes
+    #     regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
+    #     regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
+    #     regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
+    #
+    #     categories = []
+    #     for result in regex_articles.finditer(raw_html):
+    #         article_info_html = result.group(1)
+    #         article_html = result.group(2)
+    #         category_title = regex_submenu_title.search(article_info_html).group(1)
+    #         category_id = regex_submenu_id.search(article_info_html).group(1)
+    #
+    #         # Skip empty categories or 'All programs'
+    #         if not category_id or category_id == 'programmas':
+    #             continue
+    #
+    #         # Extract items
+    #         programs = self._extract_programs(article_html, channel)
+    #         episodes = self._extract_videos(article_html)
+    #         categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
+    #
+    #     return categories
 
-        # Load webpage
-        raw_html = self._get_url(CHANNELS[channel]['url'])
-
-        # Categories regexes
-        regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
-        regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
-        regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
-
-        categories = []
-        for result in regex_articles.finditer(raw_html):
-            article_info_html = result.group(1)
-            article_html = result.group(2)
-            category_title = regex_submenu_title.search(article_info_html).group(1)
-            category_id = regex_submenu_id.search(article_info_html).group(1)
-
-            # Skip empty categories or 'All programs'
-            if not category_id or category_id == 'programmas':
-                continue
-
-            # Extract items
-            programs = self._extract_programs(article_html, channel)
-            episodes = self._extract_videos(article_html, channel)
-            categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
-
-        return categories
-
-    @staticmethod
-    def _extract_programs(html, channel):
-        """ Extract Programs from HTML code """
-        # Item regexes
-        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
-                                r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
-                                r'</a>', re.DOTALL)
-
-        # Extract items
-        programs = []
-        for item in regex_item.finditer(html):
-            path = item.group('path')
-            if path.startswith('/video'):
-                continue
-
-            title = unescape(item.group('title'))
-
-            # Program
-            programs.append(Program(
-                path=path.lstrip('/'),
-                channel=channel,
-                title=title,
-            ))
-
-        return programs
+    # @staticmethod
+    # def _extract_programs(html, channel):
+    #     """ Extract Programs from HTML code """
+    #     # Item regexes
+    #     regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
+    #                             r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
+    #                             r'</a>', re.DOTALL)
+    #
+    #     # Extract items
+    #     programs = []
+    #     for item in regex_item.finditer(html):
+    #         path = item.group('path')
+    #         if path.startswith('/video'):
+    #             continue
+    #
+    #         title = unescape(item.group('title'))
+    #
+    #         # Program
+    #         programs.append(Program(
+    #             path=path.lstrip('/'),
+    #             channel=channel,
+    #             title=title,
+    #         ))
+    #
+    #     return programs
 
     @staticmethod
-    def _extract_videos(html, channel):
+    def _extract_videos(html):
         """ Extract videos from HTML code """
         # Item regexes
         regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>.*?</a>', re.DOTALL)
@@ -490,7 +468,7 @@ class ContentApi:
             # Episode
             episodes.append(Episode(
                 path=path.lstrip('/'),
-                channel=channel,
+                channel='',  # TODO
                 title=title,
                 duration=episode_duration,
                 uuid=episode_video_id,
@@ -511,7 +489,7 @@ class ContentApi:
         program = Program(
             uuid=data['id'],
             path=data['link'].lstrip('/'),
-            channel=data['pageInfo']['site'],
+            channel=data['pageInfo']['brand'],
             title=data['title'],
             description=data['description'],
             aired=datetime.fromtimestamp(data.get('pageInfo', {}).get('publishDate')),
@@ -524,7 +502,7 @@ class ContentApi:
             key: Season(
                 uuid=playlist['id'],
                 path=playlist['link'].lstrip('/'),
-                channel=playlist['pageInfo']['site'],
+                channel=playlist['pageInfo']['brand'],
                 title=playlist['title'],
                 description=playlist['pageInfo']['description'],
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this

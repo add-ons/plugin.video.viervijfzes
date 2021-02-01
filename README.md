@@ -4,18 +4,18 @@
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Contributors](https://img.shields.io/github/contributors/add-ons/plugin.video.viervijfzes.svg)](https://github.com/add-ons/plugin.video.viervijfzes/graphs/contributors)
 
-# VIER-VIJF-ZES Kodi add-on
+# GoPlay Kodi add-on
 
-*plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [vier.be](https://www.vier.be/), [vijf.be](https://www.vijf.be/) en [zestv.be](https://www.zestv.be/) te bekijken. 
+*plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [goplay.be](https://www.goplay.be/) te bekijken. 
 
-> Note: Je moet eerst een account aanmaken op één van bovenstaande websites.
+> Note: Je moet eerst een account aanmaken.
 
 Meer informatie kan je vinden op de [Wiki pagina](https://github.com/add-ons/plugin.video.viervijfzes/wiki).
 
 ## Features
 
 De volgende features worden ondersteund:
-* Bekijk on-demand content van VIER, VIJF en ZES
+* Bekijk on-demand content van Play4, Play5 en Play6
 * Programma's rechtstreeks afspelen vanuit de tv-gids
 * Doorzoeken van alle programma's
 * Afspelen van gerelateerde Youtube content
@@ -34,4 +34,4 @@ De volgende features worden ondersteund:
 ## Disclaimer
 
 Deze add-on wordt niet ondersteund door SBS Belgium, en wordt aangeboden 'as is', zonder enige garantie.
-De logo's van VIER, VIJF en ZES zijn eigendom van SBS België.
+De logo's van GoPlay, Play4, Play5 en Play6 zijn eigendom van SBS België.

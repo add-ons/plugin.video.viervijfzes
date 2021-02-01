@@ -8,7 +8,6 @@ import logging
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
 from resources.lib.modules.menu import Menu
-from resources.lib.viervijfzes import CHANNELS
 from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.content import CACHE_PREVENT, ContentApi, UnavailableException
 
@@ -26,9 +25,7 @@ class Catalog:
     def show_catalog(self):
         """ Show all the programs of all channels """
         try:
-            items = []
-            for channel in list(CHANNELS):
-                items.extend(self._api.get_programs(channel))
+            items = self._api.get_programs()
         except Exception as ex:
             kodiutils.notification(message=str(ex))
             raise
@@ -57,13 +54,12 @@ class Catalog:
         # Used for A-Z listing or when movies and episodes are mixed.
         kodiutils.show_listing(listing, 30003, content='tvshows', sort='title')
 
-    def show_program(self, channel, program_id):
+    def show_program(self, program_id):
         """ Show a program from the catalog
-        :type channel: str
         :type program_id: str
          """
         try:
-            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
+            program = self._api.get_program(program_id, extract_clips=True, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
@@ -76,10 +72,8 @@ class Catalog:
 
         # Go directly to the season when we have only one season and no clips
         if not program.clips and len(program.seasons) == 1:
-            self.show_program_season(channel, program_id, list(program.seasons.values())[0].uuid)
+            self.show_program_season(program_id, list(program.seasons.values())[0].uuid)
             return
-
-        studio = CHANNELS.get(program.channel, {}).get('studio_icon')
 
         listing = []
 
@@ -88,7 +82,7 @@ class Catalog:
             listing.append(
                 TitleItem(
                     title='* %s' % kodiutils.localize(30204),  # * All seasons
-                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season='-1'),
+                    path=kodiutils.url_for('show_catalog_program_season', program=program_id, season='-1'),
                     art_dict={
                         'fanart': program.background,
                     },
@@ -97,7 +91,6 @@ class Catalog:
                         'title': kodiutils.localize(30204),  # All seasons
                         'plot': program.description,
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )
@@ -107,7 +100,7 @@ class Catalog:
             listing.append(
                 TitleItem(
                     title=season.title,  # kodiutils.localize(30205, season=season.number),  # Season {season}
-                    path=kodiutils.url_for('show_catalog_program_season', channel=channel, program=program_id, season=season.uuid),
+                    path=kodiutils.url_for('show_catalog_program_season', program=program_id, season=season.uuid),
                     art_dict={
                         'fanart': program.background,
                     },
@@ -116,7 +109,6 @@ class Catalog:
                         'title': kodiutils.localize(30205, season=season.number),  # Season {season}
                         'plot': season.description,
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )
@@ -126,7 +118,7 @@ class Catalog:
             listing.append(
                 TitleItem(
                     title=kodiutils.localize(30059, program=program.title),  # Clips for {program}
-                    path=kodiutils.url_for('show_catalog_program_clips', channel=channel, program=program_id),
+                    path=kodiutils.url_for('show_catalog_program_clips', program=program_id),
                     art_dict={
                         'fanart': program.background,
                     },
@@ -135,7 +127,6 @@ class Catalog:
                         'title': kodiutils.localize(30059, program=program.title),  # Clips for {program}
                         'plot': kodiutils.localize(30060, program=program.title),  # Watch short clips of {program}
                         'set': program.title,
-                        'studio': studio,
                     }
                 )
             )
@@ -143,14 +134,13 @@ class Catalog:
         # Sort by label. Some programs return seasons unordered.
         kodiutils.show_listing(listing, 30003, content='tvshows')
 
-    def show_program_season(self, channel, program_id, season_uuid):
+    def show_program_season(self, program_id, season_uuid):
         """ Show the episodes of a program from the catalog
-        :type channel: str
         :type program_id: str
         :type season_uuid: str
         """
         try:
-            program = self._api.get_program(channel, program_id)
+            program = self._api.get_program(program_id)
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
@@ -168,14 +158,13 @@ class Catalog:
         # Sort by episode number by default. Takes seasons into account.
         kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration'])
 
-    def show_program_clips(self, channel, program_id):
+    def show_program_clips(self, program_id):
         """ Show the clips of a program from the catalog
-        :type channel: str
         :type program_id: str
         """
         try:
             # We need to query the backend, since we don't cache clips.
-            program = self._api.get_program(channel, program_id, extract_clips=True, cache=CACHE_PREVENT)
+            program = self._api.get_program(program_id, extract_clips=True, cache=CACHE_PREVENT)
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()

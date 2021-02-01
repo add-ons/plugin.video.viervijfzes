@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class SearchApi:
-    """ VIER/VIJF/ZES Search API """
+    """ GoPlay Search API """
     API_ENDPOINT = 'https://api.viervijfzes.be/search'
 
     def __init__(self):

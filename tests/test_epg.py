@@ -22,17 +22,17 @@ class TestEpg(unittest.TestCase):
         self._epg = EpgApi()
 
     def test_vier_today(self):
-        programs = self._epg.get_epg('vier', date.today().strftime('%Y-%m-%d'))
+        programs = self._epg.get_epg('Play4', date.today().strftime('%Y-%m-%d'))
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], EpgProgram)
 
     def test_vijf_today(self):
-        programs = self._epg.get_epg('vijf', date.today().strftime('%Y-%m-%d'))
+        programs = self._epg.get_epg('Play5', date.today().strftime('%Y-%m-%d'))
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], EpgProgram)
 
     def test_zes_today(self):
-        programs = self._epg.get_epg('zes', date.today().strftime('%Y-%m-%d'))
+        programs = self._epg.get_epg('Play6', date.today().strftime('%Y-%m-%d'))
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], EpgProgram)
 
@@ -41,16 +41,16 @@ class TestEpg(unittest.TestCase):
             self._epg.get_epg('vtm', date.today().strftime('%Y-%m-%d'))
 
     def test_vier_out_of_range(self):
-        programs = self._epg.get_epg('vier', '2020-01-01')
+        programs = self._epg.get_epg('Play4', '2020-01-01')
         self.assertEqual(programs, [])
 
     def test_play_video_from_epg(self):
-        epg_programs = self._epg.get_epg('vier', 'yesterday')
+        epg_programs = self._epg.get_epg('Play4', 'yesterday')
         epg_program = [program for program in epg_programs if program.video_url][0]
 
         # Lookup the Episode data since we don't have an UUID
         api = ContentApi(cache_path=kodiutils.get_cache_path())
-        episode = api.get_episode(epg_program.channel, epg_program.video_url)
+        episode = api.get_episode(epg_program.video_url)
         self.assertIsInstance(episode, Episode)
 
     # def test_map_epg_genre(self):

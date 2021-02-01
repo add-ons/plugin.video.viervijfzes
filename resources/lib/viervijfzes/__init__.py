@@ -1,50 +1,70 @@
 # -*- coding: utf-8 -*-
-""" SBS API """
+""" GoPlay API """
 from __future__ import absolute_import, division, unicode_literals
 
 from collections import OrderedDict
 
 CHANNELS = OrderedDict([
-    ('vier', dict(
-        name='VIER',
-        url='https://www.vier.be',
-        logo='vier.png',
-        background='vier-background.jpg',
-        studio_icon='vier',
+    ('Play4', dict(
+        name='Play4',
+        epg_id='vier',
+        logo='play4.png',
+        background='play4-background.png',
         iptv_preset=4,
-        iptv_id='vier.be',
+        iptv_id='play4.be',
         youtube=[
             dict(
-                label='VIER / VIJF',
-                logo='vier.png',
+                label='GoPlay',
+                logo='goplay.png',
                 path='plugin://plugin.video.youtube/user/viertv/',
             ),
         ],
     )),
-    ('vijf', dict(
-        name='VIJF',
-        url='https://www.vijf.be',
-        logo='vijf.png',
-        background='vijf-background.jpg',
-        studio_icon='vijf',
+    ('Play5', dict(
+        name='Play5',
+        epg_id='vijf',
+        logo='play5.png',
+        background='play5-background.png',
         iptv_preset=5,
-        iptv_id='vijf.be',
+        iptv_id='play5.be',
         youtube=[
             dict(
-                label='VIER / VIJF',
-                logo='vijf.png',
+                label='GoPlay',
+                logo='goplay.png',
                 path='plugin://plugin.video.youtube/user/viertv/',
             ),
         ],
     )),
-    ('zes', dict(
-        name='ZES',
-        url='https://www.zestv.be',
-        logo='zes.png',
-        background='zes-background.jpg',
-        studio_icon='zes',
+    ('Play6', dict(
+        name='Play6',
+        epg_id='zes',
+        logo='play6.png',
+        background='play6-background.png',
         iptv_preset=6,
-        iptv_id='zes.be',
+        iptv_id='play6.be',
+        youtube=[
+            dict(
+                label='GoPlay',
+                logo='goplay.png',
+                path='plugin://plugin.video.youtube/user/viertv/',
+            ),
+        ],
+    )),
+    # ('Play7', dict(
+    #     name='Play7',
+    #     epg_id='zeven',
+    #     url='https://www.goplay.be',
+    #     logo='play7.png',
+    #     background='play7-background.png',
+    #     iptv_preset=7,
+    #     iptv_id='play7.be',
+    #     youtube=[],
+    # )),
+    ('GoPlay', dict(
+        name='Go Play',
+        url='https://www.goplay.be',
+        logo='goplay.png',
+        background='goplay-background.png',
         youtube=[],
     ))
 ])
