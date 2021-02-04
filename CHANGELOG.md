@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.4.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.4.0) (2021-02-04)
+
+[Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.3.1...v0.4.0)
+
+**Implemented enhancements:**
+
+- Rebranding to GoPlay [\#64](https://github.com/add-ons/plugin.video.viervijfzes/pull/64) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Merged pull requests:**
+
+- Make use of git archive [\#66](https://github.com/add-ons/plugin.video.viervijfzes/pull/66) ([dagwieers](https://github.com/dagwieers))
+- Run CI on Windows [\#62](https://github.com/add-ons/plugin.video.viervijfzes/pull/62) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add support for Python 3.9 [\#60](https://github.com/add-ons/plugin.video.viervijfzes/pull/60) ([michaelarnauts](https://github.com/michaelarnauts))
+
 ## [v0.3.1](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.3.1) (2020-11-28)
 
 [Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.3.0...v0.3.1)
