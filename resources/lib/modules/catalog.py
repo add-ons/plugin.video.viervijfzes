@@ -19,8 +19,8 @@ class Catalog:
 
     def __init__(self):
         """ Initialise object """
-        auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
-        self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
+        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+        self._api = ContentApi(self._auth, cache_path=kodiutils.get_cache_path())
 
     def show_catalog(self):
         """ Show all the programs of all channels """
@@ -174,3 +174,19 @@ class Catalog:
 
         # Sort like we get our results back.
         kodiutils.show_listing(listing, 30003, content='episodes')
+
+    def show_mylist(self):
+        """ Show all the programs of all channels """
+        try:
+            mylist = self._auth.get_dataset('myList')
+        except Exception as ex:
+            kodiutils.notification(message=str(ex))
+            raise
+
+        items = []
+        # TODO: fill in items with results from My List
+        listing = [Menu.generate_titleitem(item) for item in items]
+
+        # Sort items by title
+        # Used for A-Z listing or when movies and episodes are mixed.
+        kodiutils.show_listing(listing, 30011, content='tvshows', sort='title')

@@ -34,6 +34,14 @@ msgctxt "#30010"
 msgid "Search trough the catalogue"
 msgstr ""
 
+msgctxt "#30011"
+msgid "My List"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Browse My List"
+msgstr ""
+
 msgctxt "#30013"
 msgid "TV guide"
 msgstr ""

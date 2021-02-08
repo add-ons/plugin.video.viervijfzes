@@ -98,6 +98,13 @@ def show_catalog_program_season(program, season):
     Catalog().show_program_season(program, season)
 
 
+@routing.route('/mylist')
+def show_mylist():
+    """ Show my list """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_mylist()
+
+
 @routing.route('/search')
 @routing.route('/search/<query>')
 def show_search(query=None):

@@ -9,7 +9,9 @@ import os
 import time
 
 from resources.lib import kodiutils
-from resources.lib.viervijfzes.auth_awsidp import AuthenticationException, AwsIdp, InvalidLoginException
+from resources.lib.viervijfzes.aws.cognito_identity import CognitoIdentity
+from resources.lib.viervijfzes.aws.cognito_idp import AuthenticationException, CognitoIdp, InvalidLoginException
+from resources.lib.viervijfzes.aws.cognito_sync import CognitoSync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,6 +21,7 @@ class AuthApi:
     COGNITO_REGION = 'eu-west-1'
     COGNITO_POOL_ID = 'eu-west-1_dViSsKM5Y'
     COGNITO_CLIENT_ID = '6s1h851s8uplco5h6mqh1jac8m'
+    COGNITO_IDENTITY_POOL_ID = 'eu-west-1:8b7eb22c-cf61-43d5-a624-04b494867234'
 
     TOKEN_FILE = 'auth-tokens.json'
 
@@ -93,11 +96,23 @@ class AuthApi:
     @staticmethod
     def _authenticate(username, password):
         """ Authenticate with Amazon Cognito and fetch a refresh token and id token. """
-        client = AwsIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
-        return client.authenticate(username, password)
+        idp_client = CognitoIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
+        return idp_client.authenticate(username, password)
 
     @staticmethod
     def _refresh(refresh_token):
         """ Use the refresh token to fetch a new id token. """
-        client = AwsIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
-        return client.renew_token(refresh_token)
+        idp_client = CognitoIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
+        return idp_client.renew_token(refresh_token)
+
+    def get_dataset(self, dataset='myList'):
+        """ Fetch the value from the specified dataset. """
+        identity_client = CognitoIdentity(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_IDENTITY_POOL_ID)
+        id_token = self.get_token()
+        identity_id = identity_client.get_id(id_token)
+        credentials = identity_client.get_credentials_for_identity(id_token, identity_id)
+
+        sync_client = CognitoSync(AuthApi.COGNITO_IDENTITY_POOL_ID, identity_id, credentials)
+        data = sync_client.list_records(dataset)
+
+        return data

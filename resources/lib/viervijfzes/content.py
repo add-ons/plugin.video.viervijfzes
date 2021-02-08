@@ -260,6 +260,14 @@ class ContentApi:
 
         return program
 
+    def get_program_by_uuid(self, uuid):
+        """ Get a Program object with the specified uuid.
+        :type uuid: str
+        :rtype Program
+        """
+        # TODO: lookup program based on its uuid
+        return None
+
     def get_episode(self, path, cache=CACHE_AUTO):
         """ Get a Episode object from the specified page.
         :type path: str

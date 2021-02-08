@@ -42,6 +42,17 @@ class Menu:
                 )
             ),
             TitleItem(
+                title=kodiutils.localize(30011),  # My List
+                path=kodiutils.url_for('show_mylist'),
+                art_dict=dict(
+                    icon='DefaultPlaylist.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30012),
+                )
+            ),
+            TitleItem(
                 title=kodiutils.localize(30009),  # Search
                 path=kodiutils.url_for('show_search'),
                 art_dict=dict(
