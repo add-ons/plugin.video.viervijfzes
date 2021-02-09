@@ -27,11 +27,14 @@ class AuthenticationException(Exception):
     """ Something went wrong while logging in """
 
 
-class AwsIdp:
-    """ AWS Identity Provider """
+class CognitoIdp:
+    """ Cognito IDP """
 
     def __init__(self, pool_id, client_id):
         """
+
+        See https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/Welcome.html.
+
         :param str pool_id:     The AWS user pool to connect to (format: <region>_<poolid>).
                                 E.g.: eu-west-1_aLkOfYN3T
         :param str client_id:   The client application ID (the ID of the application connecting)
@@ -291,7 +294,7 @@ class AwsIdp:
 
     @staticmethod
     def __hex_hash(hex_string):
-        return AwsIdp.__hash_sha256(bytearray.fromhex(hex_string))
+        return CognitoIdp.__hash_sha256(bytearray.fromhex(hex_string))
 
     @staticmethod
     def __hash_sha256(buf):
@@ -311,7 +314,7 @@ class AwsIdp:
 
         # noinspection PyTypeChecker
         if not isinstance(long_int, six.string_types):
-            hash_str = AwsIdp.__long_to_hex(long_int)
+            hash_str = CognitoIdp.__long_to_hex(long_int)
         else:
             hash_str = long_int
         if len(hash_str) % 2 == 1:
@@ -323,7 +326,7 @@ class AwsIdp:
     @staticmethod
     def __get_random(nbytes):
         random_hex = binascii.hexlify(os.urandom(nbytes))
-        return AwsIdp.__hex_to_long(random_hex)
+        return CognitoIdp.__hex_to_long(random_hex)
 
     @staticmethod
     def __get_current_timestamp():

@@ -34,6 +34,14 @@ msgctxt "#30010"
 msgid "Search trough the catalogue"
 msgstr ""
 
+msgctxt "#30011"
+msgid "My List"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Browse My List"
+msgstr ""
+
 msgctxt "#30013"
 msgid "TV guide"
 msgstr ""
@@ -74,6 +82,14 @@ msgstr ""
 
 
 ### CONTEXT MENU
+msgctxt "#30100"
+msgid "Add to My List"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Remove from My List"
+msgstr ""
+
 msgctxt "#30102"
 msgid "Go to Program"
 msgstr ""

@@ -26,12 +26,12 @@ class TestAuth(unittest.TestCase):
         auth.clear_tokens()
 
         # We should get a token by logging in
-        token = auth.get_token()
-        self.assertTrue(token)
+        id_token = auth.get_token()
+        self.assertTrue(id_token)
 
         # Test it a second time, it should go from memory now
-        token = auth.get_token()
-        self.assertTrue(token)
+        id_token = auth.get_token()
+        self.assertTrue(id_token)
 
 
 if __name__ == '__main__':

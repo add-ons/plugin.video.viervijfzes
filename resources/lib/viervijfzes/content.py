@@ -45,7 +45,7 @@ class Program:
     """ Defines a Program. """
 
     def __init__(self, uuid=None, path=None, channel=None, title=None, description=None, aired=None, cover=None, background=None, seasons=None, episodes=None,
-                 clips=None):
+                 clips=None, my_list=False):
         """
         :type uuid: str
         :type path: str
@@ -58,6 +58,7 @@ class Program:
         :type seasons: list[Season]
         :type episodes: list[Episode]
         :type clips: list[Episode]
+        :type my_list: bool
         """
         self.uuid = uuid
         self.path = path
@@ -70,6 +71,7 @@ class Program:
         self.seasons = seasons
         self.episodes = episodes
         self.clips = clips
+        self.my_list = my_list
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -182,6 +184,7 @@ class ContentApi:
 
     def get_programs(self, channel=None, cache=CACHE_AUTO):
         """ Get a list of all programs of the specified channel.
+        :type channel: str
         :type cache: str
         :rtype list[Program]
         """
@@ -257,6 +260,31 @@ class ContentApi:
         if extract_clips and raw_html[0]:
             clips = self._extract_videos(raw_html[0])
             program.clips = clips
+
+        return program
+
+    def get_program_by_uuid(self, uuid, cache=CACHE_AUTO):
+        """ Get a Program object with the specified uuid.
+        :type uuid: str
+        :type cache: str
+        :rtype Program
+        """
+        if not uuid:
+            return None
+
+        def update():
+            """ Fetch the program metadata """
+            # Fetch webpage
+            result = self._get_url(self.SITE_URL + '/api/program/%s' % uuid)
+            data = json.loads(result)
+            return data
+
+        # Fetch listing from cache or update if needed
+        data = self._handle_cache(key=['program', uuid], cache_mode=cache, update=update)
+        if not data:
+            return None
+
+        program = self._parse_program_data(data)
 
         return program
 

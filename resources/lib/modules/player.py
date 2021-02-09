@@ -9,7 +9,7 @@ from resources.lib import kodiutils
 from resources.lib.modules.menu import Menu
 from resources.lib.viervijfzes import CHANNELS, ResolvedStream
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.auth_awsidp import AuthenticationException, InvalidLoginException
+from resources.lib.viervijfzes.aws.cognito_idp import AuthenticationException, InvalidLoginException
 from resources.lib.viervijfzes.content import ContentApi, GeoblockedException, UnavailableException
 
 _LOGGER = logging.getLogger(__name__)
