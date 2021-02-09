@@ -83,6 +83,14 @@ msgstr "Bekijk korte videoclips van [B]{program}[/B]"
 
 
 ### CONTEXT MENU
+msgctxt "#30100"
+msgid "Add to My List"
+msgstr "Toevoegen aan mijn lijst"
+
+msgctxt "#30101"
+msgid "Remove from My List"
+msgstr "Verwijderen uit mijn lijst"
+
 msgctxt "#30102"
 msgid "Go to Program"
 msgstr "Ga naar programma"

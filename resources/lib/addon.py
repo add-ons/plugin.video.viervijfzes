@@ -105,6 +105,20 @@ def show_mylist():
     Catalog().show_mylist()
 
 
+@routing.route('/mylist/add/<uuid>')
+def mylist_add(uuid):
+    """ Add a program to My List """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().mylist_add(uuid)
+
+
+@routing.route('/mylist/del/<uuid>')
+def mylist_del(uuid):
+    """ Remove a program from My List """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().mylist_del(uuid)
+
+
 @routing.route('/search')
 @routing.route('/search/<query>')
 def show_search(query=None):

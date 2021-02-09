@@ -4,6 +4,9 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
+from datetime import datetime
+
+import dateutil.tz
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
@@ -178,15 +181,55 @@ class Catalog:
     def show_mylist(self):
         """ Show all the programs of all channels """
         try:
-            mylist = self._auth.get_dataset('myList')
+            mylist, _ = self._auth.get_dataset('myList')
         except Exception as ex:
             kodiutils.notification(message=str(ex))
             raise
 
         items = []
-        # TODO: fill in items with results from My List
+        for item in mylist:
+            program = self._api.get_program_by_uuid(item.get('id'))
+            if program:
+                program.my_list = True
+                items.append(program)
+
         listing = [Menu.generate_titleitem(item) for item in items]
 
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
         kodiutils.show_listing(listing, 30011, content='tvshows', sort='title')
+
+    def mylist_add(self, uuid):
+        """ Add a program to My List """
+        if not uuid:
+            kodiutils.end_of_directory()
+            return
+
+        mylist, sync_info = self._auth.get_dataset('myList')
+
+        if uuid not in [item.get('id') for item in mylist]:
+            # Python 2.7 doesn't support .timestamp(), and windows doesn't do '%s', so we need to calculate it ourself
+            epoch = datetime(1970, 1, 1, tzinfo=dateutil.tz.gettz('UTC'))
+            now = datetime.now(tz=dateutil.tz.gettz('UTC'))
+            timestamp = str(int((now - epoch).total_seconds())) + '000'
+
+            mylist.append({
+                'id': uuid,
+                'timestamp': timestamp,
+            })
+
+            self._auth.put_dataset('myList', mylist, sync_info)
+
+        kodiutils.end_of_directory()
+
+    def mylist_del(self, uuid):
+        """ Remove a program from My List """
+        if not uuid:
+            kodiutils.end_of_directory()
+            return
+
+        mylist, sync_info = self._auth.get_dataset('myList')
+        new_mylist = [item for item in mylist if item.get('id') != uuid]
+        self._auth.put_dataset('myList', new_mylist, sync_info)
+
+        kodiutils.end_of_directory()

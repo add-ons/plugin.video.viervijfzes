@@ -101,8 +101,30 @@ class Menu:
                 # We have episodes, or we don't know it
                 title = item.title
 
+            context_menu = []
+            if item.uuid:
+                if item.my_list:
+                    context_menu.append((
+                        kodiutils.localize(30101),  # Remove from My List
+                        'Container.Update(%s)' %
+                        kodiutils.url_for('mylist_del', uuid=item.uuid)
+                    ))
+                else:
+                    context_menu.append((
+                        kodiutils.localize(30100),  # Add to My List
+                        'Container.Update(%s)' %
+                        kodiutils.url_for('mylist_add', uuid=item.uuid)
+                    ))
+
+            context_menu.append((
+                kodiutils.localize(30102),  # Go to Program
+                'Container.Update(%s)' %
+                kodiutils.url_for('show_catalog_program', program=item.path)
+            ))
+
             return TitleItem(title=title,
                              path=kodiutils.url_for('show_catalog_program', program=item.path),
+                             context_menu=context_menu,
                              art_dict=art_dict,
                              info_dict=info_dict)
 

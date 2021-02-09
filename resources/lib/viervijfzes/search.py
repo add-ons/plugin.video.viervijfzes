@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" AUTH API """
+""" Search API """
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -8,17 +8,19 @@ import logging
 
 import requests
 
-from resources.lib.viervijfzes.content import Program
+from resources.lib import kodiutils
+from resources.lib.viervijfzes.content import Program, ContentApi, CACHE_ONLY
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class SearchApi:
     """ GoPlay Search API """
-    API_ENDPOINT = 'https://api.viervijfzes.be/search'
+    API_ENDPOINT = 'https://api.goplay.be/search'
 
     def __init__(self):
         """ Initialise object """
+        self._api = ContentApi(None, cache_path=kodiutils.get_cache_path())
         self._session = requests.session()
 
     def search(self, query):
@@ -33,26 +35,28 @@ class SearchApi:
             self.API_ENDPOINT,
             json={
                 "query": query,
-                "sites": ["vier", "vijf", "zes"],
                 "page": 0,
-                "mode": "byDate"
+                "mode": "programs"
             }
         )
-
-        if response.status_code != 200:
-            raise Exception('Could not search')
+        _LOGGER.debug(response.content)
+        response.raise_for_status()
 
         data = json.loads(response.text)
 
         results = []
         for hit in data['hits']['hits']:
             if hit['_source']['bundle'] == 'program':
-                results.append(Program(
-                    channel=hit['_source']['site'],
-                    path=hit['_source']['url'].split('/')[-1],
-                    title=hit['_source']['title'],
-                    description=hit['_source']['intro'],
-                    cover=hit['_source']['img'],
-                ))
+                path = hit['_source']['url'].split('/')[-1]
+                program = self._api.get_program(path, cache=CACHE_ONLY)
+                if program:
+                    results.append(program)
+                else:
+                    results.append(Program(
+                        path=path,
+                        title=hit['_source']['title'],
+                        description=hit['_source']['intro'],
+                        cover=hit['_source']['img'],
+                    ))
 
         return results

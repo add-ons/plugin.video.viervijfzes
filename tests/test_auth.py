@@ -10,8 +10,6 @@ import unittest
 
 from resources.lib import kodiutils
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.aws.cognito_identity import CognitoIdentity
-from resources.lib.viervijfzes.aws.cognito_sync import CognitoSync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,19 +32,6 @@ class TestAuth(unittest.TestCase):
         # Test it a second time, it should go from memory now
         id_token = auth.get_token()
         self.assertTrue(id_token)
-
-        # Test Cognito Identity
-        identity_client = CognitoIdentity(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_IDENTITY_POOL_ID)
-        identity_id = identity_client.get_id(id_token)
-        self.assertTrue(identity_id)
-
-        credentials = identity_client.get_credentials_for_identity(id_token, identity_id)
-        self.assertTrue(credentials)
-
-        # Test Cognito Sync
-        sync_client = CognitoSync(AuthApi.COGNITO_IDENTITY_POOL_ID, identity_id, credentials)
-        dataset = sync_client.list_records('myList')
-        self.assertTrue(dataset)
 
 
 if __name__ == '__main__':
