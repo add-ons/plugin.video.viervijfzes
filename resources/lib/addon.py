@@ -9,7 +9,6 @@ from routing import Plugin
 
 from resources.lib import kodilogging
 
-kodilogging.config()
 routing = Plugin()  # pylint: disable=invalid-name
 _LOGGER = logging.getLogger(__name__)
 
@@ -190,4 +189,5 @@ def iptv_epg():
 
 def run(params):
     """ Run the routing plugin """
+    kodilogging.config()
     routing.run(params)

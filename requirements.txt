@@ -1,7 +1,8 @@
-coverage
 polib
 pylint
 pytest
+pytest-cov
+pytest-timeout
 python-dateutil
 requests
 git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
