@@ -215,7 +215,7 @@ class Catalog:
             # Python 2.7 doesn't support .timestamp(), and windows doesn't do '%s', so we need to calculate it ourself
             epoch = datetime(1970, 1, 1, tzinfo=dateutil.tz.gettz('UTC'))
             now = datetime.now(tz=dateutil.tz.gettz('UTC'))
-            timestamp = str(int((now - epoch).total_seconds())) + '000'
+            timestamp = int((now - epoch).total_seconds()) * 1000
 
             mylist.append({
                 'id': uuid,
