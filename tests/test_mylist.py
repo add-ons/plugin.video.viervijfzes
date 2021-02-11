@@ -24,7 +24,7 @@ class TestMyList(unittest.TestCase):
         id_token = auth.get_token()
         self.assertTrue(id_token)
 
-        dataset, _ = auth.get_dataset('myList')
+        dataset, _ = auth.get_dataset('myList', 'myList')
         self.assertTrue(dataset)
 
         # Test disabled since it would cause locks due to all the CI tests changing this at the same time.
@@ -38,7 +38,7 @@ class TestMyList(unittest.TestCase):
         #     {'id': 'da584be3-dea6-49c7-bfbd-c480d8096937', 'timestamp': timestamp}
         # ]
         #
-        # auth.put_dataset('myList', new_dataset, sync_info)
+        # auth.put_dataset('myList', 'myList', new_dataset, sync_info)
 
 
 if __name__ == '__main__':

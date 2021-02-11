@@ -112,10 +112,11 @@ class CognitoSync:
             'Authorization': authorization_header
         })
 
-    def list_records(self, dataset):
+    def list_records(self, dataset, key):
         """ Return the values of this dataset.
 
         :param str dataset:            The name of the dataset to request.
+        :param str key:                The name of the key to request.
         :return The requested dataset
         :rtype: dict
         """
@@ -142,13 +143,20 @@ class CognitoSync:
         reply.raise_for_status()
         result = json.loads(reply.text)
 
+        _LOGGER.debug("Got results: %s", result.get('Records'))
+
         # Return the records
-        record = next(record for record in result.get('Records', []) if record.get('Key') == dataset)
-        value = json.loads(record.get('Value'))
+        try:
+            record = next(record for record in result.get('Records', []) if record.get('Key') == key)
+            value = json.loads(record.get('Value'))
+            sync_count = record.get('SyncCount')
+        except StopIteration:
+            value = None
+            sync_count = 0
 
-        return value, result.get('SyncSessionToken'), record.get('SyncCount')
+        return value, result.get('SyncSessionToken'), sync_count
 
-    def update_records(self, dataset, value, session_token, sync_count):
+    def update_records(self, dataset, key, value, session_token, sync_count):
         """ Return the values of this dataset.
 
         :param str dataset:            The name of the dataset to request.
@@ -171,7 +179,7 @@ class CognitoSync:
                 "SyncSessionToken": session_token,
                 "RecordPatches": [
                     {
-                        "Key": dataset,
+                        "Key": key,
                         "Op": "replace",
                         "SyncCount": sync_count,
                         "Value": json.dumps(value),

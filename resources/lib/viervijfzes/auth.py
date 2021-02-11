@@ -105,7 +105,7 @@ class AuthApi:
         idp_client = CognitoIdp(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_CLIENT_ID)
         return idp_client.renew_token(refresh_token)
 
-    def get_dataset(self, dataset):
+    def get_dataset(self, dataset, key):
         """ Fetch the value from the specified dataset. """
         identity_client = CognitoIdentity(AuthApi.COGNITO_POOL_ID, AuthApi.COGNITO_IDENTITY_POOL_ID)
         id_token = self.get_token()
@@ -113,7 +113,7 @@ class AuthApi:
         credentials = identity_client.get_credentials_for_identity(id_token, identity_id)
 
         sync_client = CognitoSync(AuthApi.COGNITO_IDENTITY_POOL_ID, identity_id, credentials)
-        data, session_token, sync_count = sync_client.list_records(dataset)
+        data, session_token, sync_count = sync_client.list_records(dataset, key)
 
         sync_info = {
             'identity_id': identity_id,
@@ -125,7 +125,7 @@ class AuthApi:
         return data, sync_info
 
     @staticmethod
-    def put_dataset(dataset, value, sync_info):
+    def put_dataset(dataset, key, value, sync_info):
         """ Store the value from the specified dataset. """
         sync_client = CognitoSync(AuthApi.COGNITO_IDENTITY_POOL_ID, sync_info.get('identity_id'), sync_info.get('credentials'))
-        sync_client.update_records(dataset, value, sync_info.get('session_token'), sync_info.get('sync_count'))
+        sync_client.update_records(dataset, key, value, sync_info.get('session_token'), sync_info.get('sync_count'))
