@@ -5,8 +5,6 @@ from __future__ import absolute_import, division, unicode_literals
 
 import hashlib
 import logging
-import os
-from time import time
 
 from xbmc import Monitor, Player, getInfoLabel
 
@@ -31,10 +29,6 @@ class BackgroundService(Monitor):
         _LOGGER.debug('Service started')
 
         while not self.abortRequested():
-            # Update every `update_interval` after the last update
-            if kodiutils.get_setting_bool('metadata_update') and int(kodiutils.get_setting('metadata_last_updated', 0)) + self.update_interval < time():
-                self._update_metadata()
-
             # Stop when abort requested
             if self.waitForAbort(10):
                 break
@@ -61,38 +55,6 @@ class BackgroundService(Monitor):
             kodiutils.set_setting('credentials_hash', new_hash)
             return True
         return False
-
-    def _update_metadata(self):
-        """ Update the metadata for the listings """
-        from resources.lib.modules.metadata import Metadata
-
-        def update_status(_i, _total):
-            """ Allow to cancel the background job """
-            return self.abortRequested() or not kodiutils.get_setting_bool('metadata_update')
-
-        # Clear metadata that has expired for 30 days
-        self._remove_expired_metadata(30 * 24 * 60 * 60)
-
-        # Fetch new metadata
-        success = Metadata().fetch_metadata(callback=update_status)
-
-        # Update metadata_last_updated
-        if success:
-            kodiutils.set_setting('metadata_last_updated', str(int(time())))
-
-    @staticmethod
-    def _remove_expired_metadata(keep_expired=None):
-        """ Clear the cache """
-        path = kodiutils.get_cache_path()
-        if not os.path.exists(path):
-            return
-
-        now = time()
-        for filename in os.listdir(path):
-            fullpath = os.path.join(path, filename)
-            if keep_expired and os.stat(fullpath).st_mtime + keep_expired > now:
-                continue
-            os.unlink(fullpath)
 
 
 class KodiPlayer(Player):
