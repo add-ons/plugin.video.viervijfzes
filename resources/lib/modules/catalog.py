@@ -181,17 +181,18 @@ class Catalog:
     def show_mylist(self):
         """ Show all the programs of all channels """
         try:
-            mylist, _ = self._auth.get_dataset('myList')
+            mylist, _ = self._auth.get_dataset('myList', 'myList')
         except Exception as ex:
             kodiutils.notification(message=str(ex))
             raise
 
         items = []
-        for item in mylist:
-            program = self._api.get_program_by_uuid(item.get('id'))
-            if program:
-                program.my_list = True
-                items.append(program)
+        if mylist:
+            for item in mylist:
+                program = self._api.get_program_by_uuid(item.get('id'))
+                if program:
+                    program.my_list = True
+                    items.append(program)
 
         listing = [Menu.generate_titleitem(item) for item in items]
 
@@ -205,7 +206,10 @@ class Catalog:
             kodiutils.end_of_directory()
             return
 
-        mylist, sync_info = self._auth.get_dataset('myList')
+        mylist, sync_info = self._auth.get_dataset('myList', 'myList')
+
+        if not mylist:
+            mylist = []
 
         if uuid not in [item.get('id') for item in mylist]:
             # Python 2.7 doesn't support .timestamp(), and windows doesn't do '%s', so we need to calculate it ourself
@@ -218,7 +222,7 @@ class Catalog:
                 'timestamp': timestamp,
             })
 
-            self._auth.put_dataset('myList', mylist, sync_info)
+            self._auth.put_dataset('myList', 'myList', mylist, sync_info)
 
         kodiutils.end_of_directory()
 
@@ -228,8 +232,12 @@ class Catalog:
             kodiutils.end_of_directory()
             return
 
-        mylist, sync_info = self._auth.get_dataset('myList')
+        mylist, sync_info = self._auth.get_dataset('myList', 'myList')
+
+        if not mylist:
+            mylist = []
+
         new_mylist = [item for item in mylist if item.get('id') != uuid]
-        self._auth.put_dataset('myList', new_mylist, sync_info)
+        self._auth.put_dataset('myList', 'myList', new_mylist, sync_info)
 
         kodiutils.end_of_directory()
