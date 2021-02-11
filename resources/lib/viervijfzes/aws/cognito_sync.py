@@ -140,9 +140,10 @@ class CognitoSync:
 
         # Send the request
         reply = self._session.send(request)
-        _LOGGER.debug(reply.text)
         reply.raise_for_status()
         result = json.loads(reply.text)
+
+        _LOGGER.debug("Got results: %s", result.get('Records'))
 
         # Return the records
         try:
