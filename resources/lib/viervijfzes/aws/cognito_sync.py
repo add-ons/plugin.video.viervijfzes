@@ -89,8 +89,6 @@ class CognitoSync:
                              signed_headers + '\n' +
                              payload_hash)
 
-        _LOGGER.warning(canonical_request)
-
         # Step 2. Create a string to sign
         algorithm = 'AWS4-HMAC-SHA256'
         credential_scope = '%s/%s/%s/%s' % (datestamp, self.region, service, 'aws4_request')
