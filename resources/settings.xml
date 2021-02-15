@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <setting id="metadata_last_updated" visible="false"/>
     <category label="30800"> <!-- Credentials -->
         <setting label="30801" type="lsep"/> <!-- Credentials -->
         <setting label="30802" type="text" id="username"/>
         <setting label="30803" type="text" id="password" option="hidden"/>
-    </category>
-    <category label="30820"> <!-- Interface -->
-        <setting label="30821" type="lsep"/> <!-- Metadata -->
-        <setting label="30822" type="bool" id="metadata_update" default="true" subsetting="true"/>
-        <setting label="30823" type="action" action="RunPlugin(plugin://plugin.video.viervijfzes/metadata/update)"/>
-        <setting label="30824" type="action" action="RunPlugin(plugin://plugin.video.viervijfzes/metadata/clean)"/>
     </category>
     <category label="30840"> <!-- Integrations -->
         <setting label="30841" type="lsep"/> <!-- IPTV Manager -->

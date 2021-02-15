@@ -208,7 +208,7 @@ class ContentApi:
             return data
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['programs'], cache_mode=cache, update=update, ttl=30 * 5)
+        data = self._handle_cache(key=['programs'], cache_mode=cache, update=update, ttl=5 * 60)
         if not data:
             return []
 

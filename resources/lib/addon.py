@@ -159,20 +159,6 @@ def play_from_page(page):
     Player().play_from_page(unquote(page))
 
 
-@routing.route('/metadata/update')
-def metadata_update():
-    """ Update the metadata for the listings (called from settings) """
-    from resources.lib.modules.metadata import Metadata
-    Metadata().update()
-
-
-@routing.route('/metadata/clean')
-def metadata_clean():
-    """ Clear the metadata for the listings (called from settings) """
-    from resources.lib.modules.metadata import Metadata
-    Metadata().clean()
-
-
 @routing.route('/iptv/channels')
 def iptv_channels():
     """ Generate channel data for the Kodi PVR integration """
