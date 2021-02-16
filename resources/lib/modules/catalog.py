@@ -110,7 +110,7 @@ class Catalog:
                     info_dict={
                         'tvshowtitle': program.title,
                         'title': kodiutils.localize(30205, season=season.number),  # Season {season}
-                        'plot': season.description,
+                        'plot': season.description or program.description,
                         'set': program.title,
                     }
                 )
