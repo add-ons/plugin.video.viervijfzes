@@ -12,7 +12,7 @@ from datetime import datetime
 
 import requests
 
-from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS
+from resources.lib.kodiutils import html_to_kodi, STREAM_DASH, STREAM_HLS
 from resources.lib.viervijfzes import ResolvedStream
 
 try:  # Python 3
@@ -532,7 +532,7 @@ class ContentApi:
                 path=playlist['link'].lstrip('/'),
                 channel=playlist['pageInfo']['brand'],
                 title=playlist['title'],
-                description=playlist['pageInfo']['description'],
+                description=html_to_kodi(playlist.get('description')),
                 number=playlist['episodes'][0]['seasonNumber'],  # You did not see this
             )
             for key, playlist in enumerate(data['playlists']) if playlist['episodes']
@@ -572,7 +572,7 @@ class ContentApi:
             channel=data.get('pageInfo', {}).get('site'),
             program_title=data.get('program', {}).get('title') if data.get('program') else data.get('title'),
             title=data.get('title'),
-            description=data.get('pageInfo', {}).get('description'),
+            description=html_to_kodi(data.get('description')),
             cover=data.get('image'),
             background=data.get('image'),
             duration=data.get('duration'),

@@ -5,12 +5,19 @@ from __future__ import absolute_import, division, unicode_literals
 
 import logging
 import os
+import re
 
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
+
+try:  # Python 3
+    from html import unescape
+except ImportError:  # Python 2
+    from HTMLParser import HTMLParser
+    unescape = HTMLParser().unescape
 
 ADDON = xbmcaddon.Addon()
 
@@ -25,6 +32,19 @@ SORT_METHODS = dict(
 )
 DEFAULT_SORT_METHODS = [
     'unsorted', 'title'
+]
+
+HTML_MAPPING = [
+    (re.compile(r'<(/?)i(|\s[^>]+)>', re.I), '[\\1I]'),
+    (re.compile(r'<(/?)b(|\s[^>]+)>', re.I), '[\\1B]'),
+    (re.compile(r'<em(|\s[^>]+)>', re.I), '[I]'),
+    (re.compile(r'</em>', re.I), '[/I]'),
+    (re.compile(r'<(strong|h\d)>', re.I), '[B]'),
+    (re.compile(r'</(strong|h\d)>', re.I), '[/B]'),
+    (re.compile(r'<li>', re.I), '- '),
+    (re.compile(r'</?(li|ul|ol)(|\s[^>]+)>', re.I), '\n'),
+    (re.compile(r'</?(code|div|p|pre|span)(|\s[^>]+)>', re.I), ''),
+    (re.compile('(&nbsp;\n){2,}', re.I), '\n'),  # Remove repeating non-blocking spaced newlines
 ]
 
 STREAM_HLS = 'hls'
@@ -85,6 +105,15 @@ def from_unicode(text, encoding='utf-8', errors='strict'):
     if sys.version_info.major == 2 and isinstance(text, unicode):  # noqa: F821; pylint: disable=undefined-variable
         return text.encode(encoding, errors)
     return text
+
+
+def html_to_kodi(text):
+    """Convert HTML content into Kodi formatted text"""
+    if not text:
+        return text
+    for key, val in HTML_MAPPING:
+        text = key.sub(val, text)
+    return unescape(text).strip()
 
 
 def addon_icon():
