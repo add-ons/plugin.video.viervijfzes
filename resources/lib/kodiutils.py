@@ -108,7 +108,7 @@ def from_unicode(text, encoding='utf-8', errors='strict'):
 
 
 def html_to_kodi(text):
-    """Convert VRT HTML content into Kodi formatted text"""
+    """Convert HTML content into Kodi formatted text"""
     if not text:
         return text
     for key, val in HTML_MAPPING:
