@@ -34,6 +34,9 @@ class TestRouting(unittest.TestCase):
     def test_catalog_menu(self):
         routing.run([routing.url_for(addon.show_catalog), '0', ''])
 
+    def test_recommendations_menu(self):
+        routing.run([routing.url_for(addon.show_recommendations), '0', ''])
+
     def test_catalog_channel_menu(self):
         routing.run([routing.url_for(addon.show_channel_catalog, channel='Play4'), '0', ''])
 

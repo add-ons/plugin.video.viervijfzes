@@ -13,6 +13,11 @@ from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import UnavailableException
 from resources.lib.viervijfzes.epg import EpgApi
 
+try:  # Python 3
+    from urllib.parse import quote
+except ImportError:  # Python 2
+    from urllib import quote
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -103,11 +108,6 @@ class TvGuide:
             kodiutils.notification(message=str(ex))
             kodiutils.end_of_directory()
             return
-
-        try:  # Python 3
-            from urllib.parse import quote
-        except ImportError:  # Python 2
-            from urllib import quote
 
         listing = []
         for program in programs:

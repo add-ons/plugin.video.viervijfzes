@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import hashlib
 import json
 import logging
 import os
@@ -208,7 +209,7 @@ class ContentApi:
             return data
 
         # Fetch listing from cache or update if needed
-        data = self._handle_cache(key=['programs'], cache_mode=cache, update=update, ttl=5 * 60)
+        data = self._handle_cache(key=['programs'], cache_mode=cache, update=update, ttl=30 * 60)  # 30 minutes
         if not data:
             return []
 
@@ -381,75 +382,145 @@ class ContentApi:
             stream_type=STREAM_HLS,
         )
 
-    # def get_categories(self):
-    #     """ Get a list of all categories.
-    #     :rtype list[Category]
-    #     """
-    #     # Load webpage
-    #     raw_html = self._get_url(self.SITE_URL)
-    #
-    #     # Categories regexes
-    #     regex_articles = re.compile(r'<article([^>]+)>(.*?)</article>', re.DOTALL)
-    #     regex_submenu_id = re.compile(r'data-submenu-id="([^"]*)"')  # splitted since the order might change
-    #     regex_submenu_title = re.compile(r'data-submenu-title="([^"]*)"')
-    #
-    #     categories = []
-    #     for result in regex_articles.finditer(raw_html):
-    #         article_info_html = result.group(1)
-    #         article_html = result.group(2)
-    #         category_title = regex_submenu_title.search(article_info_html).group(1)
-    #         category_id = regex_submenu_id.search(article_info_html).group(1)
-    #
-    #         # Skip empty categories or 'All programs'
-    #         if not category_id or category_id == 'programmas':
-    #             continue
-    #
-    #         # Extract items
-    #         programs = self._extract_programs(article_html, channel)
-    #         episodes = self._extract_videos(article_html)
-    #         categories.append(Category(uuid=category_id, channel=channel, title=category_title, programs=programs, episodes=episodes))
-    #
-    #     return categories
+    def get_program_tree(self, cache=CACHE_AUTO):
+        """ Get a content tree with information about all the programs.
+        :type cache: str
+        :rtype dict
+        """
 
-    # @staticmethod
-    # def _extract_programs(html, channel):
-    #     """ Extract Programs from HTML code """
-    #     # Item regexes
-    #     regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
-    #                             r'.*?<h3 class="poster-teaser__title"><span>(?P<title>[^<]*)</span></h3>.*?'
-    #                             r'</a>', re.DOTALL)
-    #
-    #     # Extract items
-    #     programs = []
-    #     for item in regex_item.finditer(html):
-    #         path = item.group('path')
-    #         if path.startswith('/video'):
-    #             continue
-    #
-    #         title = unescape(item.group('title'))
-    #
-    #         # Program
-    #         programs.append(Program(
-    #             path=path.lstrip('/'),
-    #             channel=channel,
-    #             title=title,
-    #         ))
-    #
-    #     return programs
+        def update():
+            """ Fetch the content tree """
+            response = self._get_url(self.SITE_URL + '/api/content_tree')
+            return json.loads(response)
+
+        # Fetch listing from cache or update if needed
+        data = self._handle_cache(key=['content_tree'], cache_mode=cache, update=update, ttl=5 * 60)  # 5 minutes
+
+        return data
+
+    def get_popular_programs(self, brand=None):
+        """ Get a list of popular programs.
+        :rtype list[Program]
+        """
+        if brand:
+            response = self._get_url(self.SITE_URL + '/api/programs/popular/%s' % brand)
+        else:
+            response = self._get_url(self.SITE_URL + '/api/programs/popular')
+        data = json.loads(response)
+
+        programs = []
+        for program in data:
+            programs.append(self._parse_program_data(program))
+
+        return programs
+
+    def get_categories(self):
+        """ Return a list of categories.
+        :rtype list[Category]
+        """
+        content_tree = self.get_program_tree()
+
+        categories = []
+        for category_id, category_name in content_tree.get('categories').items():
+            categories.append(Category(uuid=category_id,
+                                       title=category_name))
+
+        return categories
+
+    def get_category_content(self, category_id):
+        """ Return a category.
+        :type category_id: int
+        :rtype list[Program]
+        """
+        content_tree = self.get_program_tree()
+
+        # Find out all the program_id's of the requested category
+        program_ids = [key for key, value in content_tree.get('programs').items() if value.get('category') == category_id]
+
+        # Filter out the list of all programs to only keep the one of the requested category
+        return [program for program in self.get_programs() if program.uuid in program_ids]
+
+    def get_recommendation_categories(self):
+        """ Get a list of all categories.
+        :rtype list[Category]
+        """
+        # Load all programs
+        all_programs = self.get_programs()
+
+        # Load webpage
+        raw_html = self._get_url(self.SITE_URL)
+
+        # Categories regexes
+        regex_articles = re.compile(r'<article[^>]+>(.*?)</article>', re.DOTALL)
+        regex_category = re.compile(r'<h1.*?>(.*?)</h1>(?:.*?<div class="visually-hidden">(.*?)</div>)?', re.DOTALL)
+
+        categories = []
+        for result in regex_articles.finditer(raw_html):
+            article_html = result.group(1)
+
+            match_category = regex_category.search(article_html)
+            category_title = match_category.group(1).strip()
+            if match_category.group(2):
+                category_title += ' [B]%s[/B]' % match_category.group(2).strip()
+
+            # Extract programs and lookup in all_programs so we have more metadata
+            programs = []
+            for program in self._extract_programs(article_html):
+                try:
+                    rich_program = next(rich_program for rich_program in all_programs if rich_program.path == program.path)
+                    programs.append(rich_program)
+                except StopIteration:
+                    programs.append(program)
+
+            episodes = self._extract_videos(article_html)
+
+            categories.append(
+                Category(uuid=hashlib.md5(category_title.encode('utf-8')).hexdigest(), title=category_title, programs=programs, episodes=episodes))
+
+        return categories
+
+    @staticmethod
+    def _extract_programs(html):
+        """ Extract Programs from HTML code
+        :type html: str
+        :rtype list[Program]
+        """
+        # Item regexes
+        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
+                                r'.*?<h3 class="poster-teaser__title">(?P<title>[^<]*)</h3>.*?data-background-image="(?P<image>.*?)".*?'
+                                r'</a>', re.DOTALL)
+
+        # Extract items
+        programs = []
+        for item in regex_item.finditer(html):
+            path = item.group('path')
+            if path.startswith('/video'):
+                continue
+
+            # Program
+            programs.append(Program(
+                path=path.lstrip('/'),
+                title=unescape(item.group('title')),
+                cover=unescape(item.group('image')),
+            ))
+
+        return programs
 
     @staticmethod
     def _extract_videos(html):
-        """ Extract videos from HTML code """
+        """ Extract videos from HTML code
+        :type html: str
+        :rtype list[Episode]
+        """
         # Item regexes
         regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>.*?</a>', re.DOTALL)
 
-        # Episode regexes
-        regex_episode_title = re.compile(r'<h3 class="(?:poster|card|image)-teaser__title">(?:<span>)?([^<]*)(?:</span>)?</h3>')
-        regex_episode_program = re.compile(r'<div class="card-teaser__label">([^<]*)</div>')
+        regex_episode_program = re.compile(r'<h3 class="episode-teaser__subtitle">([^<]*)</h3>')
+        regex_episode_title = re.compile(r'<(?:div|h3) class="(?:poster|card|image|episode)-teaser__title">(?:<span>)?([^<]*)(?:</span>)?</(?:div|h3)>')
         regex_episode_duration = re.compile(r'data-duration="([^"]*)"')
-        regex_episode_video_id = re.compile(r'data-videoid="([^"]*)"')
+        regex_episode_video_id = re.compile(r'data-video-id="([^"]*)"')
         regex_episode_image = re.compile(r'data-background-image="([^"]*)"')
-        regex_episode_timestamp = re.compile(r'data-timestamp="([^"]*)"')
+        regex_episode_badge = re.compile(r'<div class="(?:poster|card|image|episode)-teaser__badge badge">([^<]*)</div>')
 
         # Extract items
         episodes = []
@@ -463,7 +534,7 @@ class ContentApi:
             except AttributeError:
                 continue
 
-            # This is not a episode
+            # This is not a video
             if not path.startswith('/video'):
                 continue
 
@@ -472,35 +543,42 @@ class ContentApi:
             except AttributeError:
                 _LOGGER.warning('Found no episode_program for %s', title)
                 episode_program = None
+
             try:
                 episode_duration = int(regex_episode_duration.search(item_html).group(1))
             except AttributeError:
                 _LOGGER.warning('Found no episode_duration for %s', title)
                 episode_duration = None
+
             try:
                 episode_video_id = regex_episode_video_id.search(item_html).group(1)
             except AttributeError:
                 _LOGGER.warning('Found no episode_video_id for %s', title)
                 episode_video_id = None
+
             try:
                 episode_image = unescape(regex_episode_image.search(item_html).group(1))
             except AttributeError:
                 _LOGGER.warning('Found no episode_image for %s', title)
                 episode_image = None
+
             try:
-                episode_timestamp = int(regex_episode_timestamp.search(item_html).group(1))
+                episode_badge = unescape(regex_episode_badge.search(item_html).group(1))
             except AttributeError:
-                _LOGGER.warning('Found no episode_timestamp for %s', title)
-                episode_timestamp = None
+                episode_badge = None
+
+            description = title
+            if episode_badge:
+                description += "\n\n[B]%s[/B]" % episode_badge
 
             # Episode
             episodes.append(Episode(
                 path=path.lstrip('/'),
                 channel='',  # TODO
                 title=title,
+                description=html_to_kodi(description),
                 duration=episode_duration,
                 uuid=episode_video_id,
-                aired=datetime.fromtimestamp(episode_timestamp) if episode_timestamp else None,
                 cover=episode_image,
                 program_title=episode_program,
             ))
@@ -519,7 +597,7 @@ class ContentApi:
             path=data['link'].lstrip('/'),
             channel=data['pageInfo']['brand'],
             title=data['title'],
-            description=data['description'],
+            description=html_to_kodi(data['description']),
             aired=datetime.fromtimestamp(data.get('pageInfo', {}).get('publishDate')),
             cover=data['images']['poster'],
             background=data['images']['hero'],

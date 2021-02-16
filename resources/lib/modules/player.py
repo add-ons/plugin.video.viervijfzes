@@ -12,6 +12,11 @@ from resources.lib.viervijfzes.auth import AuthApi
 from resources.lib.viervijfzes.aws.cognito_idp import AuthenticationException, InvalidLoginException
 from resources.lib.viervijfzes.content import ContentApi, GeoblockedException, UnavailableException
 
+try:  # Python 3
+    from urllib.parse import quote, urlencode
+except ImportError:  # Python 2
+    from urllib import quote, urlencode
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -142,11 +147,6 @@ class Player:
         :param str key_value:
         :rtype: str
         """
-        try:  # Python 3
-            from urllib.parse import quote, urlencode
-        except ImportError:  # Python 2
-            from urllib import quote, urlencode
-
         header = ''
         if key_headers:
             header = urlencode(key_headers)
