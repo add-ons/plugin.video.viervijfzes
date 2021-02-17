@@ -9,6 +9,11 @@ from routing import Plugin
 
 from resources.lib import kodilogging
 
+try:  # Python 3
+    from urllib.parse import unquote
+except ImportError:  # Python 2
+    from urllib import unquote
+
 routing = Plugin()  # pylint: disable=invalid-name
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,20 +37,6 @@ def show_channel_menu(channel):
     """ Shows Live TV channels """
     from resources.lib.modules.channels import Channels
     Channels().show_channel_menu(channel)
-
-
-# @routing.route('/channels/<channel>/categories')
-# def show_channel_categories(channel):
-#     """ Shows TV Channel categories """
-#     from resources.lib.modules.channels import Channels
-#     Channels().show_channel_categories(channel)
-
-
-# @routing.route('/channels/<channel>/categories/<category>')
-# def show_channel_category(channel, category):
-#     """ Shows TV Channel categories """
-#     from resources.lib.modules.channels import Channels
-#     Channels().show_channel_category(channel, category)
 
 
 @routing.route('/channels/<channel>/tvguide')
@@ -95,6 +86,34 @@ def show_catalog_program_season(program, season):
     """ Show a season from a program """
     from resources.lib.modules.catalog import Catalog
     Catalog().show_program_season(program, season)
+
+
+@routing.route('/category')
+def show_categories():
+    """ Show the catalog by category """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_categories()
+
+
+@routing.route('/category/<category>')
+def show_category(category):
+    """ Show the catalog by category """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_category(category)
+
+
+@routing.route('/recommendations')
+def show_recommendations():
+    """ Show my list """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_recommendations()
+
+
+@routing.route('/recommendations/<category>')
+def show_recommendations_category(category):
+    """ Show my list """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().show_recommendations_category(category)
 
 
 @routing.route('/mylist')
@@ -150,11 +169,6 @@ def play_catalog(uuid):
 @routing.route('/play/page/<page>')
 def play_from_page(page):
     """ Play the requested item """
-    try:  # Python 3
-        from urllib.parse import unquote
-    except ImportError:  # Python 2
-        from urllib import unquote
-
     from resources.lib.modules.player import Player
     Player().play_from_page(unquote(page))
 

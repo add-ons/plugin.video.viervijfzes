@@ -178,6 +178,73 @@ class Catalog:
         # Sort like we get our results back.
         kodiutils.show_listing(listing, 30003, content='episodes')
 
+    def show_categories(self):
+        """ Shows the categories """
+        categories = self._api.get_categories()
+
+        listing = []
+        for category in categories:
+            listing.append(TitleItem(title=category.title,
+                                     path=kodiutils.url_for('show_category', category=category.uuid),
+                                     info_dict={
+                                         'title': category.title,
+                                     }))
+
+        kodiutils.show_listing(listing, 30003, sort=['title'])
+
+    def show_category(self, uuid):
+        """ Shows a category """
+        programs = self._api.get_category_content(int(uuid))
+
+        listing = [
+            Menu.generate_titleitem(program) for program in programs
+        ]
+
+        kodiutils.show_listing(listing, 30003, content='tvshows')
+
+    def show_recommendations(self):
+        """ Shows the recommendations """
+        # "Meest bekeken" has a specific API endpoint, the other categories are scraped from the website.
+        listing = [
+            TitleItem(title='Meest bekeken',
+                      path=kodiutils.url_for('show_recommendations_category', category='meest-bekeken'),
+                      info_dict={
+                          'title': 'Meest bekeken',
+                      })
+        ]
+
+        recommendations = self._api.get_recommendation_categories()
+        for category in recommendations:
+            listing.append(TitleItem(title=category.title,
+                                     path=kodiutils.url_for('show_recommendations_category', category=category.uuid),
+                                     info_dict={
+                                         'title': category.title,
+                                     }))
+
+        kodiutils.show_listing(listing, 30005, content='tvshows')
+
+    def show_recommendations_category(self, uuid):
+        """ Shows the a category of the recommendations """
+        if uuid == 'meest-bekeken':
+            programs = self._api.get_popular_programs()
+            episodes = []
+        else:
+            recommendations = self._api.get_recommendation_categories()
+            category = next(category for category in recommendations if category.uuid == uuid)
+            programs = category.programs
+            episodes = category.episodes
+
+        listing = []
+        for episode in episodes:
+            title_item = Menu.generate_titleitem(episode)
+            title_item.info_dict['title'] = episode.program_title + ' - ' + title_item.title
+            listing.append(title_item)
+
+        for program in programs:
+            listing.append(Menu.generate_titleitem(program))
+
+        kodiutils.show_listing(listing, 30005, content='tvshows')
+
     def show_mylist(self):
         """ Show all the programs of all channels """
         try:

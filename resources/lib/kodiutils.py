@@ -45,6 +45,7 @@ HTML_MAPPING = [
     (re.compile(r'</?(li|ul|ol)(|\s[^>]+)>', re.I), '\n'),
     (re.compile(r'</?(code|div|p|pre|span)(|\s[^>]+)>', re.I), ''),
     (re.compile('(&nbsp;\n){2,}', re.I), '\n'),  # Remove repeating non-blocking spaced newlines
+    (re.compile('  +', re.I), ' '),  # Remove double spaces
 ]
 
 STREAM_HLS = 'hls'
@@ -57,8 +58,7 @@ class TitleItem:
     """ This helper object holds all information to be used with Kodi xbmc's ListItem object """
 
     def __init__(self, title, path=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None,
-                 context_menu=None, subtitles_path=None,
-                 is_playable=False):
+                 context_menu=None, subtitles_path=None, is_playable=False, visible=True):
         """ The constructor for the TitleItem class
         :type title: str
         :type path: str
@@ -69,6 +69,7 @@ class TitleItem:
         :type context_menu: list[tuple[str, str]]
         :type subtitles_path: list[str]
         :type is_playable: bool
+        :type visible: bool
         """
         self.title = title
         self.path = path
@@ -79,6 +80,7 @@ class TitleItem:
         self.context_menu = context_menu
         self.subtitles_path = subtitles_path
         self.is_playable = is_playable
+        self.visible = visible
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -189,6 +191,9 @@ def show_listing(title_items, category=None, sort=None, content=None, cache=True
     # Add the listings
     listing = []
     for title_item in title_items:
+        if not title_item.visible:
+            continue
+
         # Three options:
         #  - item is a virtual directory/folder (not playable, path)
         #  - item is a playable file (playable, path)

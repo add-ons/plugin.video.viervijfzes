@@ -8,6 +8,11 @@ from resources.lib.kodiutils import TitleItem
 from resources.lib.viervijfzes import STREAM_DICT
 from resources.lib.viervijfzes.content import Episode, Program
 
+try:  # Python 3
+    from urllib.parse import quote
+except ImportError:  # Python 2
+    from urllib import quote
+
 
 class Menu:
     """ Menu code """
@@ -39,6 +44,28 @@ class Menu:
                 ),
                 info_dict=dict(
                     plot=kodiutils.localize(30008),
+                )
+            ),
+            TitleItem(
+                title=kodiutils.localize(30003),  # Catalog
+                path=kodiutils.url_for('show_categories'),
+                art_dict=dict(
+                    icon='DefaultGenre.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30004),
+                )
+            ),
+            TitleItem(
+                title=kodiutils.localize(30005),  # Recommendations
+                path=kodiutils.url_for('show_recommendations'),
+                art_dict=dict(
+                    icon='DefaultFavourites.png',
+                    fanart=kodiutils.get_addon_info('fanart'),
+                ),
+                info_dict=dict(
+                    plot=kodiutils.localize(30006),
                 )
             ),
             TitleItem(
@@ -94,9 +121,12 @@ class Menu:
                 'season': len(item.seasons) if item.seasons else None,
             })
 
+            visible = True
             if isinstance(item.episodes, list) and not item.episodes:
                 # We know that we don't have episodes
                 title = '[COLOR gray]' + item.title + '[/COLOR]'
+                visible = kodiutils.get_setting_bool('interface_show_unavailable')
+
             else:
                 # We have episodes, or we don't know it
                 title = item.title
@@ -126,7 +156,8 @@ class Menu:
                              path=kodiutils.url_for('show_catalog_program', program=item.path),
                              context_menu=context_menu,
                              art_dict=art_dict,
-                             info_dict=info_dict)
+                             info_dict=info_dict,
+                             visible=visible)
 
         #
         # Episode
@@ -146,11 +177,6 @@ class Menu:
             })
 
             if item.path:
-                try:  # Python 3
-                    from urllib.parse import quote
-                except ImportError:  # Python 2
-                    from urllib import quote
-
                 # We don't have an UUID, and first need to fetch the video information from the page
                 path = kodiutils.url_for('play_from_page', page=quote(item.path, safe=''))
             else:

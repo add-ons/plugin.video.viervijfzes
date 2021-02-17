@@ -11,7 +11,7 @@ import unittest
 import resources.lib.kodiutils as kodiutils
 from resources.lib.viervijfzes import ResolvedStream
 from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.content import ContentApi, Program, Episode, CACHE_PREVENT
+from resources.lib.viervijfzes.content import ContentApi, Program, Episode, CACHE_PREVENT, Category
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,10 +27,24 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
-    # def test_categories(self):
-    #     categories = self._api.get_categories()
-    #     self.assertIsInstance(categories, list)
-    #     self.assertIsInstance(categories[0], Category)
+    def test_popular_programs(self):
+        for brand in [None, 'vier', 'vijf', 'zes', 'goplay']:
+            programs = self._api.get_popular_programs(brand)
+            self.assertIsInstance(programs, list)
+            self.assertIsInstance(programs[0], Program)
+
+    def test_recommendations(self):
+        categories = self._api.get_recommendation_categories()
+        self.assertIsInstance(categories, list)
+
+    def test_categories(self):
+        categories = self._api.get_categories()
+        self.assertIsInstance(categories, list)
+        self.assertIsInstance(categories[0], Category)
+
+        programs = self._api.get_category_content(int(categories[0].uuid))
+        self.assertIsInstance(programs, list)
+        self.assertIsInstance(programs[0], Program)
 
     def test_episodes(self):
         for program in ['auwch', 'zo-man-zo-vrouw']:

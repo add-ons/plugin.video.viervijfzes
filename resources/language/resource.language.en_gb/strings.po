@@ -18,6 +18,18 @@ msgctxt "#30003"
 msgid "Catalogue"
 msgstr ""
 
+msgctxt "#30004"
+msgid "Browse the catalogue"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Recommendations"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Show the recommendations"
+msgstr ""
+
 msgctxt "#30007"
 msgid "Channels"
 msgstr ""
@@ -62,14 +74,6 @@ msgstr ""
 
 msgctxt "#30056"
 msgid "Browse the Catalog for [B]{channel}[/B]"
-msgstr ""
-
-msgctxt "#30057"
-msgid "Categories for [B]{channel}[/B]"
-msgstr ""
-
-msgctxt "#30058"
-msgid "Browse the Categories for [B]{channel}[/B]"
 msgstr ""
 
 msgctxt "#30059"
@@ -184,6 +188,14 @@ msgstr ""
 
 msgctxt "#30803"
 msgid "Password"
+msgstr ""
+
+msgctxt "#30820"
+msgid "Interface"
+msgstr ""
+
+msgctxt "#30821"
+msgid "Show unavailable programs"
 msgstr ""
 
 msgctxt "#30840"
