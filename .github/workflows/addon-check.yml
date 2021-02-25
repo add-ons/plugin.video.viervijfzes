@@ -23,5 +23,5 @@ jobs:
         uses: xbmc/action-kodi-addon-checker@v1.2
         with:
           kodi-version: ${{ matrix.kodi-version }}
-          rewrite-for-matrix: true
+          rewrite-for-matrix: ${{ matrix.kodi-version == 'matrix' }}
           addon-id: ${{ github.event.repository.name }}
