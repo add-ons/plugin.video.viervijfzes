@@ -1,5 +1,25 @@
 # Changelog
 
+## [v0.4.1](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.4.1) (2021-02-27)
+
+[Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.4.0...v0.4.1)
+
+**Implemented enhancements:**
+
+- Add recommendations and categories, allow to hide unavailable programs [\#76](https://github.com/add-ons/plugin.video.viervijfzes/pull/76) ([michaelarnauts](https://github.com/michaelarnauts))
+- Fix incomplete descriptions [\#75](https://github.com/add-ons/plugin.video.viervijfzes/pull/75) ([dagwieers](https://github.com/dagwieers))
+- Remove background metadata downloading [\#74](https://github.com/add-ons/plugin.video.viervijfzes/pull/74) ([michaelarnauts](https://github.com/michaelarnauts))
+- Implement My List [\#71](https://github.com/add-ons/plugin.video.viervijfzes/pull/71) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Fixed bugs:**
+
+- Fix error when requesting a My List that has not been created yet. [\#73](https://github.com/add-ons/plugin.video.viervijfzes/pull/73) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Merged pull requests:**
+
+- Cleanup CI [\#72](https://github.com/add-ons/plugin.video.viervijfzes/pull/72) ([michaelarnauts](https://github.com/michaelarnauts))
+- Remove dependency on tox [\#70](https://github.com/add-ons/plugin.video.viervijfzes/pull/70) ([michaelarnauts](https://github.com/michaelarnauts))
+
 ## [v0.4.0](https://github.com/add-ons/plugin.video.viervijfzes/tree/v0.4.0) (2021-02-04)
 
 [Full Changelog](https://github.com/add-ons/plugin.video.viervijfzes/compare/v0.3.1...v0.4.0)

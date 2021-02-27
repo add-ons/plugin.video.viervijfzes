@@ -62,15 +62,15 @@ jobs:
           asset_path: ../${{ steps.build.outputs.matrix-filename }}
           asset_content_type: application/zip
 
-#      - name: Generate distribution zip and submit to official kodi repository
-#        id: kodi-addon-submitter
-#        uses: xbmc/action-kodi-addon-submitter@v1.2
-#        with:
-#          kodi-repository: repo-plugins
-#          addon-id: plugin.video.viervijfzes
-#          kodi-version: leia
-#          kodi-matrix: true
-#        env:
-#          GH_USERNAME: ${{ secrets.GH_USERNAME }}
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#          EMAIL: ${{ secrets.EMAIL }}
+      - name: Generate distribution zip and submit to official kodi repository
+        id: kodi-addon-submitter
+        uses: xbmc/action-kodi-addon-submitter@v1.2
+        with:
+          kodi-repository: repo-plugins
+          addon-id: plugin.video.viervijfzes
+          kodi-version: leia
+          kodi-matrix: true
+        env:
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          EMAIL: ${{ secrets.EMAIL }}
