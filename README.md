@@ -8,7 +8,7 @@
 
 *plugin.video.viervijfzes* is een Kodi add-on om de video-on-demand content van [GoPlay](https://www.goplay.be/) te bekijken. 
 
-> Note: Je moet eerst een account aanmaken op [goplay.be](https://www.goplay.be/.
+> Note: Je moet eerst een account aanmaken op [goplay.be](https://www.goplay.be/).
 
 Meer informatie kan je vinden op de [Wiki pagina](https://github.com/add-ons/plugin.video.viervijfzes/wiki).
 
