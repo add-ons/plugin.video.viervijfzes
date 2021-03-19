@@ -86,7 +86,7 @@ class EpgApi:
         :type channel: str
         :type date: str
         :rtype list[EpgProgram]
-         """
+        """
         if channel not in self.EPG_ENDPOINTS:
             raise Exception('Unknown channel %s' % channel)
 
