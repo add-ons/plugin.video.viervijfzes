@@ -100,11 +100,6 @@ class Menu:
         :type item: Union[Program, Episode]
         :rtype TitleItem
         """
-        art_dict = {
-            'thumb': item.cover,
-            'cover': item.cover,
-            'fanart': item.background or item.cover,
-        }
         info_dict = {
             'title': item.title,
             'plot': item.description,
@@ -120,6 +115,13 @@ class Menu:
                 'mediatype': None,
                 'season': len(item.seasons) if item.seasons else None,
             })
+
+            art_dict = {
+                'poster': item.poster,
+                'landscape': item.thumb,
+                'thumb': item.thumb,
+                'fanart': item.fanart,
+            }
 
             visible = True
             if isinstance(item.episodes, list) and not item.episodes:
@@ -170,6 +172,12 @@ class Menu:
                 'season': item.season,
                 'episode': item.number,
             })
+
+            art_dict = {
+                'landscape': item.thumb,
+                'thumb': item.thumb,
+                'fanart': item.thumb,
+            }
 
             stream_dict = STREAM_DICT.copy()
             stream_dict.update({
