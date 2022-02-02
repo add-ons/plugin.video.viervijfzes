@@ -13,7 +13,7 @@ from datetime import datetime
 
 import requests
 
-from resources.lib.kodiutils import html_to_kodi, STREAM_DASH, STREAM_HLS
+from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS, html_to_kodi
 from resources.lib.viervijfzes import ResolvedStream
 
 try:  # Python 3

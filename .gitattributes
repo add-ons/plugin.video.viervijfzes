@@ -6,3 +6,4 @@ tests/ export-ignore
 .pylintrc export-ignore
 Makefile export-ignore
 requirements.txt export-ignore
+scripts/ export-ignore
