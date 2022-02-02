@@ -75,7 +75,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        resolved_stream = self._api.get_stream_by_uuid('2a17b793-7407-42b2-9851-5487db6d3a6a')  # NCIS LA 10x6
+        resolved_stream = self._api.get_stream_by_uuid('32ac67c6-9b15-4e3e-9440-6de04e586a6e')  # NCIS 12x8
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
 
