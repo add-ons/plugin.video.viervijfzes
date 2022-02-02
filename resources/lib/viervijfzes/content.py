@@ -366,7 +366,7 @@ class ContentApi:
             drm_key = data['drmKey']['S']
 
             _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
-            response_drm = self._get_url(self.API_GOPLAY + '/restricted/decode/%s' % drm_key, authentication=True)
+            response_drm = self._get_url(self.API_GOPLAY + '/video/xml/%s' % drm_key, authentication=True)
             data_drm = json.loads(response_drm)
 
             return ResolvedStream(
