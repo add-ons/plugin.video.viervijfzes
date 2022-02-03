@@ -263,10 +263,14 @@ class Catalog:
         items = []
         if mylist:
             for item in mylist:
-                program = self._api.get_program_by_uuid(item.get('id'))
-                if program:
-                    program.my_list = True
-                    items.append(program)
+                try:
+                    program = self._api.get_program_by_uuid(item.get('id'), cache=CACHE_PREVENT)
+                    if program:
+                        program.my_list = True
+                        items.append(program)
+                except Exception as exc:
+                    _LOGGER.warning(exc)
+                    pass
 
         listing = [Menu.generate_titleitem(item) for item in items]
 
