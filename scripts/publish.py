@@ -99,7 +99,7 @@ def create_addon_branch(repo, branch, source, addon_info, gh_username, gh_token,
         shell('git', 'fetch', '-f', 'upstream', branch)  # Fetch upstream
     else:
         # Clone the upstream repo
-        shell('git', 'clone', '--branch', branch, '--origin', 'upstream', '--single-branch', 'git://github.com/xbmc/{}.git'.format(repo))
+        shell('git', 'clone', '--branch', branch, '--origin', 'upstream', '--single-branch', 'https://github.com/xbmc/{}.git'.format(repo))
         os.chdir(repo)
 
     # Create local branch
@@ -200,11 +200,11 @@ def create_pull_request(repo, branch, addon_info, gh_username, gh_token):
 if __name__ == '__main__':
     filenames = sys.argv[1:]
 
-    for filename in filenames:
-        # Fork the repo if the user does not have a personal repo fork
-        if not user_fork_exists(GH_REPO, GH_USERNAME, GH_TOKEN):
-            create_personal_fork(GH_REPO, GH_USERNAME, GH_TOKEN)
+    # Fork the repo if the user does not have a personal repo fork
+    if not user_fork_exists(GH_REPO, GH_USERNAME, GH_TOKEN):
+        create_personal_fork(GH_REPO, GH_USERNAME, GH_TOKEN)
 
+    for filename in filenames:
         with TemporaryDirectory() as extract_dir:
             with ZipFile(filename) as z:
                 # Look for addon.xml in zip and load the details
