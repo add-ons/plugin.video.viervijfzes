@@ -361,23 +361,33 @@ class ContentApi:
             raise UnavailableException
 
         if 'videoDash' in data:
-            # DRM protected stream
-            # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
-            drm_key = data['drmKey']['S']
 
-            _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
-            response_drm = self._get_url(self.API_GOPLAY + '/video/xml/%s' % drm_key, authentication=self._auth.get_token())
-            data_drm = json.loads(response_drm)
+            if 'drmKey' in data:
+                # DRM protected stream
+                # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
+                drm_key = data['drmKey']['S']
 
+                _LOGGER.debug('Fetching Authentication XML with drm_key %s', drm_key)
+                response_drm = self._get_url(self.API_GOPLAY + '/video/xml/%s' % drm_key, authentication=self._auth.get_token())
+                data_drm = json.loads(response_drm)
+
+                # DRM protected DASH stream
+                return ResolvedStream(
+                    uuid=uuid,
+                    url=data['videoDash']['S'],
+                    stream_type=STREAM_DASH,
+                    license_url='https://wv-keyos.licensekeyserver.com/',
+                    auth=data_drm.get('auth'),
+                )
+
+            # Unprotected DASH stream
             return ResolvedStream(
                 uuid=uuid,
                 url=data['videoDash']['S'],
                 stream_type=STREAM_DASH,
-                license_url='https://wv-keyos.licensekeyserver.com/',
-                auth=data_drm.get('auth'),
             )
 
-        # Normal HLS stream
+        # Unprotected HLS stream
         return ResolvedStream(
             uuid=uuid,
             url=data['video']['S'],
