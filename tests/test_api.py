@@ -47,7 +47,7 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(programs[0], Program)
 
     def test_episodes(self):
-        for program in ['auwch', 'zo-man-zo-vrouw']:
+        for program in ['gentwest', 'zo-man-zo-vrouw']:
             program = self._api.get_program(program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
@@ -66,7 +66,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
-        program = self._api.get_program('auwch')
+        program = self._api.get_program('gentwest')
         self.assertIsInstance(program, Program)
 
         episode = program.episodes[0]
@@ -75,7 +75,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        resolved_stream = self._api.get_stream_by_uuid('62e04ab5-1f3c-4385-ad7a-e2943ddb1849')  # https://www.goplay.be/video/ncis-los-angeles/ncis-los-angeles-s10/ncis-los-angeles-s10-aflevering-12
+        resolved_stream = self._api.get_stream_by_uuid('e7faa457-5768-4abd-bf4f-5a0e1055bbd3')  # https://www.goplay.be/video/ncis-los-angeles/ncis-los-angeles-s13/ncis-los-angeles-s13-aflevering-1
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
 
