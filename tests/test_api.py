@@ -70,12 +70,12 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(program, Program)
 
         episode = program.episodes[0]
-        resolved_stream = self._api.get_stream_by_uuid(episode.uuid)
+        resolved_stream = self._api.get_stream_by_uuid(episode.uuid, episode.islongform)
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        resolved_stream = self._api.get_stream_by_uuid('e7faa457-5768-4abd-bf4f-5a0e1055bbd3')  # https://www.goplay.be/video/ncis-los-angeles/ncis-los-angeles-s13/ncis-los-angeles-s13-aflevering-1
+        resolved_stream = self._api.get_stream_by_uuid('e7faa457-5768-4abd-bf4f-5a0e1055bbd3', True)  # https://www.goplay.be/video/ncis-los-angeles/ncis-los-angeles-s13/ncis-los-angeles-s13-aflevering-1
         self.assertIsInstance(resolved_stream, ResolvedStream)
 
 
