@@ -13,6 +13,7 @@ from datetime import datetime
 
 import requests
 
+from resources.lib import kodiutils
 from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS, html_to_kodi
 from resources.lib.viervijfzes import ResolvedStream
 
@@ -28,6 +29,8 @@ _LOGGER = logging.getLogger(__name__)
 CACHE_AUTO = 1  # Allow to use the cache, and query the API if no cache is available
 CACHE_ONLY = 2  # Only use the cache, don't use the API
 CACHE_PREVENT = 3  # Don't use the cache
+
+PROXIES = kodiutils.get_proxies()
 
 
 class UnavailableException(Exception):
@@ -396,7 +399,8 @@ class ContentApi:
 
         # No manifest url found, get manifest from Server-Side Ad Insertion service
         if data.get('adType') == 'SSAI' and data.get('ssai'):
-            url = 'https://pubads.g.doubleclick.net/ondemand/dash/content/%s/vid/%s/streams' % (data.get('ssai').get('contentSourceID'), data.get('ssai').get('videoID'))
+            url = 'https://pubads.g.doubleclick.net/ondemand/dash/content/%s/vid/%s/streams' % (
+                data.get('ssai').get('contentSourceID'), data.get('ssai').get('videoID'))
             ad_data = json.loads(self._post_url(url, data=''))
 
             # Server-Side Ad Insertion DASH stream
@@ -408,7 +412,6 @@ class ContentApi:
             )
 
         raise UnavailableException
-
 
     def get_program_tree(self, cache=CACHE_AUTO):
         """ Get a content tree with information about all the programs.
@@ -772,9 +775,9 @@ class ContentApi:
         if authentication:
             response = self._session.get(url, params=params, headers={
                 'authorization': authentication,
-            })
+            }, proxies=PROXIES)
         else:
-            response = self._session.get(url, params=params)
+            response = self._session.get(url, params=params, proxies=PROXIES)
 
         if response.status_code != 200:
             _LOGGER.error(response.text)
@@ -791,9 +794,9 @@ class ContentApi:
         if authentication:
             response = self._session.post(url, params=params, json=data, headers={
                 'authorization': authentication,
-            })
+            }, proxies=PROXIES)
         else:
-            response = self._session.post(url, params=params, json=data)
+            response = self._session.post(url, params=params, json=data, proxies=PROXIES)
 
         if response.status_code not in (200, 201):
             _LOGGER.error(response.text)
@@ -810,9 +813,9 @@ class ContentApi:
         if authentication:
             response = self._session.delete(url, params=params, headers={
                 'authorization': authentication,
-            })
+            }, proxies=PROXIES)
         else:
-            response = self._session.delete(url, params=params)
+            response = self._session.delete(url, params=params, proxies=PROXIES)
 
         if response.status_code != 200:
             _LOGGER.error(response.text)
