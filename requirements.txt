@@ -4,7 +4,9 @@ pytest
 pytest-cov
 pytest-timeout
 python-dateutil
+pysocks
 requests
 git+https://github.com/tamland/kodi-plugin-routing@master#egg=routing
 six
 sakee
+win-inet-pton; platform_system=="Windows"
