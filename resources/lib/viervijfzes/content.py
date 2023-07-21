@@ -351,10 +351,10 @@ class ContentApi:
         return None
 
     def get_stream_by_uuid(self, uuid, islongform):
-        """ Get the stream URL to use for this video.
+        """ Return a ResolvedStream for this video.
         :type uuid: str
         :type islongform: bool
-        :rtype str
+        :rtype: ResolvedStream
         """
         mode = 'long-form' if islongform else 'short-form'
         response = self._get_url(self.API_GOPLAY + '/web/v1/videos/%s/%s' % (mode, uuid), authentication='Bearer %s' % self._auth.get_token())
@@ -363,34 +363,35 @@ class ContentApi:
         if not data:
             raise UnavailableException
 
+        # Get DRM license
+        license_key = None
+        if data.get('drmXml'):
+            # BuyDRM format
+            # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
+
+            # Generate license key
+            license_key = self.create_license_key('https://wv-keyos.licensekeyserver.com/', key_headers=dict(
+                customdata=data['drmXml'],
+            ))
+
+        # Get manifest url
         if data.get('manifestUrls'):
 
-            if data.get('drmXml'):
-                # DRM protected stream
-                # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
-
-                # DRM protected DASH stream
-                return ResolvedStream(
-                    uuid=uuid,
-                    url=data['manifestUrls']['dash'],
-                    stream_type=STREAM_DASH,
-                    license_url='https://wv-keyos.licensekeyserver.com/',
-                    auth=data['drmXml'],
-                )
-
             if data.get('manifestUrls').get('dash'):
-                # Unprotected DASH stream
+                # DASH stream
                 return ResolvedStream(
                     uuid=uuid,
                     url=data['manifestUrls']['dash'],
                     stream_type=STREAM_DASH,
+                    license_key=license_key,
                 )
 
-            # Unprotected HLS stream
+            # HLS stream
             return ResolvedStream(
                 uuid=uuid,
                 url=data['manifestUrls']['hls'],
                 stream_type=STREAM_HLS,
+                license_key=license_key,
             )
 
         # No manifest url found, get manifest from Server-Side Ad Insertion service
@@ -398,11 +399,12 @@ class ContentApi:
             url = 'https://pubads.g.doubleclick.net/ondemand/dash/content/%s/vid/%s/streams' % (data.get('ssai').get('contentSourceID'), data.get('ssai').get('videoID'))
             ad_data = json.loads(self._post_url(url, data=''))
 
-            # Unprotected DASH stream
+            # Server-Side Ad Insertion DASH stream
             return ResolvedStream(
                 uuid=uuid,
                 url=ad_data['stream_manifest'],
                 stream_type=STREAM_DASH,
+                license_key=license_key,
             )
 
         raise UnavailableException
@@ -732,6 +734,34 @@ class ContentApi:
             title=data.get('title'),
         )
         return episode
+
+    @staticmethod
+    def create_license_key(key_url, key_type='R', key_headers=None, key_value='', response_value=''):
+        """ Create a license key string that we need for inputstream.adaptive.
+        :type key_url: str
+        :type key_type: str
+        :type key_headers: dict[str, str]
+        :type key_value: str
+        :type response_value: str
+        :rtype str
+        """
+        try:  # Python 3
+            from urllib.parse import quote, urlencode
+        except ImportError:  # Python 2
+            from urllib import quote, urlencode
+
+        header = ''
+        if key_headers:
+            header = urlencode(key_headers)
+
+        if key_type in ('A', 'R', 'B'):
+            key_value = key_type + '{SSM}'
+        elif key_type == 'D':
+            if 'D{SSM}' not in key_value:
+                raise ValueError('Missing D{SSM} placeholder')
+            key_value = quote(key_value)
+
+        return '%s|%s|%s|%s' % (key_url, header, key_value, response_value)
 
     def _get_url(self, url, params=None, authentication=None):
         """ Makes a GET request for the specified URL.
