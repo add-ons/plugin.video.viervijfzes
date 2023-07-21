@@ -312,7 +312,7 @@ class ContentApi:
                 video_id = json.loads(unescape(result.group(1)))['id']
                 video_json_data = self._get_url('%s/web/v1/videos/short-form/%s' % (self.API_GOPLAY, video_id))
                 video_json = json.loads(video_json_data)
-                return dict(video=video_json)
+                return {'video': video_json}
 
             # Extract program JSON
             regex_program = re.compile(r'data-hero="([^"]+)', re.DOTALL)
@@ -328,7 +328,7 @@ class ContentApi:
                 episode_json_data = unescape(result.group(1))
                 episode_json = json.loads(episode_json_data)
 
-            return dict(program=program_json, episode=episode_json)
+            return {'program': program_json, 'episode': episode_json}
 
         # Fetch listing from cache or update if needed
         data = self._handle_cache(key=['episode', path], cache_mode=cache, update=update)
@@ -370,9 +370,9 @@ class ContentApi:
             # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
 
             # Generate license key
-            license_key = self.create_license_key('https://wv-keyos.licensekeyserver.com/', key_headers=dict(
-                customdata=data['drmXml'],
-            ))
+            license_key = self.create_license_key('https://wv-keyos.licensekeyserver.com/', key_headers={
+                'customdata': data['drmXml']
+            })
 
         # Get manifest url
         if data.get('manifestUrls'):

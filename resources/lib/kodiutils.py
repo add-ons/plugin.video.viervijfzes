@@ -21,15 +21,15 @@ except ImportError:  # Python 2
 
 ADDON = xbmcaddon.Addon()
 
-SORT_METHODS = dict(
-    unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
-    label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS,
-    title=xbmcplugin.SORT_METHOD_TITLE,
-    episode=xbmcplugin.SORT_METHOD_EPISODE,
-    duration=xbmcplugin.SORT_METHOD_DURATION,
-    year=xbmcplugin.SORT_METHOD_VIDEO_YEAR,
-    date=xbmcplugin.SORT_METHOD_DATE,
-)
+SORT_METHODS = {
+    'unsorted': xbmcplugin.SORT_METHOD_UNSORTED,
+    'label': xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS,
+    'title': xbmcplugin.SORT_METHOD_TITLE,
+    'episode': xbmcplugin.SORT_METHOD_EPISODE,
+    'duration': xbmcplugin.SORT_METHOD_DURATION,
+    'year': xbmcplugin.SORT_METHOD_VIDEO_YEAR,
+    'date': xbmcplugin.SORT_METHOD_DATE
+}
 DEFAULT_SORT_METHODS = [
     'unsorted', 'title'
 ]
@@ -469,13 +469,13 @@ def open_settings():
 
 def get_global_setting(key):
     """Get a Kodi setting"""
-    result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=key))
+    result = jsonrpc(method='Settings.GetSettingValue', params={'setting': key})
     return result.get('result', {}).get('value')
 
 
 def set_global_setting(key, value):
     """Set a Kodi setting"""
-    return jsonrpc(method='Settings.SetSettingValue', params=dict(setting=key, value=value))
+    return jsonrpc(method='Settings.SetSettingValue', params={'setting': key, 'value': value})
 
 
 def get_cond_visibility(condition):

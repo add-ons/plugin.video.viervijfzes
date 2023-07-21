@@ -38,7 +38,7 @@ class Player:
         #     self.play_from_page(broadcast.video_url)
         #     return
 
-        channel_name = CHANNELS.get(channel, dict(name=channel))
+        channel_name = CHANNELS.get(channel, {'name': channel})
         kodiutils.ok_dialog(message=kodiutils.localize(30718, channel=channel_name.get('name')))  # There is no live stream available for {channel}.
         kodiutils.end_of_directory()
 
