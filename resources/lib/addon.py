@@ -160,14 +160,11 @@ def play_epg(channel, timestamp):
 
 
 @routing.route('/play/catalog')
-@routing.route('/play/catalog/<uuid>')
-@routing.route('/play/catalog/<uuid>/<islongform>')
-def play_catalog(uuid=None, islongform=False):
+@routing.route('/play/catalog/<uuid>/<content_type>')
+def play_catalog(uuid=None, content_type=None):
     """ Play the requested item """
-    from ast import literal_eval
     from resources.lib.modules.player import Player
-    # Convert string to bool using literal_eval
-    Player().play(uuid, literal_eval(islongform))
+    Player().play(uuid, content_type)
 
 
 @routing.route('/play/page/<page>')

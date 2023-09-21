@@ -7,6 +7,7 @@ from collections import OrderedDict
 CHANNELS = OrderedDict([
     ('Play4', {
         'name': 'Play4',
+        'url': 'live-kijken/play-4',
         'epg_id': 'vier',
         'logo': 'play4.png',
         'background': 'play4-background.png',
@@ -18,6 +19,7 @@ CHANNELS = OrderedDict([
     }),
     ('Play5', {
         'name': 'Play5',
+        'url': 'live-kijken/play-5',
         'epg_id': 'vijf',
         'logo': 'play5.png',
         'background': 'play5-background.png',
@@ -29,6 +31,7 @@ CHANNELS = OrderedDict([
     }),
     ('Play6', {
         'name': 'Play6',
+        'url': 'live-kijken/play-6',
         'epg_id': 'zes',
         'logo': 'play6.png',
         'background': 'play6-background.png',
@@ -40,8 +43,8 @@ CHANNELS = OrderedDict([
     }),
     ('Play7', {
         'name': 'Play7',
+        'url': 'live-kijken/play-7',
         'epg_id': 'zeven',
-        'url': 'https://www.goplay.be',
         'logo': 'play7.png',
         'background': 'play7-background.png',
         'iptv_preset': 17,
