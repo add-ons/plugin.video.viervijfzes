@@ -60,6 +60,10 @@ msgstr ""
 
 
 ### SUBMENUS
+msgctxt "#30052"
+msgid "Watch live [B]{channel}[/B]"
+msgstr ""
+
 msgctxt "#30053"
 msgid "TV Guide for [B]{channel}[/B]"
 msgstr ""
