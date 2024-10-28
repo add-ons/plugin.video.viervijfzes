@@ -71,8 +71,26 @@ class Channels:
 
         # Lookup the high resolution logo based on the channel name
         fanart = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel_info.get('background'))
+        icon = '{path}/resources/logos/{logo}'.format(path=kodiutils.addon_path(), logo=channel_info.get('logo'))
 
         listing = []
+
+        listing.append(
+            TitleItem(
+                title=kodiutils.localize(30052, channel=channel_info.get('name')),  # Watch live {channel}
+                path=kodiutils.url_for('play_live', channel=channel_info.get('name')) + '?.pvr',
+                art_dict={
+                    'icon': icon,
+                    'fanart': fanart,
+                },
+                info_dict={
+                    'plot': kodiutils.localize(30052, channel=channel_info.get('name')),  # Watch live {channel}
+                    'playcount': 0,
+                    'mediatype': 'video',
+                },
+                is_playable=True,
+            )
+        )
 
         if channel_info.get('epg_id'):
             listing.append(

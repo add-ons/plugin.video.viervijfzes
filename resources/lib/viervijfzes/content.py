@@ -112,7 +112,7 @@ class Episode:
     """ Defines an Episode. """
 
     def __init__(self, uuid=None, nodeid=None, path=None, channel=None, program_title=None, title=None, description=None, thumb=None, duration=None,
-                 season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None, stream=None, islongform=False):
+                 season=None, season_uuid=None, number=None, rating=None, aired=None, expiry=None, stream=None, content_type=None):
         """
         :type uuid: str
         :type nodeid: str
@@ -130,7 +130,7 @@ class Episode:
         :type aired: datetime
         :type expiry: datetime
         :type stream: string
-        :type islongform: bool
+        :type content_type: string
         """
         self.uuid = uuid
         self.nodeid = nodeid
@@ -148,7 +148,7 @@ class Episode:
         self.aired = aired
         self.expiry = expiry
         self.stream = stream
-        self.islongform = islongform
+        self.content_type = content_type
 
     def __repr__(self):
         return "%r" % self.__dict__
@@ -338,6 +338,14 @@ class ContentApi:
         if not data:
             return None
 
+        if 'episode' in data and data['episode']['pageInfo']['type'] == 'live_channel':
+            episode = Episode(
+                uuid=data['episode']['pageInfo']['nodeUuid'],
+                program_title=data['episode']['pageInfo']['title'],
+                content_type=data['episode']['pageInfo']['type'],
+            )
+            return episode
+
         if 'video' in data and data['video']:
             # We have found detailed episode information
             episode = self._parse_clip_data(data['video'])
@@ -353,14 +361,19 @@ class ContentApi:
 
         return None
 
-    def get_stream_by_uuid(self, uuid, islongform):
+    def get_stream_by_uuid(self, uuid, content_type):
         """ Return a ResolvedStream for this video.
-        :type uuid: str
-        :type islongform: bool
+        :type uuid: string
+        :type content_type: string
         :rtype: ResolvedStream
         """
-        mode = 'long-form' if islongform else 'short-form'
-        response = self._get_url(self.API_GOPLAY + '/web/v1/videos/%s/%s' % (mode, uuid), authentication='Bearer %s' % self._auth.get_token())
+        if content_type in ('video-long_form', 'long_form'):
+            mode = 'videos/long-form'
+        elif content_type == 'video-short_form':
+            mode = 'videos/short-form'
+        elif content_type == 'live_channel':
+            mode = 'liveStreams'
+        response = self._get_url(self.API_GOPLAY + '/web/v1/%s/%s' % (mode, uuid), authentication='Bearer %s' % self._auth.get_token())
         data = json.loads(response)
 
         if not data:
@@ -482,8 +495,8 @@ class ContentApi:
         raw_html = self._get_url(self.SITE_URL)
 
         # Categories regexes
-        regex_articles = re.compile(r'<article[^>]+>(.*?)</article>', re.DOTALL)
-        regex_category = re.compile(r'<h2.*?>(.*?)</h2>(?:.*?<div class="visually-hidden">(.*?)</div>)?', re.DOTALL)
+        regex_articles = re.compile(r'<article[^>]+>([\s\S]*?)</article>', re.DOTALL)
+        regex_category = re.compile(r'<h2.*?>(.*?)</h2>(?:.*?<div class=\"visually-hidden\">(.*?)</div>)?', re.DOTALL)
 
         categories = []
         for result in regex_articles.finditer(raw_html):
@@ -492,9 +505,9 @@ class ContentApi:
             match_category = regex_category.search(article_html)
             category_title = None
             if match_category:
-                category_title = match_category.group(1).strip()
+                category_title = unescape(match_category.group(1).strip())
                 if match_category.group(2):
-                    category_title += ' [B]%s[/B]' % match_category.group(2).strip()
+                    category_title += ' [B]%s[/B]' % unescape(match_category.group(2).strip())
 
             if category_title:
                 # Extract programs and lookup in all_programs so we have more metadata
@@ -547,8 +560,8 @@ class ContentApi:
         :rtype list[Program]
         """
         # Item regexes
-        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
-                                r'.*?<h3 class="poster-teaser__title">(?P<title>[^<]*)</h3>.*?data-background-image="(?P<image>.*?)".*?'
+        regex_item = re.compile(r'<a[^>]+?href=\"(?P<path>[^\"]+)\"[^>]+?>'
+                                r'[\s\S]*?<h3 class=\"poster-teaser__title\">(?P<title>[^<]*)</h3>[\s\S]*?poster-teaser__image\" src=\"(?P<image>[\s\S]*?)\"[\s\S]*?'
                                 r'</a>', re.DOTALL)
 
         # Extract items
@@ -574,20 +587,21 @@ class ContentApi:
         :rtype list[Episode]
         """
         # Item regexes
-        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>.*?</a>', re.DOTALL)
+        regex_item = re.compile(r'<a[^>]+?class=\"(?P<item_type>[^\"]+)\"[^>]+?href=\"(?P<path>[^\"]+)\"[^>]+?>[\s\S]*?</a>', re.DOTALL)
 
-        regex_episode_program = re.compile(r'<h3 class="episode-teaser__subtitle">([^<]*)</h3>')
-        regex_episode_title = re.compile(r'<(?:div|h3) class="(?:poster|card|image|episode)-teaser__title">(?:<span>)?([^<]*)(?:</span>)?</(?:div|h3)>')
-        regex_episode_duration = re.compile(r'data-duration="([^"]*)"')
-        regex_episode_video_id = re.compile(r'data-video-id="([^"]*)"')
-        regex_episode_image = re.compile(r'data-background-image="([^"]*)"')
-        regex_episode_badge = re.compile(r'<div class="(?:poster|card|image|episode)-teaser__badge badge">([^<]*)</div>')
+        regex_episode_program = re.compile(r'<(?:div|h3) class=\"episode-teaser__subtitle\">([^<]*)</(?:div|h3)>')
+        regex_episode_title = re.compile(r'<(?:div|h3) class=\"(?:poster|card|image|episode)-teaser__title\">(?:<span>)?([^<]*)(?:</span>)?</(?:div|h3)>')
+        regex_episode_duration = re.compile(r'data-duration=\"([^\"]*)\"')
+        regex_episode_video_id = re.compile(r'data-video-id=\"([^\"]*)\"')
+        regex_episode_image = re.compile(r'<img class=\"episode-teaser__header\" src=\"([^<\"]*)\"')
+        regex_episode_badge = re.compile(r'<div class=\"badge (?:poster|card|image|episode)-teaser__badge (?:poster|card|image|episode)-teaser__badge--default\">([^<]*)</div>')
 
         # Extract items
         episodes = []
         for item in regex_item.finditer(html):
             item_html = item.group(0)
             path = item.group('path')
+            item_type = item.group('item_type')
 
             # Extract title
             try:
@@ -632,6 +646,8 @@ class ContentApi:
             if episode_badge:
                 description += "\n\n[B]%s[/B]" % episode_badge
 
+            content_type =  'video-short_form' if 'card-' in item_type else 'video-long_form'
+
             # Episode
             episodes.append(Episode(
                 path=path.lstrip('/'),
@@ -642,6 +658,7 @@ class ContentApi:
                 uuid=episode_video_id,
                 thumb=episode_image,
                 program_title=episode_program,
+                content_type=content_type
             ))
 
         return episodes
@@ -721,7 +738,7 @@ class ContentApi:
             expiry=datetime.fromtimestamp(int(data.get('unpublishDate'))) if data.get('unpublishDate') else None,
             rating=data.get('parentalRating'),
             stream=data.get('path'),
-            islongform=data.get('isLongForm'),
+            content_type=data.get('type'),
         )
         return episode
 
